@@ -11,7 +11,7 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # Copia código fuente
-COPY main.py .
+COPY . .
 
 # Puerto utilizado por FastAPI
 EXPOSE 8000
