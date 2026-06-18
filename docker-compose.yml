@@ -1,0 +1,34 @@
+# Servicios/contenedores del sistema
+services:
+
+  # Contenedor PostgreSQL
+  postgres_db:
+    image: postgres             # Imagen utilizada
+    container_name: postgres_db # Nombre del contenedor
+    environment:                # Variables de entorno
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:                      # Mapeo de puertos
+      - "${POSTGRES_PORT}:5432"
+    volumes:                    # Volume
+      - postgres_data:/var/lib/postgresql
+    networks:
+      - grand_safe_net
+
+  # Contenedor backend FastAPI
+  backend:
+    build: ./backend            # Construir imagen usando Dockerfile local
+    container_name: backend     # Nombre del contenedor
+    ports:                      # Mapeo de puertos  
+      - "${BACKEND_PORT}:8000"
+    depends_on:                 # Esperar a PostgreSQL para iniciar
+      - postgres_db
+    networks:
+      - grand_safe_net
+
+# Volúmenes persistentes
+volumes:
+  postgres_data:                # Volumen PostgreSQL.
+
+# Redes
+networks:
+  grand_safe_net:
