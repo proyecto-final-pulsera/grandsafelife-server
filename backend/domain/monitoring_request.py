@@ -16,8 +16,11 @@ class MonitoringRequest:
         - accepted
         - rejected
 
-    elderly_read: Confirmacion de lectura notificacion
-    requested_user_read:  Confirmacion de lectura notificacion
+    elderly_read:
+        Confirmacion de lectura notificacion
+    
+    requested_user_read:
+        Confirmacion de lectura notificacion
     """    
     def __init__(
         self,

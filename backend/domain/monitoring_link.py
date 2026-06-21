@@ -9,7 +9,7 @@ class MonitoringLink:
 
     Roles soportados:
         - admin: acceso completo sobre la configuración y monitoreo.
-        - guest: acceso restringido al monitoreo.
+        - guest: acceso restringido.
     """
 
     def __init__(
