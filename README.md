@@ -14,6 +14,7 @@ La arquitectura está orientada a sistemas IoT y monitoreo remoto de adultos may
 
 * Gestionar usuarios y autenticación.
 * Administrar relaciones entre adultos mayores y monitores.
+* Gestionar solicitudes de monitoreo y administración.
 * Recibir mediciones provenientes de dispositivos móviles.
 * Procesar eventos críticos.
 * Almacenar información histórica.
@@ -23,98 +24,83 @@ La arquitectura está orientada a sistemas IoT y monitoreo remoto de adultos may
 
 ---
 
-## Arquitectura General
+## Estructura del Proyecto
 
 ```text
-Pulsera BLE
-      │
-      ▼
-Aplicación Adulto Mayor
-      │
-      ├── HTTP
-      └── MQTT
-      │
-      ▼
-Grand Safe Life Server
-      │
-      ├── PostgreSQL
-      ├── MQTT Broker
-      └── Sistema Notificaciones
-      │
-      ▼
-Aplicación Monitor (e invitados)
+.
+│   Dockerfile
+│   main.py
+│   requirements.txt
+│
+├── app_http
+│   └── app_http.py
+│
+├── app_mqtt
+│   └── app_mqtt.py
+│
+├── database
+│   ├── dataDB
+│   │   └── README.md
+│   │
+│   └── usersDB
+│       ├── connection.py
+│       ├── database.py
+│       ├── schema.py
+│       └── repositories
+│           ├── users_repository.py
+│           ├── monitoring_links_repository.py
+│           └── monitoring_requests_repository.py
+│
+├── domain
+│   ├── device.py
+│   ├── monitoring_link.py
+│   ├── monitoring_request.py
+│   └── user.py
+│
+├── notifications
+│   └── notifications.py
+│
+└── system
+    └── system.py
 ```
 
 ---
 
-## Estructura del Proyecto
+## Capas del Sistema
+
+La arquitectura se encuentra organizada en capas con responsabilidades claramente separadas.
 
 ```text
-backend/
-├── main.py
-├── http/
-│   └── app_http.py
-├── mqtt/
-│   └── app_mqtt.py
-├── postgres/
-│   └── database.py
-├── notifications/
-│   └── mobile_notifications.py
-└── system/
-    └── system.py
+Entradas HTTP/MQTT -> Procesadas por system:
+- Domain: Entidades
+- Database: Para configuracion y datos
+- Notifications: Para enviar notificaciones
 ```
 
-### main.py
+### app_http
 
-Punto de entrada de la aplicación.
-
-Responsabilidades:
-
-* Inicialización del sistema.
-* Creación de dependencias.
-* Arranque de servicios HTTP y MQTT.
-
-### http/
-
-Implementa la interfaz HTTP utilizando FastAPI.
+Implementa la API REST utilizando FastAPI.
 
 Responsabilidades:
 
 * Definición de endpoints.
-* Validación básica de requests.
-* Comunicación con la capa de sistema.
+* Validación de requests.
+* Conversión de JSON a objetos internos.
+* Comunicación con la capa System.
 
-### mqtt/
+### app_mqtt
 
-Implementa la comunicación MQTT.
-
-Responsabilidades:
-
-* Conexión al broker.
-* Recepción de mensajes.
-* Validación básica de tópicos y payloads.
-* Reporte de eventos hacia la capa de sistema.
-
-### postgres/
-
-Capa de acceso a datos.
+Implementa la integración MQTT.
 
 Responsabilidades:
 
-* Operaciones CRUD.
-* Consultas SQL.
-* Abstracción de PostgreSQL.
+* Conexión al broker MQTT.
+* Recepción de telemetría.
+* Recepción de eventos.
+* Validación de tópicos y payloads.
+* Comunicación con la capa System.
 
-### notifications/
-
-Módulo encargado del envío de notificaciones móviles.
-
-Responsabilidades:
-
-* Envío de alertas.
-* Integración futura con servicios para notificaiones push.
-
-### system/
+### system
 
 Núcleo de la lógica de negocio.
 
@@ -122,9 +108,102 @@ Responsabilidades:
 
 * Procesamiento de requests HTTP.
 * Procesamiento de eventos MQTT.
+* Aplicación de reglas de negocio.
 * Coordinación entre módulos.
-* Persistencia de datos.
-* Generación de alertas y notificaciones.
+* Generación de notificaciones.
+* Persistencia de datos mediante repositorios.
+
+### domain
+
+Define las entidades del sistema.
+
+Responsabilidades:
+
+* Representar el modelo de negocio.
+* Servir como DTO entre System y Database.
+
+Entidades actuales:
+
+* User
+* Device
+* MonitoringLink
+* MonitoringRequest
+
+### database
+
+Implementa la persistencia de datos.
+
+#### usersDB
+
+Base de datos relacional destinada a:
+
+* Usuarios.
+* Dispositivos.
+* Relaciones de monitoreo.
+* Solicitudes de monitoreo.
+* Configuración y permisos.
+
+Utiliza el patrón Repository para encapsular el acceso a PostgreSQL.
+
+Repositorios actuales:
+
+* UsersRepository
+* MonitoringLinksRepository
+* MonitoringRequestsRepository
+
+#### dataDB
+
+Módulo reservado para almacenamiento de telemetría y datos históricos.
+
+Actualmente se encuentra en etapa de definición.
+
+Su objetivo será almacenar:
+
+* Mediciones periódicas.
+* Eventos generados por dispositivos.
+* Alarmas.
+* Históricos de actividad.
+
+La implementación tecnológica aún no está definida.
+
+### notifications
+
+Módulo encargado del envío de notificaciones.
+
+Responsabilidades:
+
+* Alertas a monitores.
+* Alertas a administradores.
+* Integración futura con servicios Push.
+
+---
+
+## Componentes Pendientes
+
+Los siguientes módulos ya están identificados como necesarios para futuras etapas:
+
+### Auth
+
+Responsable de:
+
+* Generación de tokens.
+* Validación de sesiones.
+* Expiración de tokens.
+* Identificación de usuarios autenticados.
+
+Posible estructura:
+
+```text
+auth/
+├── token_manager.py
+└── session_manager.py
+```
+
+### Data DB
+
+Responsable del almacenamiento de telemetría y eventos históricos.
+
+La implementación podrá utilizar PostgreSQL, TimescaleDB u otra tecnología según los requerimientos finales del proyecto.
 
 ---
 
