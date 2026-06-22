@@ -1,21 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-class LoginRequest(BaseModel):
-    usr: str
-    psw: str
-
-class MonitoringRequestCreate(BaseModel):
-    elderly_user_id: int
-    requested_user_id: int
-    requested_role: str  # admin | monitor
-
-class MonitoringRequestAnswer(BaseModel):
-    answer: str  # accepted | rejected
-
-class MonitoringDeleteRequest(BaseModel):
-    link_id: int
-
+#==============================================
+# API Rest
+#============================================== 
 def create_http_app(system):
     app = FastAPI()
 
@@ -83,3 +71,22 @@ def create_http_app(system):
         )
 
     return app
+
+#==============================================
+# Mappers
+#============================================== 
+
+class LoginRequest(BaseModel):
+    usr: str
+    psw: str
+
+class MonitoringRequestCreate(BaseModel):
+    elderly_user_id: int
+    requested_user_id: int
+    requested_role: str  # admin | monitor
+
+class MonitoringRequestAnswer(BaseModel):
+    answer: str  # accepted | rejected
+
+class MonitoringDeleteRequest(BaseModel):
+    link_id: int
