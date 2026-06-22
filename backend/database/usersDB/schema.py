@@ -20,7 +20,7 @@ class DataBaseSchema:
         cur.execute("""
             CREATE TABLE IF NOT EXISTS devices (
                 device_id SERIAL PRIMARY KEY,
-                user_id INTEGER NOT NULL,
+                user_id INTEGER NOT NULL
             );
         """)
 
@@ -32,7 +32,7 @@ class DataBaseSchema:
                 monitored_user_id INTEGER NOT NULL,
                 monitor_user_id INTEGER NOT NULL,
 
-                monitor_role VARCHAR(20) NOT NULL,
+                monitor_role VARCHAR(20) NOT NULL
             );
         """)
 
@@ -42,17 +42,17 @@ class DataBaseSchema:
                 request_id SERIAL PRIMARY KEY,
 
                 requester_user_id INTEGER NOT NULL,
-                elderly_user_id INTEGER NOT NULL,
+                monitored_user_id INTEGER NOT NULL,
                 requested_user_id INTEGER NOT NULL,
 
                 requested_role VARCHAR(20) NOT NULL,
 
-                elderly_status VARCHAR(20) NOT NULL,
+                monitored_user_status VARCHAR(20) NOT NULL,
                 requested_user_status VARCHAR(20) NOT NULL,
                 status VARCHAR(20) NOT NULL,
 
-                elderly_read BOOLEAN NOT NULL DEFAULT FALSE,
-                requested_user_read BOOLEAN NOT NULL DEFAULT FALSE
+                monitored_read BOOLEAN NOT NULL DEFAULT FALSE,
+                requested_read BOOLEAN NOT NULL DEFAULT FALSE
             );
         """)
 

@@ -5,7 +5,7 @@ class MonitoringRequest:
     requester_user_id:
         Usuario que genera la solicitud.
 
-    elderly_user_id:
+    monitored_user_id:
         Usuario anciano involucrado.
 
     requested_user_id:
@@ -16,7 +16,7 @@ class MonitoringRequest:
         Persona que monitorea
         admin | monitor
 
-    elderly_status:
+    monitored_user_status:
         Estado de confirmacion del anciano
         pending | accepted | rejected
 
@@ -28,11 +28,11 @@ class MonitoringRequest:
         Estado general del request
         pending | accepted | rejected
     
-    elderly_read:
+    monitored_read:
         Confrmación de lectura de app anciano 
         True | False
         
-    requested_user_read:
+    requested_read:
         Confrmación de lectura de app monitor
         True | False
     """
@@ -42,29 +42,29 @@ class MonitoringRequest:
         request_id=None,
 
         requester_user_id=None,
-        elderly_user_id=None,
+        monitored_user_id=None,
         requested_user_id=None,
 
         requested_role="",
 
-        elderly_status="",
+        monitored_user_status="",
         requested_user_status="",
         status="",
 
-        elderly_read=False,
-        requested_user_read=False
+        monitored_read=False,
+        requested_read=False
     ):
         self.request_id = request_id
 
         self.requester_user_id = requester_user_id
-        self.elderly_user_id = elderly_user_id
+        self.monitored_user_id = monitored_user_id
         self.requested_user_id = requested_user_id
 
         self.requested_role = requested_role
 
-        self.elderly_status = elderly_status
+        self.monitored_user_status = monitored_user_status
         self.requested_user_status = requested_user_status
         self.status = status
 
-        self.elderly_read = elderly_read
-        self.requested_user_read = requested_user_read
+        self.monitored_read = monitored_read
+        self.requested_read = requested_read

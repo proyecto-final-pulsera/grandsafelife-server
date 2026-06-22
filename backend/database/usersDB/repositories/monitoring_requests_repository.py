@@ -11,14 +11,19 @@ class MonitoringRequestsRepository:
 
         return MonitoringRequest(
             request_id=row[0],
+
             requester_user_id=row[1],
-            target_user_id=row[3],
+            monitored_user_id=row[2],
+            requested_user_id=row[3],
+
             requested_role=row[4],
-            elderly_status=row[5],
-            monitor_status=row[6],
+
+            monitored_user_status=row[5],
+            requested_user_status=row[6],
             status=row[7],
-            elderly_read=row[8],
-            requested_user_read=row[9]
+
+            monitored_read=row[8],
+            requested_read=row[9]
         )
 
     def add_new_monitoring_request(self, monitoring_request) -> int:
@@ -30,15 +35,15 @@ class MonitoringRequestsRepository:
             SELECT request_id
             FROM monitoring_requests
             WHERE requester_user_id = %s
-              AND elderly_user_id = %s
+              AND monitored_user_id = %s
               AND requested_user_id = %s
               AND requested_role = %s
               AND status = 'pending';
             """,
             (
                 monitoring_request.requester_user_id,
-                monitoring_request.elderly_user_id,
-                monitoring_request.target_user_id,
+                monitoring_request.monitored_user_id,
+                monitoring_request.requested_user_id,
                 monitoring_request.requested_role
             )
         )
@@ -52,28 +57,28 @@ class MonitoringRequestsRepository:
                 """
                 INSERT INTO monitoring_requests (
                     requester_user_id,
-                    elderly_user_id,
+                    monitored_user_id,
                     requested_user_id,
                     requested_role,
-                    elderly_status,
+                    monitored_user_status,
                     requested_user_status,
                     status,
-                    elderly_read,
-                    requested_user_read
+                    monitored_read,
+                    requested_read
                 )
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING request_id;
                 """,
                 (
                     monitoring_request.requester_user_id,
-                    monitoring_request.elderly_user_id,
-                    monitoring_request.target_user_id,
+                    monitoring_request.monitored_user_id,
+                    monitoring_request.requested_user_id,
                     monitoring_request.requested_role,
-                    monitoring_request.elderly_status,
-                    monitoring_request.monitor_status,
+                    monitoring_request.monitored_user_status,
+                    monitoring_request.requested_user_status,
                     monitoring_request.status,
-                    monitoring_request.elderly_read,
-                    monitoring_request.requested_user_read
+                    monitoring_request.monitored_read,
+                    monitoring_request.requested_read
                 )
             )
 
@@ -85,7 +90,6 @@ class MonitoringRequestsRepository:
 
         return request_id
 
-    '''Retorna True si pudo actualizar'''
     def update_monitoring_request_status_by_id(
         self,
         request_id: int,
@@ -100,17 +104,17 @@ class MonitoringRequestsRepository:
         conn = connect()
         cur = conn.cursor()
 
-        if user_id == request.elderly_user_id:
+        if user_id == request.monitored_user_id:
             cur.execute(
                 """
                 UPDATE monitoring_requests
-                SET elderly_status = %s
+                SET monitored_user_status = %s
                 WHERE request_id = %s;
                 """,
                 (response, request_id)
             )
 
-        elif user_id == request.target_user_id:
+        elif user_id == request.requested_user_id:
             cur.execute(
                 """
                 UPDATE monitoring_requests
@@ -142,14 +146,14 @@ class MonitoringRequestsRepository:
             SELECT
                 request_id,
                 requester_user_id,
-                elderly_user_id,
+                monitored_user_id,
                 requested_user_id,
                 requested_role,
-                elderly_status,
+                monitored_user_status,
                 requested_user_status,
                 status,
-                elderly_read,
-                requested_user_read
+                monitored_read,
+                requested_read
             FROM monitoring_requests
             WHERE request_id = %s;
             """,
@@ -192,16 +196,16 @@ class MonitoringRequestsRepository:
             SELECT
                 request_id,
                 requester_user_id,
-                elderly_user_id,
+                monitored_user_id,
                 requested_user_id,
                 requested_role,
-                elderly_status,
+                monitored_user_status,
                 requested_user_status,
                 status,
-                elderly_read,
-                requested_user_read
+                monitored_read,
+                requested_read
             FROM monitoring_requests
-            WHERE elderly_user_id = %s
+            WHERE monitored_user_id = %s
                OR requested_user_id = %s;
             """,
             (user_id, user_id)
@@ -230,21 +234,21 @@ class MonitoringRequestsRepository:
         conn = connect()
         cur = conn.cursor()
 
-        if user_id == request.elderly_user_id:
+        if user_id == request.monitored_user_id:
             cur.execute(
                 """
                 UPDATE monitoring_requests
-                SET elderly_read = TRUE
+                SET monitored_read = TRUE
                 WHERE request_id = %s;
                 """,
                 (request_id,)
             )
 
-        elif user_id == request.target_user_id:
+        elif user_id == request.requested_user_id:
             cur.execute(
                 """
                 UPDATE monitoring_requests
-                SET requested_user_read = TRUE
+                SET requested_read = TRUE
                 WHERE request_id = %s;
                 """,
                 (request_id,)

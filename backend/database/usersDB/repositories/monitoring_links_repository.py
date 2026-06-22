@@ -10,7 +10,7 @@ class MonitoringLinksRepository:
 
         return MonitoringLink(
             link_id=row[0],
-            elderly_user_id=row[1],
+            monitored_user_id=row[1],
             monitor_user_id=row[2],
             monitor_role=row[3]
         )
@@ -28,7 +28,7 @@ class MonitoringLinksRepository:
               AND monitor_role = %s;
             """,
             (
-                monitoring_link.elderly_user_id,
+                monitoring_link.monitored_user_id,
                 monitoring_link.monitor_user_id,
                 monitoring_link.monitor_role
             )
@@ -50,7 +50,7 @@ class MonitoringLinksRepository:
                 RETURNING link_id;
                 """,
                 (
-                    monitoring_link.elderly_user_id,
+                    monitoring_link.monitored_user_id,
                     monitoring_link.monitor_user_id,
                     monitoring_link.monitor_role
                 )
