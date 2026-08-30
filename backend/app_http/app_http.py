@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Header
 from pydantic import BaseModel
+#from database/usersDB/repositories/users_repository.py import UsersRepository
 
 #==============================================
 # API Rest
@@ -19,29 +20,33 @@ def create_http_app(system):
         )
 
     @app.get("/auth/me")
-    def get_me():
-        return system.process_get_me()
+    def get_me(authorization: str | None = Header(default=None)):
+        return system.process_get_me(authorization)
 
     #==============================================
-    # Monitoreo
+    # Monitoreo- Typescript / Nest - Inyeccion dependencias
     #============================================== 
 
     @app.get("/monitoring/monitored-users")
-    def get_monitored_users():
-        return system.process_get_monitored_users()
+    def get_monitored_users(authorization: str | None = Header(default=None)):
+        return system.process_get_monitored_users(authorization)
 
     @app.get("/monitoring/my-monitors")
-    def get_my_monitors():
-        return system.process_get_my_monitors()
+    def get_my_monitors(authorization: str | None = Header(default=None)):
+        return system.process_get_my_monitors(authorization)
 
     #==============================================
     # Requests de monitoreo
     #============================================== 
 
     @app.post("/monitoring-requests")
-    def create_monitoring_request(request: MonitoringRequestCreate):
+    def create_monitoring_request(
+        request: MonitoringRequestCreate,
+        authorization: str | None = Header(default=None)
+    ):
         return system.process_create_monitoring_request(
-            request.elderly_user_id,
+            authorization,
+            request.monitored_user_id,
             request.requested_user_id,
             request.requested_role
         )
@@ -49,24 +54,30 @@ def create_http_app(system):
     @app.post("/monitoring-requests/{request_id}/answer")
     def answer_monitoring_request(
         request_id: int,
-        request: MonitoringRequestAnswer
+        request: MonitoringRequestAnswer,
+        authorization: str | None = Header(default=None)
     ):
         return system.process_answer_monitoring_request(
+            authorization,
             request_id,
             request.answer
         )
 
     @app.get("/monitoring-requests")
-    def get_monitoring_requests():
-        return system.process_get_monitoring_requests()
+    def get_monitoring_requests(authorization: str | None = Header(default=None)):
+        return system.process_get_monitoring_requests(authorization)
 
     #==============================================
     # Eliminar monitoreo
     #============================================== 
 
     @app.delete("/monitoring")
-    def delete_monitoring_link(request: MonitoringDeleteRequest):
+    def delete_monitoring_link(
+        request: MonitoringDeleteRequest,
+        authorization: str | None = Header(default=None)
+    ):
         return system.process_delete_monitoring_link(
+            authorization,
             request.link_id
         )
 
@@ -81,7 +92,7 @@ class LoginRequest(BaseModel):
     psw: str
 
 class MonitoringRequestCreate(BaseModel):
-    elderly_user_id: int
+    monitored_user_id: int
     requested_user_id: int
     requested_role: str  # admin | monitor
 
