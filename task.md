@@ -22,7 +22,7 @@ Crear los archivos:
 - users_endpoints.py
 - homes_endpoints.py
 - devices_endpoints.py
-- devices_metrics_endpoints.py
+- devices_stats_endpoints.py
 
 La parte de inicialziación no corresponde a la API, sino a un proceso de inicialiazcion interno del servidor
 
@@ -52,9 +52,17 @@ Esta regla aplicará para todos los endpoints siguientes.
 
 Dejar asentado este patrón en AGENTS.md
 
+
+Como verás los endpoints están pensados como funciones. Se debe ponerle una nomenclatura más adecuada a lo que es HTTP.
+
+Creo que conviene ponerle de nombres
+
+grandsafelife/api/users/*
+grandsafelife/api/homes/*
+grandsafelife/api/devices/*
+grandsafelife/api/stats/*
+
 # Paso 3: Creación de endpoints de usuario
-
-
 
 * getUserByID: Le entra el user ID por el header de authentication bearer. Método GET
 
@@ -129,7 +137,20 @@ El usuario que lo registra debe utilizar el header de auth bearer
 - **Retorna:** `Future<Map<String, double>>` - Espera un mapa numérico, ej. `{"lat": -34.6037, "long": -58.3816}`
 
 # Paso 6: Endpoints de Metricas
-devices_metrics_endpoints.py
+devices_stats_endpoints.py
+
+### `getAlarmsByDeviceId`
+- **Descripción:** Recupera todas las alarmas configuradas para un dispositivo específico.
+- **Entradas:** `deviceId` (String) - El ID del dispositivo.
+- **Retorna:** `Future<Map<String, dynamic>>` - Retorna el diccionario (mapa) que contiene todas las alarmas, donde cada clave es el ID de la alarma. Si no hay alarmas, retorna un mapa vacío `{}`.
+
+### `setAlarmsByDeviceId`
+- **Descripción:** Reemplaza o actualiza el bloque completo de alarmas de un dispositivo. Este método se usa en conjunto para crear, modificar y eliminar alarmas, sincronizando todo el mapa de una sola vez. METODO POST. Header Auth bearer del usuario.
+- **Entradas:** 
+  - `deviceId` (String) - El ID del dispositivo.
+  - `alarms` (Map<String, dynamic>) - El diccionario completo y actualizado de alarmas para el dispositivo.
+- **Retorna:** `Future<void>`
+
 
 # Paso 7: Documentacion
 Crear documentacion oficial de la API para cada endpoint. Dejé el documento creado con un template para que sigas de referencia. Basicamente:
@@ -137,6 +158,7 @@ Crear documentacion oficial de la API para cada endpoint. Dejé el documento cre
 - Endpoints especificando:
   - URL
   - Metodo
+  - brief
   - Json entrada
   - Json salida
 - Tabla op codes con campo brief
