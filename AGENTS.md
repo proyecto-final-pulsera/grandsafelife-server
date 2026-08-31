@@ -7,6 +7,11 @@ Grand Safe Life Server es el backend principal del proyecto Grand Safe Life.
 Su responsabilidad es gestionar usuarios, hogares, dispositivos, relaciones de
 monitoreo, métricas, alarmas, eventos y notificaciones.
 
+Es un proyecto académico y didáctico. Durante la materia se lo trata como si
+fuera un producto real para practicar decisiones y buenas prácticas de
+ingeniería, pero no es un producto final ni necesita resolver anticipadamente
+problemas propios de una plataforma de gran escala.
+
 La aplicación móvil nunca debe acceder directamente a Firebase ni conocer cómo
 se almacenan los datos. La API REST es la única interfaz entre cualquier cliente
 y el servidor.
@@ -30,6 +35,11 @@ Al definir la API:
 
 La implementación HTTP anterior puede desestimarse. Los endpoints definitivos y sus contratos se volverán a definir dentro de `backend/app_http`.
 
+El alcance inicial contempla menos de diez usuarios. Las decisiones deben ser
+correctas y defendibles, pero proporcionales a esa escala. Se priorizan una
+implementación clara, verificable y fácil de explicar por sobre infraestructura
+distribuida o abstracciones destinadas a una escala hipotética.
+
 ---
 
 ## Arquitectura
@@ -38,16 +48,25 @@ La implementación HTTP anterior puede desestimarse. Los endpoints definitivos y
 Aplicación móvil u otro cliente
               |
               v
+      Un contenedor Docker
+              |
+              v
         API REST (FastAPI)
               |
               v
        System / negocio
-          /         \
-         v           v
-Firebase/Firestore  Notifications
+       /       |       \
+      v        v        v
+Firebase  Notifications  Machine Learning
 ```
 
 La división en capas debe conservarse. Cada capa tiene una responsabilidad específica y no debe filtrar detalles internos hacia las demás.
+
+La arquitectura inicial es un monolito modular: FastAPI, procesamiento de
+requests, reglas de negocio, integración con Firebase, decisión y envío de
+notificaciones y procesamiento mediante el modelo de machine learning se
+despliegan juntos en un único contenedor. Que compartan un contenedor no autoriza
+a mezclar sus responsabilidades en el código.
 
 ---
 
@@ -59,6 +78,7 @@ backend
 |-- app_http
 |-- database
 |-- domain
+|-- machine_learning
 |-- notifications
 `-- system
 ```
@@ -150,6 +170,63 @@ Contiene la integración y lógica de envío de notificaciones.
 Las notificaciones deben ser solicitadas desde `system`; los endpoints no deben
 enviarlas directamente.
 
+`system` decide, según el resultado del caso de uso y las reglas del negocio, si
+corresponde generar una notificación. El módulo `notifications` se limita a
+prepararla y enviarla mediante el proveedor elegido.
+
+### machine_learning
+
+Contiene la carga del modelo y el procesamiento de datos mediante machine
+learning.
+
+Responsabilidades:
+
+* Inicializar y cargar el modelo del lado servidor.
+* Exponer una interfaz interna explícita para ejecutar inferencias.
+* Validar o transformar las entradas propias del modelo.
+* Retornar resultados sin decidir las reglas generales del negocio.
+* Mantener separados los datos y el contexto de cada solicitud.
+
+La aplicación móvil no accede directamente al modelo. Los endpoints invocan a
+`system`; esta capa decide cuándo utilizar `machine_learning` y qué hacer con el
+resultado.
+
+Inicialmente se utilizará un modelo compartido por todas las solicitudes, no una
+instancia por usuario. El modelo no debe almacenar un usuario actual ni otro
+estado global mutable que pueda mezclar datos entre solicitudes.
+
+La implementación debe permitir medir tiempos de inferencia, controlar errores
+y limitar la concurrencia si el modelo no soporta ejecuciones simultáneas. No se
+agregarán colas distribuidas, servicios independientes ni escalado automático
+sin una necesidad observada o un paso que lo solicite.
+
+---
+
+## Contenedor y despliegue
+
+Docker forma parte de la estrategia de empaquetado del servidor, principalmente
+para fijar el entorno y las dependencias del módulo de machine learning.
+
+Alcance inicial:
+
+* Un único contenedor para todo el backend.
+* Una única aplicación FastAPI como proceso principal.
+* Un solo worker inicialmente, para evitar cargar copias innecesarias del modelo
+  en memoria.
+* Una instancia del modelo cargada y compartida dentro de ese worker.
+* Firebase permanece como servicio externo en la nube y no se ejecuta dentro del
+  contenedor.
+* El proveedor de hosting se definirá más adelante.
+
+Cada worker adicional puede cargar otra copia completa del modelo. Por eso no se
+debe aumentar la cantidad de workers o réplicas sin medir antes memoria, tiempo
+de inferencia y comportamiento concurrente.
+
+Aunque todos los módulos se desplieguen juntos, deben comunicarse mediante
+interfaces internas claras. Esto permite separar el módulo de machine learning
+o notificaciones en otro servicio en el futuro si aparece una necesidad real,
+sin diseñar hoy una arquitectura distribuida.
+
 ---
 
 ## Reglas de la API REST
@@ -209,5 +286,10 @@ Reglas de ejecución:
 * Priorizar contratos explícitos y legibles.
 * Priorizar claridad antes que optimizaciones prematuras.
 * No agregar abstracciones innecesarias.
+* Aplicar prácticas similares a las de un producto real cuando tengan valor
+  didáctico o eviten errores concretos.
+* No sobrearquitecturar para una escala que el proyecto no necesita.
+* Preferir primero una solución simple y medible; optimizar o distribuir después
+  de observar una limitación real.
 * Modificar solamente lo necesario para el paso solicitado.
 * No conservar código obsoleto por compatibilidad si el paso actual indica reemplazarlo, pero no eliminarlo anticipadamente fuera del alcance solicitado.
