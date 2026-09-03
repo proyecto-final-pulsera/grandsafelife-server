@@ -301,6 +301,10 @@ Reglas de ejecución:
 * Leer el archivo completo para comprender el rumbo general antes de trabajar en un paso.
 * Ejecutar únicamente el paso que el usuario solicite expresamente en el chat.
 * No adelantar pasos posteriores aunque parezcan necesarios o convenientes.
+* Al implementar un grupo de endpoints, avanzar también la parte correspondiente
+  del paso de documentación en `backend/app_http/api_documentation.md`, siguiendo
+  el template y manteniendo sincronizados URL, método, contrato y códigos de
+  operación con el código implementado.
 * Al terminar el paso solicitado, detenerse y entregar el resultado para que el usuario pueda verificarlo.
 * Aplicar los ajustes que el usuario pida antes de continuar.
 * Avanzar al siguiente paso solamente cuando el usuario lo indique expresamente.
