@@ -27,6 +27,8 @@
 | Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly?month={YYYY-MM}` | Recupera agregados mensuales. |
 | Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly/previous` | Recupera los agregados del mes anterior. |
 | Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily/last-week` | Recupera métricas de los últimos siete días. |
+| Alarms | GET | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Recupera las alarmas de un dispositivo. |
+| Alarms | PUT | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Reemplaza la configuración completa de alarmas. |
 
 ## 2 - Tabla de códigos de operación
 
@@ -713,4 +715,81 @@ datos. Si el período completo está vacío, `resp` es `[]`.
 
 ## 9 - Endpoints "Alarms"
 
-Pendiente del paso correspondiente.
+Las alarmas se representan como un objeto cuyas claves son sus IDs. El servidor
+administra sus estados y timestamps; la aplicación solamente configura nombre,
+horario, días e indicador de actividad.
+
+### `GET /grandsafelife/api/v1/devices/{device_id}/alarms`
+
+- Descripción: recupera todas las alarmas configuradas para un dispositivo.
+- Body: no aplica.
+
+Response:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully",
+  "resp": {
+    "alarm_abc_123": {
+      "name": "Ibuprofeno 400mg",
+      "time_in_minutes": 480,
+      "days": 127,
+      "is_active": true,
+      "state": "taken",
+      "created_at": "2026-08-15T10:32:14Z",
+      "updated_at": "2026-09-01T18:21:47Z"
+    },
+    "alarm_def_456": {
+      "name": "Losartán 50mg",
+      "time_in_minutes": 1200,
+      "days": 127,
+      "is_active": true,
+      "state": "pending",
+      "created_at": "2026-08-10T09:00:00Z",
+      "updated_at": "2026-09-01T00:00:00Z"
+    }
+  }
+}
+```
+
+`time_in_minutes` representa minutos desde la medianoche. `days` es una máscara
+de bits para los días de la semana. `state` puede ser `none`, `pending`, `taken`
+o `missed`. Si el dispositivo no tiene alarmas, `resp` es `{}`.
+
+### `PUT /grandsafelife/api/v1/devices/{device_id}/alarms`
+
+- Descripción: reemplaza el mapa completo de alarmas del dispositivo.
+
+Body:
+
+```json
+{
+  "alarm_abc_123": {
+    "name": "Ibuprofeno 400mg",
+    "time_in_minutes": 480,
+    "days": 127,
+    "is_active": true
+  },
+  "alarm_def_456": {
+    "name": "Losartán 50mg",
+    "time_in_minutes": 1200,
+    "days": 127,
+    "is_active": true
+  }
+}
+```
+
+Response:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully"
+}
+```
+
+Las claves omitidas se consideran eliminadas y un body `{}` elimina todas las
+alarmas. La aplicación no puede enviar `state`, `created_at` ni `updated_at`;
+el servidor conserva o genera esos valores según corresponda. El horario debe
+estar entre `0` y `1439` minutos.
