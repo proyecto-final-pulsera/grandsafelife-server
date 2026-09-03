@@ -151,28 +151,30 @@ class System:
     # Monitoring Requests
     #==================================================
 
-    def process_create_monitoring_request(
-        self,
-        authorization,
-        monitored_user_id,
-        requested_user_id,
-        requested_role
-    ):
-        # TODO:
-        # 1) Obtener usuario autenticado.
-        # 2) Validar requested_role.
-        # 3) Verificar que no exista una solicitud equivalente.
-        # 4) Crear objeto MonitoringRequest.
-        # 5) Inicializar estados:
-        #       elderly_status = pending
-        #       requested_user_status = pending
-        #       status = pending
-        # 6) Inicializar flags de lectura:
-        #       elderly_read = False
-        #       requested_user_read = False
-        # 7) Guardar solicitud en base de datos.
-        # 8) Retornar request_id generado.
-        pass
+    def process_create_monitoring_request(self, authorization, home_id, data):
+        # TODO: Verificar el token y el rol administrador del solicitante,
+        # resolver el destinatario por email, prevenir membresías o solicitudes
+        # pendientes duplicadas, persistir y enviar la notificación.
+        return "request_id_001"
+
+    def process_get_my_monitoring_requests(self, authorization):
+        # TODO: Verificar el token y consultar las solicitudes pendientes
+        # recibidas por el usuario autenticado mediante el repository.
+        return [
+            {
+                "request_id": "request_id_001",
+                "home_id": "home_id_001",
+                "home_name": "Residencia Principal",
+                "requester": {
+                    "name": "Juan Pérez",
+                    "email": "juan.perez@example.com",
+                },
+                "requested_role": "observer",
+                "status": "pending",
+                "created_at": 1783882718000,
+                "updated_at": 1783882718000,
+            }
+        ]
 
     def process_answer_monitoring_request(
         self,
@@ -180,42 +182,11 @@ class System:
         request_id,
         answer
     ):
-        # TODO:
-        # 1) Obtener usuario autenticado.
-        # 2) Buscar solicitud.
-        # 3) Validar que el usuario participe de ella.
-        # 4) Actualizar estado correspondiente:
-        #       elderly_status
-        #       requested_user_status
-        # 5) Recalcular estado global.
-        #
-        # Casos:
-        #
-        # accepted + accepted:
-        #     status = accepted
-        #     crear MonitoringLink
-        #
-        # rejected + cualquiera:
-        #     status = rejected
-        #
-        # pending restantes:
-        #     status = pending
-        #
-        # 6) Guardar cambios.
-        # 7) Retornar resultado actualizado.
-        pass
-
-    def process_get_monitoring_requests(self, authorization):
-        # TODO:
-        # 1) Obtener usuario autenticado.
-        # 2) Consultar solicitudes relacionadas.
-        # 3) Marcar como leídas aquellas que correspondan
-        #    al usuario autenticado.
-        # 4) Retornar listado completo con:
-        #       estados
-        #       flags de lectura
-        #       participantes
-        pass
+        # TODO: Verificar token, existencia y estado pendiente de la solicitud,
+        # y que el usuario autenticado sea su destinatario. Si acepta, agregar
+        # atómicamente ambas relaciones de membresía; si rechaza, no agregarlas.
+        # Persistir el estado definitivo y enviar las notificaciones necesarias.
+        return None
 
     #==================================================
     # Monitoring Links

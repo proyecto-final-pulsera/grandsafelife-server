@@ -268,10 +268,11 @@ sin diseñar hoy una arquitectura distribuida.
 * Cada `op_status` de la aplicación tiene exactamente un `brief` asociado. Esa
   relación se centraliza en `backend/app_http/api_op_codes.py` y se amplía a
   medida que aparecen nuevos resultados.
-* La API utiliza inicialmente los estados HTTP básicos `200` para una operación
-  atendida correctamente, `400` para errores atribuibles al request del cliente
-  y `500` para errores internos del servidor. El código HTTP no reemplaza el
-  `op_status` propio de la aplicación.
+* La API utiliza inicialmente `200` para una operación atendida correctamente,
+  `400` para errores del cliente gestionados explícitamente por la aplicación y
+  `500` para errores internos del servidor. Los errores automáticos de
+  validación de FastAPI/Pydantic conservan el estado HTTP `422`. El código HTTP
+  no reemplaza el `op_status` propio de la aplicación.
 
 ---
 

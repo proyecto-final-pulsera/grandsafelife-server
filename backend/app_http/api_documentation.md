@@ -13,6 +13,9 @@
 | Homes | POST | `/grandsafelife/api/v1/homes` | Crea un hogar para el usuario autenticado. |
 | Homes | PATCH | `/grandsafelife/api/v1/homes/{home_id}` | Actualiza parcialmente un hogar. |
 | Homes | DELETE | `/grandsafelife/api/v1/homes/{home_id}` | Elimina un hogar y sus relaciones. |
+| Monitoring requests | POST | `/grandsafelife/api/v1/homes/{home_id}/monitoring-requests` | Invita a un usuario a participar de un hogar. |
+| Monitoring requests | GET | `/grandsafelife/api/v1/users/me/monitoring-requests` | Recupera las solicitudes pendientes recibidas. |
+| Monitoring requests | POST | `/grandsafelife/api/v1/monitoring-requests/{request_id}/answer` | Acepta o rechaza una solicitud pendiente. |
 
 ## 2 - Tabla de códigos de operación
 
@@ -32,6 +35,10 @@ Todas las respuestas reportan:
 - `op_status`
 - `brief`
 - `resp` (Cuando corrresponde)
+
+Los bodies, parámetros y headers se validan mediante FastAPI/Pydantic. Cuando
+un request no cumple el esquema declarado, FastAPI responde automáticamente con
+HTTP `422 Unprocessable Entity` y no ejecuta la función `process_*`.
 
 
 ## 4 - Endpoints "Users"
@@ -275,7 +282,101 @@ operación de manera consistente desde el servidor.
 
 ## 6 - Endpoints "Monitoring requests"
 
-Pendiente del paso correspondiente.
+Las solicitudes usan `pending`, `accepted` y `rejected` como estados. Estos
+valores no son roles; los roles admitidos para una invitación son `admin` y
+`observer`.
+
+### Crear una solicitud de monitoreo
+
+- URL: `/grandsafelife/api/v1/homes/{home_id}/monitoring-requests`
+- Método: `POST`
+- Descripción: invita por email a otro usuario a participar del hogar.
+
+Body:
+
+```json
+{
+  "email": "maria.gomez@example.com",
+  "role": "observer"
+}
+```
+
+Response mock:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully",
+  "resp": "request_id_001"
+}
+```
+
+El servidor obtiene al solicitante desde el token, comprueba su rol
+administrador y resuelve internamente al destinatario mediante el email. El body
+no admite IDs, estado ni timestamps.
+
+### Obtener mis solicitudes de monitoreo
+
+- URL: `/grandsafelife/api/v1/users/me/monitoring-requests`
+- Método: `GET`
+- Descripción: recupera inicialmente las solicitudes pendientes recibidas por el usuario autenticado.
+- Body: no aplica.
+
+Response mock:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully",
+  "resp": [
+    {
+      "request_id": "request_id_001",
+      "home_id": "home_id_001",
+      "home_name": "Residencia Principal",
+      "requester": {
+        "name": "Juan Pérez",
+        "email": "juan.perez@example.com"
+      },
+      "requested_role": "observer",
+      "status": "pending",
+      "created_at": 1783882718000,
+      "updated_at": 1783882718000
+    }
+  ]
+}
+```
+
+Si posteriormente se necesitan solicitudes enviadas o históricas, se agregará
+un filtro explícito al contrato.
+
+### Responder una solicitud de monitoreo
+
+- URL: `/grandsafelife/api/v1/monitoring-requests/{request_id}/answer`
+- Método: `POST`
+- Descripción: permite al destinatario aceptar o rechazar una solicitud pendiente.
+
+Body:
+
+```json
+{
+  "answer": "accepted"
+}
+```
+
+`answer` admite únicamente `accepted` o `rejected`.
+
+Response mock:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully"
+}
+```
+
+Al aceptar, el servidor agregará atómicamente al usuario en `home.members` y el
+hogar en `user.homes`, utilizando el rol pedido. Al rechazar, no modificará las
+membresías.
 
 ## 7 - Endpoints "Devices"
 
