@@ -23,6 +23,10 @@
 | Devices | GET | `/grandsafelife/api/v1/users/{owner_id}/devices` | Recupera dispositivos por administrador propietario. |
 | Devices | GET | `/grandsafelife/api/v1/homes/{home_id}/devices` | Recupera dispositivos asociados a un hogar. |
 | Devices | GET | `/grandsafelife/api/v1/devices/{device_id}/location` | Recupera la última ubicación de un dispositivo. |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily?date={YYYY-MM-DD}` | Recupera métricas diarias. |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly?month={YYYY-MM}` | Recupera agregados mensuales. |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly/previous` | Recupera los agregados del mes anterior. |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily/last-week` | Recupera métricas de los últimos siete días. |
 
 ## 2 - Tabla de códigos de operación
 
@@ -583,7 +587,129 @@ Response:
 
 ## 8 - Endpoints "Devices Stats"
 
-Pendiente del paso correspondiente.
+Las métricas son de solo lectura para la aplicación. Su carga, procesamiento y
+agregación corresponden a los dispositivos y al servidor.
+
+### `GET /grandsafelife/api/v1/devices/{device_id}/stats/daily?date={YYYY-MM-DD}`
+
+- Descripción: recupera las métricas de un dispositivo para la fecha solicitada.
+- Body: no aplica. `date` es un query parameter con formato `YYYY-MM-DD`.
+
+Response:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully",
+  "resp": {
+    "id": "2026-09-01",
+    "steps": 4350,
+    "falls": 0,
+    "stumbles": 2,
+    "time_lying_down": 8.5,
+    "night_rises": 1,
+    "panic_button": 0,
+    "updated_at": "2026-09-01T23:59:59Z"
+  }
+}
+```
+
+Si no existen datos para la fecha solicitada, `resp` es `{}`.
+
+### `GET /grandsafelife/api/v1/devices/{device_id}/stats/monthly?month={YYYY-MM}`
+
+- Descripción: recupera los agregados calculados para el mes solicitado.
+- Body: no aplica. `month` es un query parameter con formato `YYYY-MM`.
+
+Response:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully",
+  "resp": {
+    "id": "2026-09",
+    "avg_steps": 4120.5,
+    "avg_falls": 0.03,
+    "avg_stumbles": 1.4,
+    "avg_lying_down": 7.9,
+    "avg_night_rises": 1.1,
+    "total_panic_button_press": 0,
+    "sedentarism_level": 45,
+    "risk_level": 12,
+    "active_days": 13
+  }
+}
+```
+
+Si no existen datos para el mes solicitado, `resp` es `{}`.
+
+### `GET /grandsafelife/api/v1/devices/{device_id}/stats/monthly/previous`
+
+- Descripción: recupera los agregados del mes calendario anterior, calculado por el servidor.
+- Body: no aplica.
+
+Response:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully",
+  "resp": {
+    "id": "2026-08",
+    "avg_steps": 4120.5,
+    "avg_falls": 0.03,
+    "avg_stumbles": 1.4,
+    "avg_lying_down": 7.9,
+    "avg_night_rises": 1.1,
+    "total_panic_button_press": 0,
+    "sedentarism_level": 45,
+    "risk_level": 12,
+    "active_days": 13
+  }
+}
+```
+
+Si no existen agregados para el mes anterior, `resp` es `{}`.
+
+### `GET /grandsafelife/api/v1/devices/{device_id}/stats/daily/last-week`
+
+- Descripción: recupera los días con datos dentro de los últimos siete días, incluido el actual.
+- Body: no aplica.
+
+Response:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully",
+  "resp": [
+    {
+      "id": "2026-08-31",
+      "steps": 4010,
+      "falls": 0,
+      "stumbles": 1,
+      "time_lying_down": 7.8,
+      "night_rises": 1,
+      "panic_button": 0,
+      "updated_at": "2026-08-31T23:59:59Z"
+    },
+    {
+      "id": "2026-09-01",
+      "steps": 4350,
+      "falls": 0,
+      "stumbles": 2,
+      "time_lying_down": 8.5,
+      "night_rises": 1,
+      "panic_button": 0,
+      "updated_at": "2026-09-01T23:59:59Z"
+    }
+  ]
+}
+```
+
+El array está ordenado del día más antiguo al más reciente y omite los días sin
+datos. Si el período completo está vacío, `resp` es `[]`.
 
 ## 9 - Endpoints "Alarms"
 
