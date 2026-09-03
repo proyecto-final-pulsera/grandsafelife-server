@@ -142,9 +142,23 @@ Responsabilidades:
 
 Firebase/Firestore es la única persistencia prevista actualmente.
 
-No se utilizará la capa ni el patrón `repository` heredado de la implementación
-anterior. Ese código se considera obsoleto y se eliminará o reemplazará en los
-pasos correspondientes.
+Dentro de `database` se mantiene una capa `repositories`. Cada repository
+encapsula las operaciones de persistencia de un área concreta, como usuarios,
+hogares o dispositivos, y oculta la sintaxis y estructura propias de Firestore.
+
+Los repositories deben:
+
+* Ser la única capa que ejecuta consultas y escrituras de Firestore.
+* Exponer operaciones con nombres vinculados al dominio y no a la sintaxis de
+  Firebase.
+* Convertir documentos de Firestore a los tipos esperados por las capas
+  superiores y viceversa.
+* No contener validaciones de permisos ni reglas de negocio.
+* No retornar objetos internos del SDK de Firebase fuera de `database`.
+
+El código de repositories heredado se considera obsoleto por estar asociado al
+diseño anterior. Se reemplazará por repositories específicos para Firebase en
+los pasos correspondientes.
 
 La inicialización de Firebase es una responsabilidad interna del servidor y no
 debe exponerse como endpoint.
@@ -241,6 +255,16 @@ sin diseñar hoy una arquitectura distribuida.
 * Los requests y responses deben tener esquemas explícitos; evitar contratos abiertos equivalentes a `Map<String, dynamic>` salvo que el caso realmente lo requiera.
 * Los nombres y estructuras internas de Firebase no forman parte del contrato público.
 * La compatibilidad con los JSON actuales de la app es deseable, pero no debe comprometer seguridad, consistencia ni autoridad del servidor.
+* Todos los endpoints deben responder con el envelope de la aplicación, que
+  contiene siempre `op_status` y `brief`, y contiene `resp` solamente cuando
+  corresponda.
+* Cada `op_status` de la aplicación tiene exactamente un `brief` asociado. Esa
+  relación se centraliza en `backend/app_http/api_op_codes.py` y se amplía a
+  medida que aparecen nuevos resultados.
+* La API utiliza inicialmente los estados HTTP básicos `200` para una operación
+  atendida correctamente, `400` para errores atribuibles al request del cliente
+  y `500` para errores internos del servidor. El código HTTP no reemplaza el
+  `op_status` propio de la aplicación.
 
 ---
 
