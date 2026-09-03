@@ -1,5 +1,5 @@
 """
-@file monitoring_requests_endpoints.py
+@file http_endpoints_monitoring_requests.py
 @author Grand Safe Life
 @brief Endpoints HTTP relacionados con solicitudes de monitoreo.
 

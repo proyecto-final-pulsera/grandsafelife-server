@@ -1,5 +1,5 @@
 """
-@file alarms_endpoints.py
+@file http_endpoints_alarms.py
 @author Grand Safe Life
 @brief Endpoints HTTP relacionados con alarmas de dispositivos.
 

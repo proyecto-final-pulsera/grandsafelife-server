@@ -19,12 +19,12 @@ Basandonos en el archivo de
 "Parte de Guido\datasource_api_documentation.md"
 
 Crear los archivos:
-- users_endpoints.py
-- homes_endpoints.py
-- monitoring_requests_endpoints.py
-- devices_endpoints.py
-- devices_stats_endpoints.py
-- alarms_endpoints.py
+- http_endpoints_users.py
+- http_endpoints_homes.py
+- http_endpoints_monitoring_requests.py
+- http_endpoints_devices.py
+- http_endpoints_devices_stats.py
+- http_endpoints_alarms.py
 
 La parte de inicialziación no corresponde a la API, sino a un proceso de inicialiazcion interno del servidor
 
@@ -65,7 +65,7 @@ grandsafelife/api/v1/devices/{device_id}/stats/*
 grandsafelife/api/v1/devices/{device_id}/alarms/*
 
 # Paso 3: Creación de endpoints de usuario
-Crear los endpoints relacionados con usuarios en users_endpoints.py
+Crear los endpoints relacionados con usuarios en http_endpoints_users.py
 
 Todos estos endpoints utilizan el header:
 
@@ -188,7 +188,7 @@ indicadas mediante `TODO` para los pasos posteriores.
 # Paso 4: Endpoints de Hogares
 
 Leer `Parte de Guido/datasource_api_documentation.md` e implementar los
-endpoints en `homes_endpoints.py`.
+endpoints en `http_endpoints_homes.py`.
 
 Todos los endpoints utilizan:
 
@@ -357,7 +357,7 @@ documentos y persistencia real quedan indicadas mediante `TODO` para los pasos
 posteriores.
 
 # Paso 5: Solicitudes de monitoreo y acceso a hogares
-monitoring_requests_endpoints.py
+http_endpoints_monitoring_requests.py
 
 Esta sección modela la invitación y aceptación de usuarios dentro de un hogar.
 La app no modifica directamente el mapa `members` para agregar personas. El
@@ -497,10 +497,10 @@ atómica de relaciones y envío de notificaciones.
 
 
 # Paso 6: Endpoints de Devices
-devices_endpoints.py
+http_endpoints_devices.py
 
 Leer `Parte de Guido/datasource_api_documentation.md` e implementar los
-endpoints en `devices_endpoints.py`.
+endpoints en `http_endpoints_devices.py`.
 
 Todos los endpoints utilizan:
 
@@ -822,7 +822,7 @@ mockeadas. Dejar como `TODO` la autenticación real, permisos, persistencia,
 validaciones de hubs y consistencia de asociaciones con hogares.
 
 # Paso 7: Endpoints de Metricas
-devices_stats_endpoints.py
+http_endpoints_devices_stats.py
 
 Todos los endpoints reciben el token de Firebase Authentication mediante el
 header `Authorization: Bearer <firebase_id_token>`. El servidor valida la
@@ -989,7 +989,7 @@ agregados.
 
 
 # Paso 8: Endpoints de Alarmas
-alarms_endpoints.py
+http_endpoints_alarms.py
 
 Todos los endpoints reciben el token de Firebase Authentication mediante el
 header `Authorization: Bearer <firebase_id_token>`. El servidor valida que el

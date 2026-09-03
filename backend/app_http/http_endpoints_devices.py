@@ -1,5 +1,5 @@
 """
-@file devices_endpoints.py
+@file http_endpoints_devices.py
 @author Grand Safe Life
 @brief Endpoints HTTP relacionados con dispositivos.
 

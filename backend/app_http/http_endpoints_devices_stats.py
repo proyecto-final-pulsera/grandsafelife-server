@@ -1,5 +1,5 @@
 """
-@file devices_stats_endpoints.py
+@file http_endpoints_devices_stats.py
 @author Grand Safe Life
 @brief Endpoints HTTP relacionados con métricas de dispositivos.
 

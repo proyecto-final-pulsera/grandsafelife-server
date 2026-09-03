@@ -110,6 +110,7 @@ No debe contener:
 Los endpoints deben organizarse por área funcional. Cada sección debe vivir en
 un archivo diferente dentro de `backend/app_http`; por ejemplo, autenticación,
 usuarios, hogares, dispositivos, monitoreo, métricas y alarmas. El archivo que crea la aplicación FastAPI solamente debe registrar o incluir esas rutas.
+Los módulos deben nombrarse con el patrón `http_endpoints_<area>.py`.
 
 Cada módulo de endpoints expone una clase que recibe `http_processor` en su
 constructor y publica su `APIRouter`. Esta inyección permite que las rutas

@@ -1,5 +1,5 @@
 """
-@file homes_endpoints.py
+@file http_endpoints_homes.py
 @author Grand Safe Life
 @brief Endpoints HTTP relacionados con hogares.
 

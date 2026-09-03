@@ -9,12 +9,12 @@ encargado de procesar las operaciones de la API.
 
 from fastapi import FastAPI
 
-from .alarms_endpoints import AlarmsEndpoints
-from .devices_endpoints import DevicesEndpoints
-from .devices_stats_endpoints import DevicesStatsEndpoints
-from .homes_endpoints import HomesEndpoints
-from .monitoring_requests_endpoints import MonitoringRequestsEndpoints
-from .users_endpoints import UsersEndpoints
+from .http_endpoints_alarms import AlarmsEndpoints
+from .http_endpoints_devices import DevicesEndpoints
+from .http_endpoints_devices_stats import DevicesStatsEndpoints
+from .http_endpoints_homes import HomesEndpoints
+from .http_endpoints_monitoring_requests import MonitoringRequestsEndpoints
+from .http_endpoints_users import UsersEndpoints
 
 
 def create_http_app(http_processor):

@@ -1,5 +1,5 @@
 """
-@file users_endpoints.py
+@file http_endpoints_users.py
 @author Grand Safe Life
 @brief Endpoints HTTP relacionados con usuarios.
 
