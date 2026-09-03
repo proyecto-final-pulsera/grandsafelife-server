@@ -1,18 +1,6 @@
 # Documentación API REST
 
-## Convenciones generales
-
-Todos los endpoints documentados requieren este header:
-
-```http
-Authorization: Bearer <firebase_id_token>
-```
-
-Mientras la autenticación real permanezca pendiente, el header es obligatorio
-pero su contenido todavía no se verifica. Todas las respuestas utilizan el
-envelope `op_status`, `brief` y, cuando corresponde, `resp`.
-
-## Listado de endpoints
+## 1 - Listado de endpoints
 
 | CONJUNTO | MÉTODO | URL | DESCRIPCIÓN |
 | --- | --- | --- | --- |
@@ -21,8 +9,32 @@ envelope `op_status`, `brief` y, cuando corresponde, `resp`.
 | Users | GET | `/grandsafelife/api/v1/users/by-email?email={email}` | Recupera información pública de otro usuario por email. |
 | Users | POST | `/grandsafelife/api/v1/users/me` | Crea el perfil del usuario autenticado. |
 | Users | PATCH | `/grandsafelife/api/v1/users/me` | Actualiza parcialmente el perfil del usuario autenticado. |
+| Homes | GET | `/grandsafelife/api/v1/homes/{home_id}` | Recupera un hogar accesible por ID. |
+| Homes | POST | `/grandsafelife/api/v1/homes` | Crea un hogar para el usuario autenticado. |
+| Homes | PATCH | `/grandsafelife/api/v1/homes/{home_id}` | Actualiza parcialmente un hogar. |
+| Homes | DELETE | `/grandsafelife/api/v1/homes/{home_id}` | Elimina un hogar y sus relaciones. |
 
-## Endpoints "Users"
+## 2 - Tabla de códigos de operación
+
+| OP STATUS | BRIEF | SIGNIFICADO |
+| ---: | --- | --- |
+| 0 | `Operation completed successfully` | La operación fue atendida correctamente. |
+
+## 3 - Convenciones generales
+
+Todos los endpoints documentados requieren este header:
+
+```http
+Authorization: Bearer <firebase_id_token>
+```
+
+Todas las respuestas reportan:
+- `op_status`
+- `brief`
+- `resp` (Cuando corrresponde)
+
+
+## 4 - Endpoints "Users"
 
 ### Obtener el usuario actual
 
@@ -156,30 +168,123 @@ Response mock:
 El body admite solamente `name`, `email` y `avatar`. No permite modificar UID,
 `homes`, `created_at` ni `updated_at`.
 
-## Tabla de códigos de operación
+## 5 - Endpoints "Homes"
 
-| OP STATUS | BRIEF | SIGNIFICADO |
-| ---: | --- | --- |
-| 0 | `Operation completed successfully` | La operación fue atendida correctamente. |
+### Obtener un hogar por ID
 
-La tabla se ampliará a medida que se implementen resultados de error.
+- URL: `/grandsafelife/api/v1/homes/{home_id}`
+- Método: `GET`
+- Descripción: recupera el hogar si el usuario autenticado posee acceso.
+- Body: no aplica.
 
-## Endpoints "Homes"
+Response mock:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully",
+  "resp": {
+    "name": "Residencia Principal",
+    "created_at": 1783882718000,
+    "updated_at": 1783882718000,
+    "members": {
+      "user_id_001": {
+        "email": "juan.perez@example.com",
+        "role": "admin"
+      },
+      "user_id_002": {
+        "email": "maria.gomez@example.com",
+        "role": "observer"
+      }
+    }
+  }
+}
+```
+
+### Crear un hogar
+
+- URL: `/grandsafelife/api/v1/homes`
+- Método: `POST`
+- Descripción: crea un hogar y agrega al usuario autenticado como administrador.
+
+Body:
+
+```json
+{
+  "name": "Residencia Principal"
+}
+```
+
+Response mock:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully",
+  "resp": "home_id_001"
+}
+```
+
+El ID, los timestamps y el mapa inicial de miembros son responsabilidad del
+servidor. El body no permite enviar esos campos.
+
+### Actualizar un hogar
+
+- URL: `/grandsafelife/api/v1/homes/{home_id}`
+- Método: `PATCH`
+- Descripción: actualiza parcialmente los campos editables de un hogar.
+
+Body de ejemplo:
+
+```json
+{
+  "name": "Nuevo nombre de la residencia"
+}
+```
+
+Response mock:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully"
+}
+```
+
+Este endpoint solamente admite `name`. Los miembros deberán gestionarse
+mediante las operaciones específicas de negocio.
+
+### Eliminar un hogar
+
+- URL: `/grandsafelife/api/v1/homes/{home_id}`
+- Método: `DELETE`
+- Descripción: elimina el hogar y sus referencias en los perfiles relacionados.
+- Body: no aplica.
+
+Response mock:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully"
+}
+```
+
+La implementación definitiva exigirá rol administrador y realizará toda la
+operación de manera consistente desde el servidor.
+
+## 6 - Endpoints "Monitoring requests"
 
 Pendiente del paso correspondiente.
 
-## Endpoints "Devices"
+## 7 - Endpoints "Devices"
 
 Pendiente del paso correspondiente.
 
-## Endpoints "Devices Stats"
+## 8 - Endpoints "Devices Stats"
 
 Pendiente del paso correspondiente.
 
-## Endpoints "Monitoring requests"
-
-Pendiente del paso correspondiente.
-
-## Endpoints "Alarms"
+## 9 - Endpoints "Alarms"
 
 Pendiente del paso correspondiente.
