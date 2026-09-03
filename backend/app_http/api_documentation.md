@@ -43,14 +43,12 @@ HTTP `422 Unprocessable Entity` y no ejecuta la función `process_*`.
 
 ## 4 - Endpoints "Users"
 
-### Obtener el usuario actual
+### `GET /grandsafelife/api/v1/users/me`
 
-- URL: `/grandsafelife/api/v1/users/me`
-- Método: `GET`
 - Descripción: recupera la identidad y el perfil completo del usuario autenticado.
 - Body: no aplica.
 
-Response mock:
+Response:
 
 ```json
 {
@@ -76,14 +74,12 @@ Response mock:
 }
 ```
 
-### Obtener un usuario por UID
+### `GET /grandsafelife/api/v1/users/{user_id}`
 
-- URL: `/grandsafelife/api/v1/users/{user_id}`
-- Método: `GET`
 - Descripción: recupera solamente información pública del usuario objetivo.
 - Body: no aplica.
 
-Response mock:
+Response:
 
 ```json
 {
@@ -97,14 +93,12 @@ Response mock:
 }
 ```
 
-### Obtener un usuario por email
+### `GET /grandsafelife/api/v1/users/by-email?email={email}`
 
-- URL: `/grandsafelife/api/v1/users/by-email?email={email}`
-- Método: `GET`
 - Descripción: recupera solamente información pública del usuario correspondiente al email.
 - Body: no aplica. `email` se envía como query parameter.
 
-Response mock:
+Response:
 
 ```json
 {
@@ -118,10 +112,8 @@ Response mock:
 }
 ```
 
-### Crear el perfil del usuario actual
+### `POST /grandsafelife/api/v1/users/me`
 
-- URL: `/grandsafelife/api/v1/users/me`
-- Método: `POST`
 - Descripción: crea el perfil asociado al UID contenido en el token verificado.
 
 Body:
@@ -134,7 +126,7 @@ Body:
 }
 ```
 
-Response mock:
+Response:
 
 ```json
 {
@@ -148,10 +140,8 @@ Response mock:
 
 El body no admite UID, `homes`, `created_at` ni `updated_at`.
 
-### Actualizar el perfil del usuario actual
+### `PATCH /grandsafelife/api/v1/users/me`
 
-- URL: `/grandsafelife/api/v1/users/me`
-- Método: `PATCH`
 - Descripción: actualiza parcialmente los campos editables del perfil autenticado.
 
 Body de ejemplo:
@@ -163,7 +153,7 @@ Body de ejemplo:
 }
 ```
 
-Response mock:
+Response:
 
 ```json
 {
@@ -177,14 +167,12 @@ El body admite solamente `name`, `email` y `avatar`. No permite modificar UID,
 
 ## 5 - Endpoints "Homes"
 
-### Obtener un hogar por ID
+### `GET /grandsafelife/api/v1/homes/{home_id}`
 
-- URL: `/grandsafelife/api/v1/homes/{home_id}`
-- Método: `GET`
 - Descripción: recupera el hogar si el usuario autenticado posee acceso.
 - Body: no aplica.
 
-Response mock:
+Response:
 
 ```json
 {
@@ -208,10 +196,8 @@ Response mock:
 }
 ```
 
-### Crear un hogar
+### `POST /grandsafelife/api/v1/homes`
 
-- URL: `/grandsafelife/api/v1/homes`
-- Método: `POST`
 - Descripción: crea un hogar y agrega al usuario autenticado como administrador.
 
 Body:
@@ -222,7 +208,7 @@ Body:
 }
 ```
 
-Response mock:
+Response:
 
 ```json
 {
@@ -235,10 +221,8 @@ Response mock:
 El ID, los timestamps y el mapa inicial de miembros son responsabilidad del
 servidor. El body no permite enviar esos campos.
 
-### Actualizar un hogar
+### `PATCH /grandsafelife/api/v1/homes/{home_id}`
 
-- URL: `/grandsafelife/api/v1/homes/{home_id}`
-- Método: `PATCH`
 - Descripción: actualiza parcialmente los campos editables de un hogar.
 
 Body de ejemplo:
@@ -249,7 +233,7 @@ Body de ejemplo:
 }
 ```
 
-Response mock:
+Response:
 
 ```json
 {
@@ -261,14 +245,12 @@ Response mock:
 Este endpoint solamente admite `name`. Los miembros deberán gestionarse
 mediante las operaciones específicas de negocio.
 
-### Eliminar un hogar
+### `DELETE /grandsafelife/api/v1/homes/{home_id}`
 
-- URL: `/grandsafelife/api/v1/homes/{home_id}`
-- Método: `DELETE`
 - Descripción: elimina el hogar y sus referencias en los perfiles relacionados.
 - Body: no aplica.
 
-Response mock:
+Response:
 
 ```json
 {
@@ -286,10 +268,8 @@ Las solicitudes usan `pending`, `accepted` y `rejected` como estados. Estos
 valores no son roles; los roles admitidos para una invitación son `admin` y
 `observer`.
 
-### Crear una solicitud de monitoreo
+### `POST /grandsafelife/api/v1/homes/{home_id}/monitoring-requests`
 
-- URL: `/grandsafelife/api/v1/homes/{home_id}/monitoring-requests`
-- Método: `POST`
 - Descripción: invita por email a otro usuario a participar del hogar.
 
 Body:
@@ -301,7 +281,7 @@ Body:
 }
 ```
 
-Response mock:
+Response:
 
 ```json
 {
@@ -315,14 +295,12 @@ El servidor obtiene al solicitante desde el token, comprueba su rol
 administrador y resuelve internamente al destinatario mediante el email. El body
 no admite IDs, estado ni timestamps.
 
-### Obtener mis solicitudes de monitoreo
+### `GET /grandsafelife/api/v1/users/me/monitoring-requests`
 
-- URL: `/grandsafelife/api/v1/users/me/monitoring-requests`
-- Método: `GET`
 - Descripción: recupera inicialmente las solicitudes pendientes recibidas por el usuario autenticado.
 - Body: no aplica.
 
-Response mock:
+Response:
 
 ```json
 {
@@ -349,10 +327,8 @@ Response mock:
 Si posteriormente se necesitan solicitudes enviadas o históricas, se agregará
 un filtro explícito al contrato.
 
-### Responder una solicitud de monitoreo
+### `POST /grandsafelife/api/v1/monitoring-requests/{request_id}/answer`
 
-- URL: `/grandsafelife/api/v1/monitoring-requests/{request_id}/answer`
-- Método: `POST`
 - Descripción: permite al destinatario aceptar o rechazar una solicitud pendiente.
 
 Body:
@@ -365,7 +341,7 @@ Body:
 
 `answer` admite únicamente `accepted` o `rejected`.
 
-Response mock:
+Response:
 
 ```json
 {

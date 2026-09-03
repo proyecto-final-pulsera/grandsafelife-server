@@ -306,6 +306,9 @@ Reglas de ejecución:
   del paso de documentación en `backend/app_http/api_documentation.md`, siguiendo
   el template y manteniendo sincronizados URL, método, contrato y códigos de
   operación con el código implementado.
+* En la documentación, titular cada endpoint con el formato
+  ``### `MÉTODO /ruta` ``. Usar `Response:` para los ejemplos de salida, sin
+  calificarlos como mocks.
 * Al terminar el paso solicitado, detenerse y entregar el resultado para que el usuario pueda verificarlo.
 * Aplicar los ajustes que el usuario pida antes de continuar.
 * Avanzar al siguiente paso solamente cuando el usuario lo indique expresamente.
