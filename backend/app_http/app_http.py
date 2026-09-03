@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Header
 from pydantic import BaseModel
-#from database/usersDB/repositories/users_repository.py import UsersRepository
 
 #==============================================
 # API Rest

@@ -1,3 +1,10 @@
+from .op_status import (
+    OP_STATUS_INVALID_PASSWORD,
+    OP_STATUS_OK,
+    OP_STATUS_USER_NOT_FOUND,
+)
+
+
 class System:
     def __init__(self, db):
         self.db = db
@@ -7,15 +14,20 @@ class System:
     #==================================================
 
     def process_login(self, usr, psw):
-        # TODO:
-        # 1) Verificar que el usuario exista.
-        # 2) Validar contraseña.
-        # 3) Generar token de autenticación.
-        # 4) Asociar el token a la sesión actual.
-        # 5) Retornar token y datos básicos del usuario.
-        pass
+        user = self.db.users.get_user_by_username(usr)
 
-    def process_get_me(self):
+        if user is None:
+            return {"op_status": OP_STATUS_USER_NOT_FOUND}
+
+        if user.password != psw:
+            return {"op_status": OP_STATUS_INVALID_PASSWORD}
+
+        return {
+            "op_status": OP_STATUS_OK,
+            "token": str(user.user_id)
+        }
+
+    def process_get_me(self, authorization):
         # TODO:
         # 1) Obtener usuario autenticado a partir del token.
         # 2) Buscar información del usuario en base de datos.
@@ -26,7 +38,7 @@ class System:
     # Monitoring
     #==================================================
 
-    def process_get_monitored_users(self):
+    def process_get_monitored_users(self, authorization):
         # TODO:
         # 1) Obtener usuario autenticado.
         # 2) Consultar MonitoringLinks donde el usuario
@@ -35,7 +47,7 @@ class System:
         #    junto con el rol asociado.
         pass
 
-    def process_get_my_monitors(self):
+    def process_get_my_monitors(self, authorization):
         # TODO:
         # 1) Obtener usuario autenticado.
         # 2) Consultar MonitoringLinks donde el usuario
@@ -50,7 +62,8 @@ class System:
 
     def process_create_monitoring_request(
         self,
-        elderly_user_id,
+        authorization,
+        monitored_user_id,
         requested_user_id,
         requested_role
     ):
@@ -72,6 +85,7 @@ class System:
 
     def process_answer_monitoring_request(
         self,
+        authorization,
         request_id,
         answer
     ):
@@ -100,7 +114,7 @@ class System:
         # 7) Retornar resultado actualizado.
         pass
 
-    def process_get_monitoring_requests(self):
+    def process_get_monitoring_requests(self, authorization):
         # TODO:
         # 1) Obtener usuario autenticado.
         # 2) Consultar solicitudes relacionadas.
@@ -118,6 +132,7 @@ class System:
 
     def process_delete_monitoring_link(
         self,
+        authorization,
         link_id
     ):
         # TODO:
@@ -130,3 +145,11 @@ class System:
         # 4) Eliminar relación.
         # 5) Retornar resultado de la operación.
         pass
+
+    def _get_current_user_id_by_token(self, token):
+        if token is None:
+            return None
+        try:
+            return int(token)
+        except ValueError:
+            return None
