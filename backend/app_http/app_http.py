@@ -1,102 +1,36 @@
-from fastapi import FastAPI, Header
-from pydantic import BaseModel
+"""
+@file app_http.py
+@author Grand Safe Life
+@brief Construcción de la aplicación HTTP del servidor.
 
-#==============================================
-# API Rest
-#============================================== 
-def create_http_app(system):
-    app = FastAPI()
+Este módulo ensambla los routers de cada área funcional y les inyecta el objeto
+encargado de procesar las operaciones de la API.
+"""
 
-    #==============================================
-    # Auth y Login
-    #============================================== 
-    
-    @app.post("/auth/login")
-    def login(request: LoginRequest):
-        return system.process_login(
-            request.usr,
-            request.psw
-        )
+from fastapi import FastAPI
 
-    @app.get("/auth/me")
-    def get_me(authorization: str | None = Header(default=None)):
-        return system.process_get_me(authorization)
+from .alarms_endpoints import AlarmsEndpoints
+from .devices_endpoints import DevicesEndpoints
+from .devices_stats_endpoints import DevicesStatsEndpoints
+from .homes_endpoints import HomesEndpoints
+from .monitoring_requests_endpoints import MonitoringRequestsEndpoints
+from .users_endpoints import UsersEndpoints
 
-    #==============================================
-    # Monitoreo- Typescript / Nest - Inyeccion dependencias
-    #============================================== 
 
-    @app.get("/monitoring/monitored-users")
-    def get_monitored_users(authorization: str | None = Header(default=None)):
-        return system.process_get_monitored_users(authorization)
+def create_http_app(http_processor):
+    """Crea la aplicación FastAPI con todos sus grupos de endpoints."""
+    app = FastAPI(title="Grand Safe Life API", version="1.0.0")
 
-    @app.get("/monitoring/my-monitors")
-    def get_my_monitors(authorization: str | None = Header(default=None)):
-        return system.process_get_my_monitors(authorization)
+    endpoint_groups = (
+        UsersEndpoints(http_processor),
+        HomesEndpoints(http_processor),
+        MonitoringRequestsEndpoints(http_processor),
+        DevicesEndpoints(http_processor),
+        DevicesStatsEndpoints(http_processor),
+        AlarmsEndpoints(http_processor),
+    )
 
-    #==============================================
-    # Requests de monitoreo
-    #============================================== 
-
-    @app.post("/monitoring-requests")
-    def create_monitoring_request(
-        request: MonitoringRequestCreate,
-        authorization: str | None = Header(default=None)
-    ):
-        return system.process_create_monitoring_request(
-            authorization,
-            request.monitored_user_id,
-            request.requested_user_id,
-            request.requested_role
-        )
-
-    @app.post("/monitoring-requests/{request_id}/answer")
-    def answer_monitoring_request(
-        request_id: int,
-        request: MonitoringRequestAnswer,
-        authorization: str | None = Header(default=None)
-    ):
-        return system.process_answer_monitoring_request(
-            authorization,
-            request_id,
-            request.answer
-        )
-
-    @app.get("/monitoring-requests")
-    def get_monitoring_requests(authorization: str | None = Header(default=None)):
-        return system.process_get_monitoring_requests(authorization)
-
-    #==============================================
-    # Eliminar monitoreo
-    #============================================== 
-
-    @app.delete("/monitoring")
-    def delete_monitoring_link(
-        request: MonitoringDeleteRequest,
-        authorization: str | None = Header(default=None)
-    ):
-        return system.process_delete_monitoring_link(
-            authorization,
-            request.link_id
-        )
+    for endpoint_group in endpoint_groups:
+        app.include_router(endpoint_group.router)
 
     return app
-
-#==============================================
-# Mappers
-#============================================== 
-
-class LoginRequest(BaseModel):
-    usr: str
-    psw: str
-
-class MonitoringRequestCreate(BaseModel):
-    monitored_user_id: int
-    requested_user_id: int
-    requested_role: str  # admin | monitor
-
-class MonitoringRequestAnswer(BaseModel):
-    answer: str  # accepted | rejected
-
-class MonitoringDeleteRequest(BaseModel):
-    link_id: int

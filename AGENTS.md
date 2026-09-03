@@ -111,6 +111,12 @@ Los endpoints deben organizarse por área funcional. Cada sección debe vivir en
 un archivo diferente dentro de `backend/app_http`; por ejemplo, autenticación,
 usuarios, hogares, dispositivos, monitoreo, métricas y alarmas. El archivo que crea la aplicación FastAPI solamente debe registrar o incluir esas rutas.
 
+Cada módulo de endpoints expone una clase que recibe `http_processor` en su
+constructor y publica su `APIRouter`. Esta inyección permite que las rutas
+deleguen en métodos `process_*` sin construir ni conocer las dependencias
+internas del sistema. `app_http.py` se limita a construir estas clases y registrar
+sus routers en FastAPI.
+
 ### system
 
 Contiene y coordina la lógica de negocio.
