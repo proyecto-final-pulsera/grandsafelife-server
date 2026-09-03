@@ -16,6 +16,13 @@
 | Monitoring requests | POST | `/grandsafelife/api/v1/homes/{home_id}/monitoring-requests` | Invita a un usuario a participar de un hogar. |
 | Monitoring requests | GET | `/grandsafelife/api/v1/users/me/monitoring-requests` | Recupera las solicitudes pendientes recibidas. |
 | Monitoring requests | POST | `/grandsafelife/api/v1/monitoring-requests/{request_id}/answer` | Acepta o rechaza una solicitud pendiente. |
+| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}` | Recupera un dispositivo accesible por ID. |
+| Devices | POST | `/grandsafelife/api/v1/devices/{device_id}/association` | Asocia un dispositivo existente a un hogar. |
+| Devices | PATCH | `/grandsafelife/api/v1/devices/{device_id}` | Actualiza la configuración editable de un dispositivo. |
+| Devices | DELETE | `/grandsafelife/api/v1/devices/{device_id}/association` | Libera un dispositivo sin eliminarlo. |
+| Devices | GET | `/grandsafelife/api/v1/users/{owner_id}/devices` | Recupera dispositivos por administrador propietario. |
+| Devices | GET | `/grandsafelife/api/v1/homes/{home_id}/devices` | Recupera dispositivos asociados a un hogar. |
+| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}/location` | Recupera la última ubicación de un dispositivo. |
 
 ## 2 - Tabla de códigos de operación
 
@@ -356,7 +363,223 @@ membresías.
 
 ## 7 - Endpoints "Devices"
 
-Pendiente del paso correspondiente.
+Los dispositivos físicos existen previamente y poseen un ID único e inmutable.
+La aplicación puede asociarlos a un hogar, configurarlos o liberarlos, pero no
+crear ni eliminar el registro de hardware.
+
+### `GET /grandsafelife/api/v1/devices/{device_id}`
+
+- Descripción: recupera un dispositivo si el solicitante tiene acceso al hogar asociado.
+- Body: no aplica.
+
+Response:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully",
+  "resp": {
+    "id": "dev_a81f23",
+    "created_at": "2026-08-15T10:32:14Z",
+    "updated_at": "2026-09-01T18:21:47Z",
+    "home_id": "home_7f3a92",
+    "owner_id": "user_admin_001",
+    "is_active": true,
+    "type": "sensor",
+    "battery": 87,
+    "name": "Sensor Living",
+    "connection_by": "hub_001",
+    "coords": {
+      "lat": -34.6037,
+      "long": -58.3816
+    }
+  }
+}
+```
+
+### `POST /grandsafelife/api/v1/devices/{device_id}/association`
+
+- Descripción: vincula un dispositivo físico existente a un hogar.
+
+Body:
+
+```json
+{
+  "home_id": "home_7f3a92"
+}
+```
+
+Response:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully",
+  "resp": "dev_a81f23"
+}
+```
+
+El servidor resuelve `owner_id` desde el administrador del hogar. El body no
+admite ese campo ni información operativa del dispositivo.
+
+### `PATCH /grandsafelife/api/v1/devices/{device_id}`
+
+- Descripción: actualiza parcialmente el nombre o la conexión del dispositivo.
+
+Body de ejemplo:
+
+```json
+{
+  "name": "Sensor Dormitorio",
+  "connection_by": "hub_001"
+}
+```
+
+Response:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully"
+}
+```
+
+`connection_by` admite el ID de un hub válido para el hogar o `"-1"` cuando no
+se utiliza un hub. Los demás campos del dispositivo no son editables por esta
+operación.
+
+### `DELETE /grandsafelife/api/v1/devices/{device_id}/association`
+
+- Descripción: elimina la asociación actual y deja disponible el dispositivo.
+- Body: no aplica.
+
+Response:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully"
+}
+```
+
+La operación elimina `home_id` y `owner_id`, pero conserva el registro físico y
+sus estadísticas históricas.
+
+### `GET /grandsafelife/api/v1/users/{owner_id}/devices`
+
+- Descripción: recupera los dispositivos pertenecientes a hogares administrados por el usuario indicado.
+- Body: no aplica.
+
+Response:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully",
+  "resp": {
+    "dev_a81f23": {
+      "created_at": "2026-08-15T10:32:14Z",
+      "updated_at": "2026-09-01T18:21:47Z",
+      "home_id": "home_7f3a92",
+      "owner_id": "user_admin_001",
+      "is_active": true,
+      "type": "sensor",
+      "battery": 87,
+      "name": "Sensor Living",
+      "connection_by": "hub_001",
+      "coords": {
+        "lat": -34.6037,
+        "long": -58.3816
+      }
+    }
+  }
+}
+```
+
+El resultado es un objeto indexado por ID. Si no hay dispositivos accesibles,
+`resp` es `{}`.
+
+### `GET /grandsafelife/api/v1/homes/{home_id}/devices`
+
+- Descripción: recupera los dispositivos monitoreados asociados a un hogar.
+- Body: no aplica.
+
+Response:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully",
+  "resp": {
+    "dev_a81f23": {
+      "created_at": "2026-08-15T10:32:14Z",
+      "updated_at": "2026-09-01T18:21:47Z",
+      "home_id": "home_7f3a92",
+      "owner_id": "user_admin_001",
+      "is_active": true,
+      "type": "sensor",
+      "battery": 87,
+      "name": "Sensor Living",
+      "connection_by": "hub_001",
+      "coords": {
+        "lat": -34.6037,
+        "long": -58.3816
+      }
+    },
+    "dev_b42c91": {
+      "created_at": "2026-07-28T14:11:03Z",
+      "updated_at": "2026-09-01T17:58:12Z",
+      "home_id": "home_7f3a92",
+      "owner_id": "user_admin_001",
+      "is_active": true,
+      "type": "camera",
+      "battery": 64,
+      "name": "Cámara Entrada",
+      "connection_by": "hub_001",
+      "coords": {
+        "lat": -34.6032,
+        "long": -58.3809
+      }
+    },
+    "dev_c73e15": {
+      "created_at": "2026-08-02T09:45:27Z",
+      "updated_at": "2026-09-01T18:05:31Z",
+      "home_id": "home_7f3a92",
+      "owner_id": "user_admin_001",
+      "is_active": false,
+      "type": "sensor",
+      "battery": 31,
+      "name": "Sensor Dormitorio",
+      "connection_by": "-1",
+      "coords": {
+        "lat": -34.6041,
+        "long": -58.3824
+      }
+    }
+  }
+}
+```
+
+Los hubs de infraestructura no se incluyen. Si el hogar no tiene dispositivos,
+`resp` es `{}`.
+
+### `GET /grandsafelife/api/v1/devices/{device_id}/location`
+
+- Descripción: recupera la última ubicación GPS reportada por el dispositivo.
+- Body: no aplica.
+
+Response:
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully",
+  "resp": {
+    "lat": -34.6037,
+    "long": -58.3816
+  }
+}
+```
 
 ## 8 - Endpoints "Devices Stats"
 
