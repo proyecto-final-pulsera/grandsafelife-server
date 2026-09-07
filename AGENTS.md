@@ -276,10 +276,20 @@ sin diseñar hoy una arquitectura distribuida.
 
 ---
 
-## Flujo de trabajo mediante task.md
+## Planificación local en IA Workflow
 
-El usuario creará un archivo `task.md` en la raíz del proyecto para enumerar el
-plan completo de trabajo. Su formato esperado será similar a:
+`README.md` permanece en la raíz como presentación versionada del sistema y
+entrada a su documentación. `IA Workflow/epics.md` contiene las épicas pendientes.
+`IA Workflow/task.md` funciona como backlog ordenado de implementación y puede reemplazarse
+al cerrar una etapa, ya que el trabajo terminado queda reflejado en el código,
+la documentación de la API y el historial de Git.
+
+Las referencias a `task.md` en estas reglas corresponden siempre a
+`IA Workflow/task.md`, relativo a la raíz del repositorio. No crear otra copia
+en la raíz. `IA Workflow/` se destina a planificación local no versionada; su
+exclusión de Git se configurará en el paso específico de `.gitignore`.
+
+El formato esperado de `IA Workflow/task.md` será similar a:
 
 ```markdown
 ## Paso 1
