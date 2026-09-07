@@ -44,7 +44,7 @@ la persistencia del sistema.
 
 ## Documentación
 
-- [Contrato HTTP](backend/app_http/api_documentation.md).
+- [Contrato HTTP](doc/app_reports/api_rest/api_documentation.md).
 - [Interfaz del detector de caídas](doc/dev_reports/guido_readme_interfaz.md).
 - [Investigación de autenticación con Firebase](doc/dev_reports/to_do_auth.md).
 - [Reglas de arquitectura y trabajo](AGENTS.md).

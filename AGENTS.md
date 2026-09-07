@@ -321,7 +321,7 @@ Reglas de ejecución:
 * Ejecutar únicamente el paso que el usuario solicite expresamente en el chat.
 * No adelantar pasos posteriores aunque parezcan necesarios o convenientes.
 * Al implementar un grupo de endpoints, avanzar también la parte correspondiente
-  del paso de documentación en `backend/app_http/api_documentation.md`, siguiendo
+  del paso de documentación en `doc/app_reports/api_rest/api_documentation.md`, siguiendo
   el template y manteniendo sincronizados URL, método, contrato y códigos de
   operación con el código implementado.
 * En la documentación, titular cada endpoint con el formato
@@ -335,6 +335,11 @@ Reglas de ejecución:
 ---
 
 ## Reportes de testing y desarrollo
+
+La documentación técnica de la aplicación se centraliza en `doc/app_reports/`.
+El contrato de la API REST se mantiene en
+`doc/app_reports/api_rest/api_documentation.md`. Por el momento se utilizan
+documentos Markdown; se agregarán subdivisiones cuando sean necesarias.
 
 Cuando el usuario pide un reporte en el chat o en `IA Workflow/task.md`, se
 refiere a un documento Markdown tipo README, guardado dentro de `doc/` según
