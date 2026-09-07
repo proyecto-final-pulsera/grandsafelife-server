@@ -33,7 +33,7 @@ Al definir la API:
 * No permitir que el cliente tome decisiones que corresponden al servidor, como elegir identificadores internos o timestamps de auditoría.
 * Diseñar también los endpoints faltantes, aunque no estén incluidos en la interfaz inicial de Guido.
 
-La implementación HTTP anterior puede desestimarse. Los endpoints definitivos y sus contratos se volverán a definir dentro de `backend/app_http`.
+La implementación HTTP anterior puede desestimarse. Los endpoints definitivos y sus contratos se volverán a definir dentro de `backend/http_api_rest`.
 
 El alcance inicial contempla menos de diez usuarios. Las decisiones deben ser
 correctas y defendibles, pero proporcionales a esa escala. Se priorizan una
@@ -54,7 +54,7 @@ Aplicación móvil u otro cliente
         API REST (FastAPI)
               |
               v
-       System / negocio
+       App / negocio
        /       |       \
       v        v        v
 Firebase  Notifications  Machine Learning
@@ -75,19 +75,22 @@ a mezclar sus responsabilidades en el código.
 ```text
 backend
 |
-|-- app_http
+|-- http_api_rest
 |-- database
-|-- domain
 |-- machine_learning
 |-- notifications
-`-- system
+`-- app
+    `-- domain
 ```
 
 ---
 
 ## Responsabilidades por módulo
 
-### app_http
+### http_api_rest
+
+Importar esta capa como `backend.http_api_rest`. Ejecutar desde la raíz del
+repositorio mediante `python -m uvicorn backend.main:app`.
 
 Implementa la API REST mediante FastAPI y constituye la única interfaz pública
 del servidor.
@@ -97,7 +100,7 @@ Responsabilidades:
 * Definir endpoints y métodos HTTP.
 * Definir y validar los contratos de entrada y salida.
 * Convertir JSON a los tipos usados por el servidor.
-* Invocar las operaciones correspondientes de `system`.
+* Invocar las operaciones correspondientes de `app`.
 * Traducir los resultados del sistema a respuestas HTTP adecuadas.
 * Aplicar autenticación en la frontera HTTP cuando corresponda.
 
@@ -108,17 +111,17 @@ No debe contener:
 * Conocimiento de colecciones, documentos o consultas de persistencia.
 
 Los endpoints deben organizarse por área funcional. Cada sección debe vivir en
-un archivo diferente dentro de `backend/app_http`; por ejemplo, autenticación,
+un archivo diferente dentro de `backend/http_api_rest`; por ejemplo, autenticación,
 usuarios, hogares, dispositivos, monitoreo, métricas y alarmas. El archivo que crea la aplicación FastAPI solamente debe registrar o incluir esas rutas.
 Los módulos deben nombrarse con el patrón `http_endpoints_<area>.py`.
 
 Cada módulo de endpoints expone una clase que recibe `http_processor` en su
 constructor y publica su `APIRouter`. Esta inyección permite que las rutas
 deleguen en métodos `process_*` sin construir ni conocer las dependencias
-internas del sistema. `app_http.py` se limita a construir estas clases y registrar
+internas del sistema. `http.py` se limita a construir estas clases y registrar
 sus routers en FastAPI.
 
-### system
+### app
 
 Contiene y coordina la lógica de negocio.
 
@@ -170,7 +173,7 @@ los pasos correspondientes.
 La inicialización de Firebase es una responsabilidad interna del servidor y no
 debe exponerse como endpoint.
 
-### domain
+### app/domain
 
 Contiene las entidades y tipos propios del negocio.
 
@@ -188,10 +191,10 @@ dominio. Pueden parecerse, pero cada uno debe modelar su propia responsabilidad.
 
 Contiene la integración y lógica de envío de notificaciones.
 
-Las notificaciones deben ser solicitadas desde `system`; los endpoints no deben
+Las notificaciones deben ser solicitadas desde `app`; los endpoints no deben
 enviarlas directamente.
 
-`system` decide, según el resultado del caso de uso y las reglas del negocio, si
+`app` decide, según el resultado del caso de uso y las reglas del negocio, si
 corresponde generar una notificación. El módulo `notifications` se limita a
 prepararla y enviarla mediante el proveedor elegido.
 
@@ -209,7 +212,7 @@ Responsabilidades:
 * Mantener separados los datos y el contexto de cada solicitud.
 
 La aplicación móvil no accede directamente al modelo. Los endpoints invocan a
-`system`; esta capa decide cuándo utilizar `machine_learning` y qué hacer con el
+`app`; esta capa decide cuándo utilizar `machine_learning` y qué hacer con el
 resultado.
 
 Inicialmente se utilizará un modelo compartido por todas las solicitudes, no una
@@ -266,7 +269,7 @@ sin diseñar hoy una arquitectura distribuida.
   contiene siempre `op_status` y `brief`, y contiene `resp` solamente cuando
   corresponda.
 * Cada `op_status` de la aplicación tiene exactamente un `brief` asociado. Esa
-  relación se centraliza en `backend/app_http/api_op_codes.py` y se amplía a
+  relación se centraliza en `backend/http_api_rest/api_op_codes.py` y se amplía a
   medida que aparecen nuevos resultados.
 * La API utiliza inicialmente `200` para una operación atendida correctamente,
   `400` para errores del cliente gestionados explícitamente por la aplicación y
@@ -372,7 +375,7 @@ autorizan a implementar los cambios que describen.
 ## Principios de desarrollo
 
 * Mantener módulos pequeños y con responsabilidades claras.
-* Mantener los endpoints delgados y la lógica de negocio en `system`.
+* Mantener los endpoints delgados y la lógica de negocio en `app`.
 * Mantener Firebase y Firestore dentro de `database`.
 * Evitar duplicación de lógica.
 * Priorizar contratos explícitos y legibles.

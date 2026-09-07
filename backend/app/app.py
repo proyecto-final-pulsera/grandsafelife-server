@@ -11,7 +11,7 @@ from .processes.process_monitoring import MonitoringProcesses
 from .processes.process_fall_detection import FallDetectionProcesses
 
 
-class System:
+class App:
     """Conserva la interfaz process_* y delega en cada area funcional."""
 
     def __init__(self, db):

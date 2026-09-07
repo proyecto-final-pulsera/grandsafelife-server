@@ -23,7 +23,7 @@ Las personas monitoras utilizan la aplicación desarrollada por Guido. Desde ell
 ```text
 Pulsera ──► Hub ───────────────┐
                               │
-Pulsera ──► App persona mayor ─┼──► API REST ──► System
+Pulsera ──► App persona mayor ─┼──► API REST ──► App
                               │                    ├── Firebase
 App de monitores ─────────────┘                    ├── Machine Learning
                                                    └── Notificaciones
@@ -32,6 +32,12 @@ App de monitores ─────────────┘                    �
 El backend se mantiene inicialmente como un monolito modular desplegado en un único contenedor Docker. Firebase/Firestore es un servicio externo y constituye la persistencia del sistema.
 
 ## Documentación
+
+La capa `http_api_rest` recibe solicitudes y `app` coordina los casos de uso, con los
+objetos de negocio en `app/domain`.
+
+Para ejecutar fuera de Docker, desde la raíz del repositorio y con las
+dependencias instaladas: `python -m uvicorn backend.main:app --port 8000`.
 
 ### Reportes de Aplicación
 

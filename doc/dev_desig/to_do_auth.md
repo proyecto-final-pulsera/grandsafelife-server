@@ -43,7 +43,7 @@ FastAPI verifica firma, formato y vigencia
 FastAPI extrae el UID confiable
                     |
                     v
-System valida permisos y ejecuta el caso de uso
+App valida permisos y ejecuta el caso de uso
 ```
 
 ---
@@ -124,7 +124,7 @@ def get_current_user_uid(authorization: str = Header(...)) -> str:
     return decoded_token["uid"]
 ```
 
-Los endpoints reciben el UID ya verificado. La capa `system` utiliza ese UID
+Los endpoints reciben el UID ya verificado. La capa `app` utiliza ese UID
 para validar permisos y relaciones antes de acceder a los repositories.
 
 ---
@@ -148,7 +148,7 @@ En este caso:
 
 * El ID token identifica al usuario solicitante.
 * `target_user_id` identifica al usuario objetivo.
-* `system` verifica si el solicitante tiene permiso para consultar al objetivo.
+* `app` verifica si el solicitante tiene permiso para consultar al objetivo.
 
 Para operaciones sobre el perfil propio no es necesario que Flutter envíe su
 UID:
@@ -228,7 +228,7 @@ transversales son:
 * Los endpoints `/users/me` obtienen la identidad exclusivamente del token.
 * Los IDs incluidos en una URL o body representan recursos objetivo, no la
   identidad autenticada del solicitante.
-* `system` continúa siendo responsable de la autorización.
+* `app` continúa siendo responsable de la autorización.
 
 ---
 

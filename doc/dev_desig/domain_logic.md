@@ -11,23 +11,23 @@ implementan el contexto autenticado ni las validaciones aquí descritas.
 
 | Ubicación | Responsabilidad |
 | --- | --- |
-| `backend/app_http/` | Validar contratos HTTP, recibir requests y traducir resultados al envelope de la API. |
-| `backend/system/system.py` | Componer los módulos y conservar la interfaz pública `process_*`. |
-| `backend/system/processes/process_*.py` | Coordinar cada caso de uso: invocar operaciones, comprobar sus resultados y decidir cómo continuar. |
-| `backend/system/processing/` | Alojar las operaciones de negocio, validaciones, permisos y gestión de pedidos que necesiten los casos de uso. |
-| `backend/domain/` | Definir conceptos y tipos del negocio compartidos, como usuarios, hogares y dispositivos. |
+| `backend/http_api_rest/` | Validar contratos HTTP, recibir requests y traducir resultados al envelope de la API. |
+| `backend/app/app.py` | Componer los módulos y conservar la interfaz pública `process_*`. |
+| `backend/app/processes/process_*.py` | Coordinar cada caso de uso: invocar operaciones, comprobar sus resultados y decidir cómo continuar. |
+| `backend/app/processing/` | Alojar las operaciones de negocio, validaciones, permisos y gestión de pedidos que necesiten los casos de uso. |
+| `backend/app/domain/` | Definir conceptos y tipos del negocio compartidos, como usuarios, hogares y dispositivos. |
 | `backend/database/` | Encapsular persistencia, representaciones de documentos y conversiones de Firestore mediante repositories. |
 
 Los `process_*` deben ser simples y legibles. Los repositories ejecutan lecturas
-y escrituras; las decisiones de permisos y negocio corresponden a `system`.
+y escrituras; las decisiones de permisos y negocio corresponden a `app`.
 No es necesario extraer una función por cada línea: la separación debe responder
 a una responsabilidad concreta.
 
-Se conserva un único `backend/domain` para los conceptos de negocio. Las
+Se conserva un único `backend/app/domain` para los conceptos de negocio. Las
 representaciones propias de la DB permanecen dentro de `database`, sin crear
 otro `domain` para documentos de Firestore. Los objetos que describen la ejecución
-de un caso de uso pertenecen a `system`; su archivo concreto se definirá cuando
-se implementen, por ejemplo `system/context.py`.
+de un caso de uso pertenecen a `app`; su archivo concreto se definirá cuando
+se implementen, por ejemplo `app/context.py`.
 
 ## Entrada, contexto y resultado
 
@@ -65,12 +65,12 @@ Estar autenticado no implica que exista el perfil de la aplicación ni autoriza
 automáticamente a consultar otros recursos.
 
 La [propuesta de autenticación](to_do_auth.md) plantea verificar el token en una
-dependencia común de FastAPI y entregar la identidad verificada a `system`.
+dependencia común de FastAPI y entregar la identidad verificada a `app`.
 El ejemplo conversado también permite expresar esa verificación como una llamada
 a un componente de autenticación desde el coordinador. La ubicación e interfaz
 definitivas se resolverán al implementar auth, respetando la frontera HTTP del
 proyecto; no se verificará el mismo token de forma duplicada en cada capa.
-La autorización de negocio seguirá dentro de `system`.
+La autorización de negocio seguirá dentro de `app`.
 
 ## Pedidos con ciclo de vida
 
