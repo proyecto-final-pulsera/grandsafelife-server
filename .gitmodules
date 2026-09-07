@@ -1,0 +1,3 @@
+[submodule "backend/fall_detection/model"]
+	path = backend/fall_detection/model
+	url = https://github.com/proyecto-final-pulsera/software-fall-detection-model.git

@@ -14,7 +14,7 @@ implementan el contexto autenticado ni las validaciones aquí descritas.
 | `backend/http_api_rest/` | Validar contratos HTTP, recibir requests y traducir resultados al envelope de la API. |
 | `backend/app/app.py` | Componer los módulos y conservar la interfaz pública `process_*`. |
 | `backend/app/processes/process_*.py` | Coordinar cada caso de uso: invocar operaciones, comprobar sus resultados y decidir cómo continuar. |
-| `backend/app/processing/` | Alojar las operaciones de negocio, validaciones, permisos y gestión de pedidos que necesiten los casos de uso. |
+| `backend/app/processing/` | Alojar las operaciones de negocio, validaciones y permisos que necesiten los casos de uso. |
 | `backend/app/domain/` | Definir conceptos y tipos del negocio compartidos, como usuarios, hogares y dispositivos. |
 | `backend/database/` | Encapsular persistencia, representaciones de documentos y conversiones de Firestore mediante repositories. |
 
@@ -98,3 +98,15 @@ el detector solo recibe el chunk y retorna una clasificación o un error.
 
 Estas definiciones se implementarán en los pasos correspondientes. Documentar
 el diseño no implica reemplazar ahora los mocks ni adelantar auth o persistencia.
+
+## Módulo independiente de detección de caídas
+
+`backend/fall_detection` encapsula la inferencia y la ejecución del detector.
+El repositorio externo vive en `model/` como submódulo Git. El contrato público y el retorno mock temporal
+viven en el submódulo; el manager se incorporará en el mismo directorio
+`fall_detection/` en el paso 4.
+
+`app` autoriza las solicitudes, coordina los casos de uso y decide qué hacer con
+los resultados, incluyendo las notificaciones. `app/processing` conserva las
+operaciones de negocio y permisos; no ejecuta el pipeline de inferencia. La
+asociación entre identidad y pedido sigue pendiente del diseño de su contexto.

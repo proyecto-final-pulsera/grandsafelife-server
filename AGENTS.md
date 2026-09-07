@@ -77,7 +77,7 @@ backend
 |
 |-- http_api_rest
 |-- database
-|-- machine_learning
+|-- fall_detection
 |-- notifications
 `-- app
     `-- domain
@@ -198,10 +198,16 @@ enviarlas directamente.
 corresponde generar una notificación. El módulo `notifications` se limita a
 prepararla y enviarla mediante el proveedor elegido.
 
-### machine_learning
+### fall_detection
 
 Contiene la carga del modelo y el procesamiento de datos mediante machine
 learning.
+
+El repositorio externo vive como submódulo en `backend/fall_detection/model`.
+La interfaz pública se exporta desde la raíz del submódulo. El retorno mock
+temporal vive dentro de detect_fall, marcado para eliminarse. El futuro
+manager también pertenece a `fall_detection`; `app/processing` se reserva para
+negocio y permisos. Este módulo no decide autorizaciones ni notificaciones.
 
 Responsabilidades:
 
@@ -212,7 +218,7 @@ Responsabilidades:
 * Mantener separados los datos y el contexto de cada solicitud.
 
 La aplicación móvil no accede directamente al modelo. Los endpoints invocan a
-`app`; esta capa decide cuándo utilizar `machine_learning` y qué hacer con el
+`app`; esta capa decide cuándo utilizar `fall_detection` y qué hacer con el
 resultado.
 
 Inicialmente se utilizará un modelo compartido por todas las solicitudes, no una

@@ -33,6 +33,11 @@ El backend se mantiene inicialmente como un monolito modular desplegado en un ú
 
 ## Documentación
 
+El modelo externo está registrado como submódulo en
+`backend/fall_detection/model`. Después de clonar el servidor, ejecutar
+`git submodule update --init --recursive` desde la raíz del repositorio.
+Por ahora se utiliza un contrato con mock; no se carga el modelo real.
+
 La capa `http_api_rest` recibe solicitudes y `app` coordina los casos de uso, con los
 objetos de negocio en `app/domain`.
 
