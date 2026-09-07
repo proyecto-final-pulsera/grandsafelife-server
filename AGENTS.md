@@ -348,6 +348,9 @@ su propósito:
 * `doc/tests_reports/`: reportes de testing, validación de módulos y análisis
   de bugs que se solicite documentar. Incluir alcance, pruebas realizadas,
   resultados y, cuando corresponda, pasos de reproducción y pendientes.
+* `doc/dev_desig/`: diseños y decisiones de arquitectura acordados, incluyendo
+  lógica de negocio, autenticación y futuros diseños de notificaciones. Mantener
+  explícita la distinción entre decisiones acordadas y definiciones pendientes.
 * `doc/dev_reports/`: análisis y propuestas de desarrollo de mayor alcance,
   TODOs que requieren explicación y documentos para compartir con otros
   desarrolladores del proyecto, como Guido o Santi. Incluir el contexto,
