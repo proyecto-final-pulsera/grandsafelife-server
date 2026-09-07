@@ -1,6 +1,33 @@
+# Solo se incorporan las áreas compartidas y archivos raíz indicados.
+/*
+!/.gitignore
+!/AGENTS.md
+!/README.md
+!/docker-compose.yml
+!/backend/
+!/doc/
+!/IA Workflow/
+
+# Planificación activa local; solo se comparten los ejemplos.
+/IA Workflow/*
+!/IA Workflow/task.example.md
+!/IA Workflow/epics.example.md
+
+# Recursos locales de agentes (actualmente la carpeta está vacía).
+/.agents/
+
+# Entornos, configuración local y archivos generados, también en áreas permitidas.
 .env
-
+.env.*
+!.env.example
 .vscode/
-
+.venv/
+venv/
 __pycache__/
 *.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.log

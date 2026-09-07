@@ -286,8 +286,16 @@ la documentación de la API y el historial de Git.
 
 Las referencias a `task.md` en estas reglas corresponden siempre a
 `IA Workflow/task.md`, relativo a la raíz del repositorio. No crear otra copia
-en la raíz. `IA Workflow/` se destina a planificación local no versionada; su
-exclusión de Git se configurará en el paso específico de `.gitignore`.
+en la raíz. Los archivos activos `IA Workflow/task.md` y `IA Workflow/epics.md`
+son locales y están excluidos de Git. Solo se versionan `task.example.md` y
+`epics.example.md` dentro de esa carpeta. Al preparar un checkout nuevo, copiar
+los ejemplos a sus nombres activos si hace falta, sin sobrescribir planificación
+existente. Los ejemplos no son tareas autorizadas.
+
+`AGENTS.md` contiene las reglas compartidas y permanece versionado. La carpeta
+`.agents/`, actualmente vacía, queda local e ignorada; no reemplaza la planificación
+de `IA Workflow/`. Si se incorporan skills compartidas en el futuro, revisar
+explícitamente su inclusión en Git.
 
 El formato esperado de `IA Workflow/task.md` será similar a:
 
@@ -323,6 +331,33 @@ Reglas de ejecución:
 * Aplicar los ajustes que el usuario pida antes de continuar.
 * Avanzar al siguiente paso solamente cuando el usuario lo indique expresamente.
 * Si para completar el paso actual falta una definición que cambia materialmente el contrato o la arquitectura, señalarla y acordarla antes de asumirla.
+
+---
+
+## Reportes de testing y desarrollo
+
+Cuando el usuario pide un reporte en el chat o en `IA Workflow/task.md`, se
+refiere a un documento Markdown tipo README, guardado dentro de `doc/` según
+su propósito:
+
+* `doc/tests_reports/`: reportes de testing, validación de módulos y análisis
+  de bugs que se solicite documentar. Incluir alcance, pruebas realizadas,
+  resultados y, cuando corresponda, pasos de reproducción y pendientes.
+* `doc/dev_reports/`: análisis y propuestas de desarrollo de mayor alcance,
+  TODOs que requieren explicación y documentos para compartir con otros
+  desarrolladores del proyecto, como Guido o Santi. Incluir el contexto,
+  contratos o cambios esperados y las definiciones pendientes que correspondan.
+
+Usar un archivo `.md` con nombre descriptivo por tema; no es necesario que se
+llame literalmente `README.md`. Si ya existe un reporte del mismo tema,
+actualizarlo cuando el pedido sea una continuación. Respetar una ubicación o
+un formato diferente si el usuario lo indica explícitamente.
+
+Mantener los reportes concisos y proporcionales al pedido. No generar un
+reporte por cada prueba rutinaria: crearlo cuando lo solicite el usuario o el
+paso en ejecución de `IA Workflow/task.md`. La respuesta del chat debe enlazar
+el documento creado o actualizado. Los reportes no reemplazan el backlog ni
+autorizan a implementar los cambios que describen.
 
 ---
 

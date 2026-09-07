@@ -50,4 +50,7 @@ la persistencia del sistema.
 - [Reglas de arquitectura y trabajo](AGENTS.md).
 
 La planificación local se mantiene en `IA Workflow/task.md` y
-`IA Workflow/epics.md`. Cada paso se ejecuta por separado cuando se solicita.
+`IA Workflow/epics.md`, excluidos de Git. Para iniciar una planificación nueva,
+copiar [task.example.md](<IA Workflow/task.example.md>) y
+[epics.example.md](<IA Workflow/epics.example.md>) a esos nombres.
+Cada paso se ejecuta por separado cuando se solicita.
