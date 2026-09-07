@@ -12,6 +12,7 @@ from fastapi import FastAPI
 from .http_endpoints_alarms import AlarmsEndpoints
 from .http_endpoints_devices import DevicesEndpoints
 from .http_endpoints_devices_stats import DevicesStatsEndpoints
+from .http_endpoints_fall_detection import FallDetectionEndpoints
 from .http_endpoints_homes import HomesEndpoints
 from .http_endpoints_monitoring_requests import MonitoringRequestsEndpoints
 from .http_endpoints_users import UsersEndpoints
@@ -28,6 +29,7 @@ def create_http_app(http_processor):
         DevicesEndpoints(http_processor),
         DevicesStatsEndpoints(http_processor),
         AlarmsEndpoints(http_processor),
+        FallDetectionEndpoints(http_processor),
     )
 
     for endpoint_group in endpoint_groups:

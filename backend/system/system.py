@@ -400,6 +400,22 @@ class System:
         # 5) Retornar resultado de la operación.
         pass
 
+    #==================================================
+    # Fall detection (pendiente; endpoints con bypass)
+    #==================================================
+
+    def process_create_fall_detection_request(self, authorization, data):
+        # TODO: Verificar identidad y permisos, recibir el chunk crudo ya
+        # deserializado y solicitar al manager la creación del pedido y su ID.
+        # Definir el retorno al implementar el caso de uso.
+        pass
+
+    def process_get_fall_detection_request(self, authorization, request_id):
+        # TODO: Verificar identidad y acceso al pedido; consultar al manager
+        # y retornar su estado, clasificación o error de procesamiento.
+        # Definir el retorno al implementar el caso de uso.
+        pass
+
     def _get_current_user_id_by_token(self, token):
         if token is None:
             return None
