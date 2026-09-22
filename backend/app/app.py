@@ -1,5 +1,7 @@
 """Punto de composicion y entrada a los casos de uso del servidor."""
 
+from ..fall_detection.fall_detection_manager import FallProcessorManager
+
 from .processes.process_auth import AuthProcesses
 from .processes.process_users import UsersProcesses
 from .processes.process_homes import HomesProcesses
@@ -14,7 +16,7 @@ from .processes.process_fall_detection import FallDetectionProcesses
 class App:
     """Conserva la interfaz process_* y delega en cada area funcional."""
 
-    def __init__(self, db):
+    def __init__(self, db, fall_detection_manager: FallProcessorManager | None = None):
         self.db = db
         self.auth = AuthProcesses(db)
         self.users = UsersProcesses()
@@ -24,7 +26,8 @@ class App:
         self.alarms = AlarmsProcesses()
         self.monitoring_requests = MonitoringRequestsProcesses()
         self.monitoring = MonitoringProcesses()
-        self.fall_detection = FallDetectionProcesses()
+        manager = fall_detection_manager if fall_detection_manager is not None else FallProcessorManager(N=1)
+        self.fall_detection = FallDetectionProcesses(manager)
 
     def process_login(self, usr, psw):
         return self.auth.process_login(usr, psw)

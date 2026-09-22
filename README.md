@@ -58,6 +58,10 @@ Contrato y condiciones de entrega del detector para integrarlo con el servidor.
 
 ### Diseño
 
+#### [Manager de detección de caídas](doc/dev_desig/fall_detection_manager.md)
+
+Contrato del manager, respuestas mock y alternativas pendientes de ejecución.
+
 #### [Diseño de la lógica de negocio](doc/dev_desig/domain_logic.md)
 
 Organización de casos de uso, validaciones, contexto autenticado y resultados.
