@@ -33,7 +33,9 @@ Al definir la API:
 * No permitir que el cliente tome decisiones que corresponden al servidor, como elegir identificadores internos o timestamps de auditoría.
 * Diseñar también los endpoints faltantes, aunque no estén incluidos en la interfaz inicial de Guido.
 
-La implementación HTTP anterior puede desestimarse. Los endpoints definitivos y sus contratos se volverán a definir dentro de `backend/http_api_rest`.
+E1 — Migración de backend actual a Cloud Functions conserva el comportamiento
+ejecutable registrado en `backend/tests/http_reference.json`. No rediseñar los
+contratos durante esta migración. La capa HTTP vive en `backend/http_api_rest`.
 
 El alcance inicial contempla menos de diez usuarios. Las decisiones deben ser
 correctas y defendibles, pero proporcionales a esa escala. Se priorizan una
@@ -48,10 +50,10 @@ distribuida o abstracciones destinadas a una escala hipotética.
 Aplicación móvil u otro cliente
               |
               v
-      Un contenedor Docker
+      Cloud Function HTTP `api`
               |
               v
-        API REST (FastAPI)
+        API REST (Flask)
               |
               v
        App / negocio
@@ -62,11 +64,13 @@ Firebase  Notifications  Machine Learning
 
 La división en capas debe conservarse. Cada capa tiene una responsabilidad específica y no debe filtrar detalles internos hacia las demás.
 
-La arquitectura inicial es un monolito modular: FastAPI, procesamiento de
-requests, reglas de negocio, integración con Firebase, decisión y envío de
-notificaciones y procesamiento mediante el modelo de machine learning se
-despliegan juntos en un único contenedor. Que compartan un contenedor no autoriza
-a mezclar sus responsabilidades en el código.
+La arquitectura objetivo es un monolito modular alojado en una única función
+HTTP, con Flask para el enrutamiento y Pydantic para validar. E1 mantiene los
+mocks actuales, sin persistencia, autenticación, FCM ni inferencia real.
+Compartir un despliegue no autoriza a mezclar responsabilidades.
+
+La transición se ejecuta por pasos: FastAPI y Docker permanecen como referencia
+hasta completar su reemplazo y validación local. No retirarlos anticipadamente.
 
 ---
 
@@ -89,10 +93,11 @@ backend
 
 ### http_api_rest
 
-Importar esta capa como `backend.http_api_rest`. Ejecutar desde la raíz del
-repositorio mediante `python -m uvicorn backend.main:app`.
+Importar esta capa como `backend.http_api_rest`. El flujo objetivo se ejecuta
+desde la raíz mediante el emulador de Functions. Durante el paso 1, la referencia
+FastAPI se prueba sin Docker según `backend/tests/README.md`.
 
-Implementa la API REST mediante FastAPI y constituye la única interfaz pública
+Implementa la API REST mediante Flask y constituye la única interfaz pública
 del servidor.
 
 Responsabilidades:
@@ -112,14 +117,15 @@ No debe contener:
 
 Los endpoints deben organizarse por área funcional. Cada sección debe vivir en
 un archivo diferente dentro de `backend/http_api_rest`; por ejemplo, autenticación,
-usuarios, hogares, dispositivos, monitoreo, métricas y alarmas. El archivo que crea la aplicación FastAPI solamente debe registrar o incluir esas rutas.
+usuarios, hogares, dispositivos, monitoreo, métricas y alarmas. El archivo que crea la aplicación Flask solamente debe registrar esas rutas.
 Los módulos deben nombrarse con el patrón `http_endpoints_<area>.py`.
 
 Cada módulo de endpoints expone una clase que recibe `http_processor` en su
-constructor y publica su `APIRouter`. Esta inyección permite que las rutas
+constructor y publica su Blueprint de Flask. Esta inyección permite que las rutas
 deleguen en métodos `process_*` sin construir ni conocer las dependencias
 internas del sistema. `http.py` se limita a construir estas clases y registrar
-sus routers en FastAPI.
+sus Blueprints mediante `create_http_app`. Hasta el paso 2 se conservan los
+`APIRouter` existentes como referencia ejecutable.
 
 ### app
 
@@ -181,7 +187,7 @@ No debe contener:
 
 * Acceso a Firebase.
 * Conocimiento de colecciones o documentos.
-* Dependencias de FastAPI.
+* Dependencias de Flask, FastAPI o Firebase Functions.
 * Lógica de negocio compleja.
 
 Los contratos HTTP no deben confundirse automáticamente con las entidades de
@@ -232,30 +238,27 @@ sin una necesidad observada o un paso que lo solicite.
 
 ---
 
-## Contenedor y despliegue
+## Cloud Functions y desarrollo local
 
-Docker forma parte de la estrategia de empaquetado del servidor, principalmente
-para fijar el entorno y las dependencias del módulo de machine learning.
+El destino acordado es una única función HTTP `api` en `grand-safe-band`, región
+`us-central1`, codebase `backend`, runtime Python 3.13. La raíz del repositorio
+será el directorio fuente; `backend` conserva sus paquetes y capas. El `main.py`
+raíz exportará `api` y la composición de Flask y `App` permanecerá en el backend.
 
-Alcance inicial:
+Configuración inicial para los mocks: mínimo cero y máximo diez instancias,
+concurrencia uno, una CPU, 256 MiB y timeout de 60 segundos. No cargar artefactos
+ni bibliotecas de inferencia al iniciar. La memoria de una instancia no constituye
+persistencia compartida. No ejecutar trabajo de negocio después de responder.
 
-* Un único contenedor para todo el backend.
-* Una única aplicación FastAPI como proceso principal.
-* Un solo worker inicialmente, para evitar cargar copias innecesarias del modelo
-  en memoria.
-* Una instancia del modelo cargada y compartida dentro de ese worker.
-* Firebase permanece como servicio externo en la nube y no se ejecuta dentro del
-  contenedor.
-* El proveedor de hosting se definirá más adelante.
+Usar el emulador de Functions para validar la integración cuando esté preparado
+en los pasos 3 y 4. Docker se retira solamente después de esa validación. No
+desplegar hasta el paso 5 expresamente solicitado. No alterar la función
+`addmessage`, la prueba de concepto, reglas, índices ni datos de Firestore.
 
-Cada worker adicional puede cargar otra copia completa del modelo. Por eso no se
-debe aumentar la cantidad de workers o réplicas sin medir antes memoria, tiempo
-de inferencia y comportamiento concurrente.
-
-Aunque todos los módulos se desplieguen juntos, deben comunicarse mediante
-interfaces internas claras. Esto permite separar el módulo de machine learning
-o notificaciones en otro servicio en el futuro si aparece una necesidad real,
-sin diseñar hoy una arquitectura distribuida.
+Versionar código, dependencias, pruebas, documentación, `firebase.json` y
+`.firebaserc`; excluir secretos, credenciales, entornos, cachés y logs. Excluir
+también pruebas, documentación y planificación del paquete de despliegue.
+El diseño de inferencia y ejecución del manager sigue pendiente para E5.
 
 ---
 
@@ -280,8 +283,13 @@ sin diseñar hoy una arquitectura distribuida.
 * La API utiliza inicialmente `200` para una operación atendida correctamente,
   `400` para errores del cliente gestionados explícitamente por la aplicación y
   `500` para errores internos del servidor. Los errores automáticos de
-  validación de FastAPI/Pydantic conservan el estado HTTP `422`. El código HTTP
+  validación conservan el estado HTTP `422` y el JSON `detail` observado en
+  FastAPI/Pydantic. El código HTTP
   no reemplaza el `op_status` propio de la aplicación.
+* Conservar errores JSON `404`/`405`, validación de path/query/body/headers,
+  campos adicionales prohibidos y distinción entre omisión y `null`. No agregar
+  CORS ni autenticación real en E1. `/docs`, `/redoc`, `/openapi.json` y su ruta
+  auxiliar de OAuth son herramientas de FastAPI excluidas de la migración.
 
 ---
 
@@ -329,10 +337,9 @@ Reglas de ejecución:
 * Leer el archivo completo para comprender el rumbo general antes de trabajar en un paso.
 * Ejecutar únicamente el paso que el usuario solicite expresamente en el chat.
 * No adelantar pasos posteriores aunque parezcan necesarios o convenientes.
-* Al implementar un grupo de endpoints, avanzar también la parte correspondiente
-  del paso de documentación en `doc/app_reports/api_rest/api_documentation.md`, siguiendo
-  el template y manteniendo sincronizados URL, método, contrato y códigos de
-  operación con el código implementado.
+* Actualizar la documentación de endpoints solo por pedido explícito del usuario.
+  Cuando lo solicite, mantener
+  sincronizados URL, método, contrato y códigos con el código implementado.
 * En la documentación, titular cada endpoint con el formato
   ``### `MÉTODO /ruta` ``. Usar `Response:` para los ejemplos de salida, sin
   calificarlos como mocks.
@@ -344,6 +351,22 @@ Reglas de ejecución:
 ---
 
 ## Reportes de testing y desarrollo
+
+**Política de documentación:** crear o actualizar documentación únicamente por
+pedido explícito del usuario. Terminar un paso o cerrar `IA Workflow/task.md`
+no autoriza por sí solo a documentar. Esto incluye README, documentación de API,
+diseños y reportes. Esta regla prevalece sobre indicaciones previas de
+documentación automática, incremental o al cierre.
+
+Al finalizar el último paso de `IA Workflow/task.md`, recordar al usuario que
+puede actualizar la documentación y preguntarle si quiere hacerlo. Esperar su
+respuesta antes de crear o modificar documentación.
+
+La documentación del proyecto debe describir el sistema y su uso, de forma
+independiente de la metodología de trabajo: no incluir épicas, sprints, números
+de pasos ni estados del backlog. La planificación queda en `IA Workflow/`.
+Mantener la documentación breve, sin duplicar información ni crear archivos
+innecesarios. Esta política no impide implementar y ejecutar pruebas.
 
 La documentación técnica de la aplicación se centraliza en `doc/app_reports/`.
 El contrato de la API REST se mantiene en
@@ -371,8 +394,8 @@ actualizarlo cuando el pedido sea una continuación. Respetar una ubicación o
 un formato diferente si el usuario lo indica explícitamente.
 
 Mantener los reportes concisos y proporcionales al pedido. No generar un
-reporte por cada prueba rutinaria: crearlo cuando lo solicite el usuario o el
-paso en ejecución de `IA Workflow/task.md`. La respuesta del chat debe enlazar
+reporte por cada prueba rutinaria. Aplicar la política de documentación anterior.
+La respuesta del chat debe enlazar
 el documento creado o actualizado. Los reportes no reemplazan el backlog ni
 autorizan a implementar los cambios que describen.
 
