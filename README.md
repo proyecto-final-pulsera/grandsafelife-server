@@ -75,18 +75,3 @@ Propuesta para autenticar requests de Flutter mediante tokens de Firebase.
 #### [Reglas de arquitectura y trabajo](AGENTS.md)
 
 Responsabilidades de cada módulo y pautas para implementar y documentar cambios.
-
-### IA Workflow
-
-La planificación local se mantiene en `IA Workflow/task.md` y
-`IA Workflow/epics.md`, excluidos de Git. Para iniciar una planificación nueva,
-copiar los ejemplos a esos nombres. Cada paso se ejecuta por separado cuando se
-solicita.
-
-#### [Plantilla de tareas](<IA Workflow/task.example.md>)
-
-Ejemplo para organizar los pasos de implementación de una etapa.
-
-#### [Plantilla de épicas](<IA Workflow/epics.example.md>)
-
-Ejemplo para registrar objetivos y líneas de trabajo pendientes.
