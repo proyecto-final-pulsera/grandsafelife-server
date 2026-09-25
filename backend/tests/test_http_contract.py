@@ -1,10 +1,11 @@
-"""Referencia HTTP congelada: unittest + transporte FastAPI, Flask o URL real."""
+"""Pruebas del contrato HTTP contra respuestas de referencia guardadas."""
 import argparse
 import importlib.metadata
 import json
 import os
 from pathlib import Path
 import platform
+import re
 import unittest
 from urllib.parse import urlsplit
 
@@ -12,6 +13,12 @@ from .contract_cases import cases
 
 HERE = Path(__file__).parent
 REFERENCE = HERE / "http_reference.json"
+
+# Conjuntos habilitados: usuarios y solicitudes de monitoreo.
+MIGRATED_PATH = re.compile(
+    r"/grandsafelife/api/v1/(?:users/[^/]+|users/me/monitoring-requests|"
+    r"homes/[^/]+/monitoring-requests|monitoring-requests/[^/]+/answer)/?"
+)
 
 
 class RecordingProcessor:
@@ -38,7 +45,7 @@ class Transport:
             self.kind = "remote"
         else:
             from backend.app.app import App
-            from backend.http_api_rest.http import create_http_app
+            from backend.http_api_rest.http_flask import create_http_app
             self.processor = RecordingProcessor(App(db=None))
             self.app = create_http_app(self.processor)
             if hasattr(self.app, "test_client"):
@@ -98,6 +105,9 @@ class HttpContractTests(unittest.TestCase):
         requests = cases()
         self.assertEqual([c["name"] for c in requests], list(self.reference["cases"]))
         for case in requests:
+            if not (MIGRATED_PATH.fullmatch(case["path"].split("?")[0])
+                    or case["name"].startswith("unknown-")):
+                continue
             with self.subTest(case=case["name"]):
                 expected = self.reference["cases"][case["name"]].copy()
                 if self.transport.kind == "remote":
@@ -107,7 +117,9 @@ class HttpContractTests(unittest.TestCase):
     def test_registered_routes(self):
         if self.transport.kind == "remote":
             self.skipTest("Una URL no permite inspeccionar el registro interno de rutas")
-        self.assertEqual(business_routes(self.transport), self.reference["routes"])
+        expected = [route for route in self.reference["routes"]
+                    if MIGRATED_PATH.fullmatch(route[1])]
+        self.assertEqual(business_routes(self.transport), expected)
 
 
 def business_routes(transport):

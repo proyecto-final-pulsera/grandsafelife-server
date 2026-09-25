@@ -403,6 +403,11 @@ autorizan a implementar los cambios que describen.
 
 ## Principios de desarrollo
 
+* Los comentarios y docstrings del código fuente describen su funcionamiento
+  actual, sin referencias a Docker, FastAPI ni justificaciones de compatibilidad
+  con implementaciones anteriores. Solo conservar referencias puntuales cuando
+  sean necesarias en un TODO u otra nota técnica específica.
+
 * Mantener módulos pequeños y con responsabilidades claras.
 * Mantener los endpoints delgados y la lógica de negocio en `app`.
 * Mantener Firebase y Firestore dentro de `database`.
