@@ -33,6 +33,12 @@ El backend se mantiene inicialmente como un monolito modular desplegado en un ú
 
 ## Documentación
 
+### Preparar el entorno de desarrollo
+
+En Windows, consultar la [guía de instalación para desarrolladores](doc/scripts/readme.md).
+Incluye las herramientas y dependencias que instala el script, el comando para
+ejecutarlo como administrador y el uso del entorno virtual Python.
+
 El modelo externo está registrado como submódulo en
 `backend/fall_detection/model`. Después de clonar el servidor, ejecutar
 `git submodule update --init --recursive` desde la raíz del repositorio.
