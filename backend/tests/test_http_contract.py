@@ -5,7 +5,6 @@ import json
 import os
 from pathlib import Path
 import platform
-import re
 import unittest
 from urllib.parse import urlsplit
 
@@ -13,16 +12,6 @@ from .contract_cases import cases
 
 HERE = Path(__file__).parent
 REFERENCE = HERE / "http_reference.json"
-
-# Conjuntos habilitados
-MIGRATED_PATH = re.compile(
-    r"/grandsafelife/api/v1/(?:users/[^/]+|users/me/monitoring-requests|"
-    r"homes(?:/[^/]+)?|homes/[^/]+/monitoring-requests|monitoring-requests/[^/]+/answer|"
-    r"fall-detection/requests(?:/[^/]+)?|devices/[^/]+(?:/association|/location)?|"
-    r"users/[^/]+/devices|homes/[^/]+/devices|"
-    r"devices/[^/]+/stats/(?:daily(?:/last-week)?|monthly(?:/previous)?))/?"
-)
-
 
 class RecordingProcessor:
     def __init__(self, app):
@@ -108,9 +97,6 @@ class HttpContractTests(unittest.TestCase):
         requests = cases()
         self.assertEqual([c["name"] for c in requests], list(self.reference["cases"]))
         for case in requests:
-            if not (MIGRATED_PATH.fullmatch(case["path"].split("?")[0])
-                    or case["name"].startswith("unknown-")):
-                continue
             with self.subTest(case=case["name"]):
                 expected = self.reference["cases"][case["name"]].copy()
                 if self.transport.kind == "remote":
@@ -120,8 +106,7 @@ class HttpContractTests(unittest.TestCase):
     def test_registered_routes(self):
         if self.transport.kind == "remote":
             self.skipTest("Una URL no permite inspeccionar el registro interno de rutas")
-        expected = [route for route in self.reference["routes"]
-                    if MIGRATED_PATH.fullmatch(route[1])]
+        expected = self.reference["routes"]
         self.assertEqual(business_routes(self.transport), expected)
 
 
