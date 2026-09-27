@@ -1,10 +1,8 @@
 """Pruebas del contrato HTTP contra respuestas de referencia guardadas."""
-import argparse
-import importlib.metadata
 import json
 import os
 from pathlib import Path
-import platform
+import re
 import unittest
 from urllib.parse import urlsplit
 
@@ -40,13 +38,8 @@ class Transport:
             from backend.http_api_rest.http import create_http_app
             self.processor = RecordingProcessor(App(db=None))
             self.app = create_http_app(self.processor)
-            if hasattr(self.app, "test_client"):
-                self.kind = "flask"
-                self.client = self.app.test_client()
-            else:
-                from fastapi.testclient import TestClient
-                self.kind = "fastapi"
-                self.client = TestClient(self.app, follow_redirects=False)
+            self.kind = "flask"
+            self.client = self.app.test_client()
 
     def request(self, case):
         kwargs = {k: v for k, v in case.items() if k in ("headers", "json", "content")}
@@ -111,40 +104,11 @@ class HttpContractTests(unittest.TestCase):
 
 
 def business_routes(transport):
-    if transport.kind == "flask":
-        import re
-        return sorted([method, re.sub(r"<(?:[^:>]+:)?([^>]+)>", r"{\1}", rule.rule)]
-                      for rule in transport.app.url_map.iter_rules()
-                      for method in rule.methods - {"HEAD", "OPTIONS"}
-                      if rule.rule.startswith("/grandsafelife/"))
-    # OpenAPI expands included routers even in versions that store them lazily.
-    return sorted([method.upper(), path] for path, item in transport.app.openapi()["paths"].items()
-                  for method in item if method in {"get", "post", "put", "patch", "delete"})
-
-
-def capture():
-    if REFERENCE.exists():
-        raise SystemExit("La referencia ya existe: no sobrescribir automáticamente durante la migración.")
-    transport = Transport()
-    try:
-        if transport.kind != "fastapi":
-            raise SystemExit("La captura inicial requiere FastAPI local.")
-        data = {"python": platform.python_version(), "versions": {
-            name: importlib.metadata.version(name) for name in ("fastapi", "starlette", "pydantic", "httpx")
-        }, "routes": business_routes(transport), "cases": {}}
-        for case in cases():
-            data["cases"][case["name"]] = transport.request(case)
-        REFERENCE.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        print(f"Capturados {len(data['cases'])} casos y {len(data['routes'])} operaciones")
-    finally:
-        transport.close()
+    return sorted([method, re.sub(r"<(?:[^:>]+:)?([^>]+)>", r"{\1}", rule.rule)]
+                  for rule in transport.app.url_map.iter_rules()
+                  for method in rule.methods - {"HEAD", "OPTIONS"}
+                  if rule.rule.startswith("/grandsafelife/"))
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--capture", action="store_true")
-    args = parser.parse_args()
-    if args.capture:
-        capture()
-    else:
-        unittest.main(argv=[__file__])
+    unittest.main()

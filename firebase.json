@@ -23,10 +23,7 @@
         "**/backend/tests/**",
         "**/backend/fall_detection/model/test/**",
         "**/backend/fall_detection/model/app/models/**",
-        "**/backend/fall_detection/model/requirements.txt",
-        "**/backend/requirements.txt",
-        "**/backend/Dockerfile",
-        "docker-compose.yml"
+        "**/backend/fall_detection/model/requirements.txt"
       ]
     }
   ]

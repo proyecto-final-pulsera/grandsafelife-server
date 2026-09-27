@@ -3,7 +3,6 @@
 !/.gitignore
 !/AGENTS.md
 !/README.md
-!/docker-compose.yml
 !/main.py
 !/requirements.txt
 !/firebase.json
