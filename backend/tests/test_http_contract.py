@@ -18,7 +18,8 @@ REFERENCE = HERE / "http_reference.json"
 MIGRATED_PATH = re.compile(
     r"/grandsafelife/api/v1/(?:users/[^/]+|users/me/monitoring-requests|"
     r"homes(?:/[^/]+)?|homes/[^/]+/monitoring-requests|monitoring-requests/[^/]+/answer|"
-    r"fall-detection/requests(?:/[^/]+)?)/?"
+    r"fall-detection/requests(?:/[^/]+)?|devices/[^/]+(?:/association|/location)?|"
+    r"users/[^/]+/devices|homes/[^/]+/devices)/?"
 )
 
 
