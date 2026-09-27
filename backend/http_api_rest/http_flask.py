@@ -8,6 +8,7 @@ from .http_endpoints_monitoring_requests_flask import MonitoringRequestsEndpoint
 from .http_endpoints_homes_flask import HomesEndpoints
 from .http_endpoints_fall_detection_flask import FallDetectionEndpoints
 from .http_endpoints_devices_flask import DevicesEndpoints
+from .http_endpoints_devices_stats_flask import DevicesStatsEndpoints
 from .http_validation import RequestValidationError
 
 def create_http_app(http_processor):
@@ -19,6 +20,7 @@ def create_http_app(http_processor):
     app.register_blueprint(HomesEndpoints(http_processor).blueprint)
     app.register_blueprint(FallDetectionEndpoints(http_processor).blueprint)
     app.register_blueprint(DevicesEndpoints(http_processor).blueprint)
+    app.register_blueprint(DevicesStatsEndpoints(http_processor).blueprint)
 
     # Deshabilitar HEAD: consulta los encabezados del recurso sin devolver body.
     for rule in app.url_map.iter_rules():
