@@ -70,6 +70,9 @@ firebase deploy --only functions:backend:api --project grand-safe-band
 - [Configuración de runtime y escalado](https://firebase.google.com/docs/functions/manage-functions).
 - [Restricciones de ejecución y estado](https://firebase.google.com/docs/functions/tips).
 
+TODO Explicar basado en ejemplo
+- [Ejemplo didáctico](https://firebase.google.com/docs/functions/get-started?hl=es-419)
+
 ## Desarrollos futuros
 
 El flujo previsto es enviar datos con `POST /grandsafelife/api/v1/fall-detection/requests`, recibir un `request_id` y consultar luego con `GET /grandsafelife/api/v1/fall-detection/requests/{request_id}`.
