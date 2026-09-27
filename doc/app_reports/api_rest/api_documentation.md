@@ -1,5 +1,18 @@
 # Documentación API REST
 
+La API está alojada en Firebase Cloud Functions, en la función `api`.
+URL base a la que se agregan las rutas completas de este documento:
+
+```text
+https://us-central1-grand-safe-band.cloudfunctions.net/api
+```
+
+Por ejemplo, `GET /grandsafelife/api/v1/users/me` se invoca en:
+
+```text
+https://us-central1-grand-safe-band.cloudfunctions.net/api/grandsafelife/api/v1/users/me
+```
+
 ## 1 - Listado de endpoints
 
 | CONJUNTO | MÉTODO | URL | DESCRIPCIÓN |
@@ -50,15 +63,21 @@ Todos los endpoints documentados requieren este header:
 Authorization: Bearer <firebase_id_token>
 ```
 
-Todas las respuestas reportan:
+Las respuestas de las operaciones reportan:
+
 - `op_status`
 - `brief`
-- `resp` (Cuando corrresponde)
+- `resp` (cuando corresponde)
 
-Los bodies, parámetros y headers se validan mediante FastAPI/Pydantic. Cuando
-un request no cumple el esquema declarado, FastAPI responde automáticamente con
-HTTP `422 Unprocessable Entity` y no ejecuta la función `process_*`.
+La capa HTTP valida los bodies, parámetros y headers según las reglas de cada endpoint, utilizando Pydantic para los modelos.  Si un request no cumple esas reglas, responde con HTTP `422 Unprocessable Entity` y una lista de errores en `detail`, sin ejecutar la operación.
 
+### Redirecciones
+
+Las rutas se invocan sin barra final. Si se agrega una barra y existe la ruta sin ella, la API responde con `307 Temporary Redirect`, cuerpo vacío y el encabezado `Location` con la URL de destino, conservando el query string.
+
+El cliente debe seguir `Location` conservando el método HTTP y el body original; no debe intentar interpretar la respuesta 307 como JSON. Para la misma API, debe conservar también el encabezado `Authorization`. Si la biblioteca HTTP no sigue redirecciones automáticamente, hay que habilitarlo o repetir la petición en la URL indicada. Usar directamente las rutas sin barra final evita este paso.
+
+En el despliegue, el alojamiento puede agregar `Content-Type: text/html` a esa respuesta vacía; no significa que haya un documento HTML que procesar.
 
 ## 4 - Endpoints "Users"
 
@@ -840,7 +859,7 @@ Response:
 - Body: no aplica.
 - Implementación actual: cualquier ID válido devuelve pedido en curso; todavía
   no se consulta su existencia. Los demás resultados quedan declarados en el
-  contrato HTTP y OpenAPI para la integración posterior.
+  contrato HTTP documentado aquí para la integración posterior.
 - Un ID inválido o la ausencia del header produce HTTP `422`.
 - Conocer un ID no otorgará permisos: el caso de uso deberá verificar acceso.
 
