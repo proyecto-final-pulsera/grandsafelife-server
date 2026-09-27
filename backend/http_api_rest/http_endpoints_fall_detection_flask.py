@@ -1,8 +1,8 @@
 """Contratos HTTP de detección de caídas; integración con process_* pendiente."""
 
-from typing import Annotated, Literal
+from typing import Literal
 
-from fastapi import APIRouter, Header, Path
+from flask import Blueprint
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, RootModel
 
 from .api_op_codes import (
@@ -13,6 +13,12 @@ from .api_op_codes import (
     API_OP_PROCESS_READY,
     build_api_response,
 )
+from .http_validation import validate_request
+
+
+#==========================
+#Reglas de validación
+#==========================
 
 
 class FallDetectionInput(RootModel[dict[str, JsonValue]]):
@@ -73,8 +79,9 @@ class FailedResponse(BaseModel):
     resp: FallDetectionErrorResponse
 
 
-AuthorizationHeader = Annotated[str, Header(alias="Authorization")]
-RequestId = Annotated[int, Path(gt=0)]
+#==========================
+#Endpoints
+#==========================
 
 
 class FallDetectionEndpoints:
@@ -82,37 +89,27 @@ class FallDetectionEndpoints:
 
     def __init__(self, http_processor):
         self.http_processor = http_processor
-        self.router = APIRouter(
-            prefix="/grandsafelife/api/v1/fall-detection/requests",
-            tags=["fall-detection"],
+        self.blueprint = Blueprint(
+            "fall_detection", __name__,
+            url_prefix="/grandsafelife/api/v1/fall-detection/requests",
         )
         self._register_routes()
 
     def _register_routes(self):
-        @self.router.post("", response_model=AcceptedResponse)
-        def create_fall_detection_request(
-            request: FallDetectionInput,
-            authorization: AuthorizationHeader,
-        ):
+        @self.blueprint.post("")
+        def create_fall_detection_request():
+            authorization, body, _ = validate_request(body_model=FallDetectionInput)
             # TODO: Quitar el bypass cuando se implemente el caso de uso.
             # result = self.http_processor.process_create_fall_detection_request(
-            #     authorization, request.model_dump()
+            #     authorization, body.model_dump()
             # )
             # Respuesta fija: todavía no se registra ni procesa ningún pedido.
             return build_api_response(API_OP_OK, {"request_id": 1})
 
-        @self.router.get(
-            "/{request_id}",
-            response_model=InProgressResponse | ReadyResponse,
-            responses={
-                400: {"model": NotFoundResponse},
-                500: {"model": FailedResponse},
-            },
-        )
-        def get_fall_detection_request(
-            request_id: RequestId,
-            authorization: AuthorizationHeader,
-        ):
+        @self.blueprint.get("/<request_id>")
+        def get_fall_detection_request(request_id):
+            authorization, _, _ = validate_request(path_model=RequestReference)
+            request_id = RequestReference.model_validate({"request_id": request_id}).request_id
             # TODO: Quitar el bypass cuando se implemente el caso de uso.
             # result = self.http_processor.process_get_fall_detection_request(
             #     authorization, request_id

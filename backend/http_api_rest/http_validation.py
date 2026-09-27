@@ -1,5 +1,5 @@
 """Mecanismo común de validación, invocado explícitamente por cada endpoint.
-Cada endpoint aporta los modelos con las reglas de body y query string.
+Cada endpoint aporta los modelos con las reglas de path, body y query string.
 Exige la presencia de Authorization, sin verificar Bearer ni el token.
 Devuelve los datos validados para continuar el flujo en la API.
 Ante errores, lanza una excepción que el manejador HTTP convierte en 422."""
@@ -41,7 +41,7 @@ def _missing(location):
 
 
 def _validate(model, value, source, errors):
-    """Retorna el modelo validado o acumula sus errores con el origen body/query."""
+    """Retorna el modelo validado o acumula sus errores con el origen path/body/query."""
     try:
         return model.model_validate(value, from_attributes=True)
     except ValidationError as exc:
@@ -53,12 +53,12 @@ def _validate(model, value, source, errors):
             errors.append(error)
 
 
-def validate_request(*, body_model=None, query_model=None):
+def validate_request(*, body_model=None, query_model=None, path_model=None):
     """
-    @brief Comprueba la presencia de Authorization y valida body/query según los modelos del endpoint.
+    @brief Comprueba Authorization y valida path/body/query según los modelos del endpoint.
     @retval  retorna (auth, body, query).
 
-    Body y query se validan solo si se proporciona su modelo. Ante errores,
+    Path, body y query se validan solo si se proporciona su modelo. Ante errores,
     lanza RequestValidationError para impedir que el endpoint continúe.
     """
     errors = []
@@ -75,6 +75,10 @@ def validate_request(*, body_model=None, query_model=None):
                     raise RequestValidationError([_json_invalid(exc)]) from exc
             else:
                 body = raw.decode("utf-8", errors="replace")
+
+    # Validación de parámetros de la ruta.
+    if path_model is not None:
+        _validate(path_model, request.view_args, "path", errors)
 
     # Validación de query string en URL
     if query_model is not None:
