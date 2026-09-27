@@ -14,10 +14,10 @@ from .contract_cases import cases
 HERE = Path(__file__).parent
 REFERENCE = HERE / "http_reference.json"
 
-# Conjuntos habilitados: usuarios y solicitudes de monitoreo.
+# Conjuntos habilitados
 MIGRATED_PATH = re.compile(
     r"/grandsafelife/api/v1/(?:users/[^/]+|users/me/monitoring-requests|"
-    r"homes/[^/]+/monitoring-requests|monitoring-requests/[^/]+/answer)/?"
+    r"homes(?:/[^/]+)?|homes/[^/]+/monitoring-requests|monitoring-requests/[^/]+/answer)/?"
 )
 
 
