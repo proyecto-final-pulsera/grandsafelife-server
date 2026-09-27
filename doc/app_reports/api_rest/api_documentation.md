@@ -857,9 +857,7 @@ Response:
 - Descripción: consulta el pedido identificado por `request_id`.
 - Parámetro: `request_id` es un entero positivo generado por el servidor.
 - Body: no aplica.
-- Implementación actual: cualquier ID válido devuelve pedido en curso; todavía
-  no se consulta su existencia. Los demás resultados quedan declarados en el
-  contrato HTTP documentado aquí para la integración posterior.
+- Implementación actual: cualquier ID válido devuelve pedido en curso; todavía no se consulta su existencia. Los demás resultados quedan declarados en el contrato HTTP documentado aquí para la integración posterior.
 - Un ID inválido o la ausencia del header produce HTTP `422`.
 - Conocer un ID no otorgará permisos: el caso de uso deberá verificar acceso.
 
