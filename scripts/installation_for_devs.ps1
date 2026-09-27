@@ -1,18 +1,18 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 #Requires -RunAsAdministrator
 <#
 .SYNOPSIS
 Prepara Windows para desarrollar Grand Safe Life Server.
 .DESCRIPTION
 Ejecutar como administrador desde la cuenta que se usara para desarrollar.
-Instala herramientas faltantes mediante WinGet y prepara .venv con Python 3.13.
+Instala herramientas faltantes mediante WinGet y prepara venv con Python 3.13.
 Requiere Internet y acepta los acuerdos de los paquetes indicados.
 No despliega, inicia sesion en Firebase, modifica contratos ni hace commit/push.
 Los entornos virtuales incompatibles se conservan en una carpeta de respaldo.
 .EXAMPLE
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\doc\scripts\installation_for_devs.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\installation_for_devs.ps1
 .EXAMPLE
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\doc\scripts\installation_for_devs.ps1 -ToolsOnly
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\installation_for_devs.ps1 -ToolsOnly
 .LINK
 https://learn.microsoft.com/windows/package-manager/winget/
 .LINK
@@ -26,7 +26,7 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
-$repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$repoRoot = Split-Path -Parent $PSScriptRoot
 
 function Invoke-Checked {
     param([string]$Executable, [string[]]$Arguments)
@@ -149,7 +149,7 @@ if (-not $ToolsOnly) {
             Invoke-Checked 'git.exe' @('submodule', 'update', '--init', '--recursive')
         }
 
-        $venv = Join-Path $repoRoot '.venv'
+        $venv = Join-Path $repoRoot 'venv'
         $venvPython = Join-Path $venv 'Scripts\python.exe'
         $validVenv = $false
         if (Test-Path -LiteralPath $venvPython) {
@@ -176,9 +176,9 @@ if (-not $ToolsOnly) {
             Invoke-Checked $python @('-m', 'venv', $venv)
         }
         Invoke-Checked $venvPython @('-m', 'pip', 'install', '--upgrade', 'pip')
-        Invoke-Checked $venvPython @('-m', 'pip', 'install', '-r', 'backend/requirements.txt', '-r', 'backend/tests/requirements.txt', 'Flask>=3.1,<4', 'firebase-functions')
+        Invoke-Checked $venvPython @('-m', 'pip', 'install', '-r', 'backend/tests/requirements.txt')
         Invoke-Checked $venvPython @('-m', 'pip', 'check')
-        Invoke-Checked $venvPython @('-c', 'import flask, pydantic, firebase_functions, fastapi, httpx')
+        Invoke-Checked $venvPython @('-c', 'import flask, pydantic, firebase_functions, httpx')
         if (-not $SkipTests) {
             if ($env:CONTRACT_BASE_URL) { throw 'Quite CONTRACT_BASE_URL para ejecutar las pruebas exclusivamente en proceso local.' }
             Invoke-Checked $venvPython @('-m', 'backend.tests.test_http_contract')
@@ -186,5 +186,5 @@ if (-not $ToolsOnly) {
     } finally { Pop-Location }
 }
 
-Write-Host 'Preparacion completada. Abra una terminal nueva y seleccione .venv\Scripts\python.exe en VS Code.' -ForegroundColor Green
+Write-Host 'Preparacion completada. Abra una terminal nueva y seleccione venv\Scripts\python.exe en VS Code.' -ForegroundColor Green
 Write-Host 'Para autenticar Firebase cuando lo necesite: firebase login'

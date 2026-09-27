@@ -10,6 +10,7 @@
 !/.python-version
 !/backend/
 !/doc/
+!/scripts/
 !/IA Workflow/
 
 # Planificación activa local; solo se comparten los ejemplos.

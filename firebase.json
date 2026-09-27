@@ -19,6 +19,7 @@
         "**/credentials*",
         "**/*service*account*",
         "**/doc/**",
+        "**/scripts/**",
         "**/IA Workflow/**",
         "**/backend/tests/**",
         "**/backend/fall_detection/model/test/**",

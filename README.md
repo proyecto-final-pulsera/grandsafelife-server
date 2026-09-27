@@ -33,51 +33,5 @@ El backend se mantiene inicialmente como un monolito modular desplegado en un ú
 
 ## Documentación
 
-### Preparar el entorno de desarrollo
-
-En Windows, consultar la [guía de instalación para desarrolladores](doc/scripts/readme.md).
-Incluye las herramientas y dependencias que instala el script, el comando para
-ejecutarlo como administrador y el uso del entorno virtual Python.
-
-El modelo externo está registrado como submódulo en
-`backend/fall_detection/model`. Después de clonar el servidor, ejecutar
-`git submodule update --init --recursive` desde la raíz del repositorio.
-Por ahora se utiliza un contrato con mock; no se carga el modelo real.
-
-La capa `http_api_rest` recibe solicitudes y `app` coordina los casos de uso, con los
-objetos de negocio en `app/domain`.
-
-Para ejecutar fuera de Docker, desde la raíz del repositorio y con las
-dependencias instaladas: `python -m uvicorn backend.main:app --port 8000`.
-
-### Reportes de Aplicación
-
-#### [Contrato HTTP](doc/app_reports/api_rest/api_documentation.md)
-
-Endpoints de la API REST, formatos de entrada y salida y códigos de operación.
-
-### Reportes a Desarrolladores
-
-#### [Interfaz del detector de caídas](doc/dev_reports/guido_readme_interfaz.md)
-
-Contrato y condiciones de entrega del detector para integrarlo con el servidor.
-
-### Diseño
-
-#### [Manager de detección de caídas](doc/dev_desig/fall_detection_manager.md)
-
-Contrato del manager, respuestas mock y alternativas pendientes de ejecución.
-
-#### [Diseño de la lógica de negocio](doc/dev_desig/domain_logic.md)
-
-Organización de casos de uso, validaciones, contexto autenticado y resultados.
-
-#### [Investigación de autenticación con Firebase](doc/dev_desig/to_do_auth.md)
-
-Propuesta para autenticar requests de Flutter mediante tokens de Firebase.
-
-### Reglas de trabajo
-
-#### [Reglas de arquitectura y trabajo](AGENTS.md)
-
-Responsabilidades de cada módulo y pautas para implementar y documentar cambios.
+Consultar el [índice de documentación](doc/README.md) para acceder a los reportes
+de la aplicación, la guía de instalación, los diseños y los reportes de tests.
