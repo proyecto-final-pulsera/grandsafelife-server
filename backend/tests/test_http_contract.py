@@ -59,6 +59,10 @@ class Transport:
             body = raw
         # Compare semantic HTTP headers; omit deployment-specific Date/Server/length.
         headers = {key: response.headers[key] for key in ("content-type", "allow", "location") if key in response.headers}
+        # El alojamiento puede agregar este tipo a una redirección sin contenido.
+        if (self.kind == "remote" and response.status_code == 307 and raw == ""
+                and headers.get("content-type") == "text/html"):
+            headers.pop("content-type")
         if "location" in headers:
             location = urlsplit(headers["location"])
             base_path = urlsplit(self.base_url).path
