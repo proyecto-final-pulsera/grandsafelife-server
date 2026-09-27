@@ -3,7 +3,7 @@
 ## Reportes de la app
 
 - [API REST](app_reports/api_rest/api_documentation.md)
-- [Cloud Functions](app_reports/deploy/google_cloude_functions.md) (pendiente de contenido)
+- [Cloud Functions](app_reports/deploy/google_cloud_functions.md)
 - [Notificaciones](app_reports/notificaciones/servicio_fcm.md) (pendiente de contenido)
 
 ## Ideas tentativas sobre desarrollos posteriores

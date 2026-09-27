@@ -22,10 +22,10 @@ Las personas monitoras utilizan la aplicación desarrollada por Guido. Desde ell
 
 ```text
 Pulsera ──► Hub ───────────────┐
-                              │
+                               │
 Pulsera ──► App persona mayor ─┼──► API REST ──► App
-                              │                    ├── Firebase
-App de monitores ─────────────┘                    ├── Machine Learning
+                               │                   ├── Firebase
+App de monitores ──────────────┘                   ├── Machine Learning
                                                    └── Notificaciones
 ```
 
@@ -33,5 +33,11 @@ El backend se mantiene inicialmente como un monolito modular desplegado en un ú
 
 ## Documentación
 
-Consultar el [índice de documentación](doc/README.md) para acceder a los reportes
-de la aplicación, la guía de instalación, los diseños y los reportes de tests.
+Consultar el [índice de documentación](doc/README.md) para acceder a los diferentes reportes:
+
+- Reportes de la app
+- Ideas tentativas sobre desarrollos posteriores
+- Reportes a otros desarrolladores
+- Reportes de tests
+
+Entre otros
