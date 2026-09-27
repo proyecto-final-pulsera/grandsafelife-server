@@ -37,7 +37,7 @@ class Transport:
             self.kind = "remote"
         else:
             from backend.app.app import App
-            from backend.http_api_rest.http_flask import create_http_app
+            from backend.http_api_rest.http import create_http_app
             self.processor = RecordingProcessor(App(db=None))
             self.app = create_http_app(self.processor)
             if hasattr(self.app, "test_client"):

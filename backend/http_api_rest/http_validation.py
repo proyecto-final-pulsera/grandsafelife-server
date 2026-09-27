@@ -97,7 +97,7 @@ def validate_request(*, body_model=None, query_model=None, path_model=None):
         else:
             body = _validate(body_model, body, "body", errors)
 
-    # El manejador registrado en http_flask.py convierte esta excepción en HTTP 422.
+    # El manejador registrado en http.py convierte esta excepción en HTTP 422.
     if errors:
         raise RequestValidationError(errors)
 

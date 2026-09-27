@@ -3,13 +3,13 @@
 from flask import Flask, Response, request
 from werkzeug.exceptions import MethodNotAllowed, NotFound
 
-from .http_endpoints_users_flask import UsersEndpoints
-from .http_endpoints_monitoring_requests_flask import MonitoringRequestsEndpoints
-from .http_endpoints_homes_flask import HomesEndpoints
-from .http_endpoints_fall_detection_flask import FallDetectionEndpoints
-from .http_endpoints_devices_flask import DevicesEndpoints
-from .http_endpoints_devices_stats_flask import DevicesStatsEndpoints
-from .http_endpoints_alarms_flask import AlarmsEndpoints
+from .http_endpoints_users import UsersEndpoints
+from .http_endpoints_monitoring_requests import MonitoringRequestsEndpoints
+from .http_endpoints_homes import HomesEndpoints
+from .http_endpoints_fall_detection import FallDetectionEndpoints
+from .http_endpoints_devices import DevicesEndpoints
+from .http_endpoints_devices_stats import DevicesStatsEndpoints
+from .http_endpoints_alarms import AlarmsEndpoints
 from .http_validation import RequestValidationError
 
 def create_http_app(http_processor):
