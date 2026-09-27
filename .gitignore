@@ -4,6 +4,11 @@
 !/AGENTS.md
 !/README.md
 !/docker-compose.yml
+!/main.py
+!/requirements.txt
+!/firebase.json
+!/.firebaserc
+!/.python-version
 !/backend/
 !/doc/
 !/IA Workflow/
@@ -31,3 +36,8 @@ __pycache__/
 .coverage
 htmlcov/
 *.log
+.firebase/
+*.pem
+*.key
+credentials*.json
+*service*account*.json

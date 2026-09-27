@@ -1,0 +1,33 @@
+{
+  "functions": [
+    {
+      "source": ".",
+      "codebase": "backend",
+      "runtime": "python313",
+      "disallowLegacyRuntimeConfig": true,
+      "ignore": [
+        "**/.*",
+        "**/venv/**",
+        "**/__pycache__/**",
+        "**/*.pyc",
+        "**/*.log",
+        "**/*.local",
+        "**/*.md",
+        "**/*.json",
+        "**/*.pem",
+        "**/*.key",
+        "**/credentials*",
+        "**/*service*account*",
+        "**/doc/**",
+        "**/IA Workflow/**",
+        "**/backend/tests/**",
+        "**/backend/fall_detection/model/test/**",
+        "**/backend/fall_detection/model/app/models/**",
+        "**/backend/fall_detection/model/requirements.txt",
+        "**/backend/requirements.txt",
+        "**/backend/Dockerfile",
+        "docker-compose.yml"
+      ]
+    }
+  ]
+}
