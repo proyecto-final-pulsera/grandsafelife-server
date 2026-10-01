@@ -47,8 +47,8 @@ class App:
     def process_create_user(self, authorization, user_data):
         return self.users.process_create_user(authorization, user_data)
 
-    def process_update_current_user(self, authorization, user_data):
-        return self.users.process_update_current_user(authorization, user_data)
+    def process_update_user(self, authorization, user_id, user_data):
+        return self.users.process_update_user(authorization, user_id, user_data)
 
     def process_get_home_by_id(self, authorization, home_id):
         return self.homes.process_get_home_by_id(authorization, home_id)

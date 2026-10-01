@@ -1,7 +1,9 @@
 """Reglas de validación y endpoints HTTP de usuarios."""
 
 from flask import Blueprint
-from pydantic import BaseModel, ConfigDict, Field
+from typing import Literal
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic_core import PydanticCustomError
 
 from .api_op_codes import API_OP_OK, build_api_response
 from .http_validation import validate_request
@@ -16,7 +18,14 @@ class UserProfileInput(BaseModel):
 
     name: str = Field(min_length=1)
     email: str = Field(min_length=1)
-    avatar: str = Field(min_length=1)
+    avatar: str | None = Field(default=None, min_length=1)
+
+
+class UserHomeInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    home_name: str = Field(min_length=1)
+    role: Literal["admin", "observer", "pending"]
 
 
 class UserProfileUpdate(BaseModel):
@@ -25,6 +34,14 @@ class UserProfileUpdate(BaseModel):
     name: str | None = Field(default=None, min_length=1)
     email: str | None = Field(default=None, min_length=1)
     avatar: str | None = Field(default=None, min_length=1)
+    homes: dict[str, UserHomeInput] | None = None
+
+    @field_validator("name", "email", "homes")
+    @classmethod
+    def reject_explicit_null(cls, value):
+        if value is None:
+            raise PydanticCustomError("null_not_allowed", "El campo no admite null")
+        return value
 
 
 class UserEmailQuery(BaseModel):
@@ -60,11 +77,11 @@ class UsersEndpoints:
             result = self.http_processor.process_create_user(authorization, body.model_dump())
             return build_api_response(API_OP_OK, result)
 
-        @self.blueprint.patch("/me")
-        def update_current_user():
+        @self.blueprint.patch("/<user_id>")
+        def update_user(user_id):
             authorization, body, _ = validate_request(body_model=UserProfileUpdate)
-            self.http_processor.process_update_current_user(
-                authorization, body.model_dump(exclude_unset=True),
+            self.http_processor.process_update_user(
+                authorization, user_id, body.model_dump(exclude_unset=True),
             )
             return build_api_response(API_OP_OK)
 

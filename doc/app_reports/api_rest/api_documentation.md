@@ -15,35 +15,35 @@ https://us-central1-grand-safe-band.cloudfunctions.net/api/grandsafelife/api/v1/
 
 ## 1 - Listado de endpoints
 
-| CONJUNTO | MÉTODO | URL | DESCRIPCIÓN |
-| --- | --- | --- | --- |
-| Users | GET | `/grandsafelife/api/v1/users/me` | Recupera el perfil del usuario autenticado. |
-| Users | GET | `/grandsafelife/api/v1/users/{user_id}` | Recupera información pública de otro usuario por UID. |
-| Users | GET | `/grandsafelife/api/v1/users/by-email?email={email}` | Recupera información pública de otro usuario por email. |
-| Users | POST | `/grandsafelife/api/v1/users/me` | Crea el perfil del usuario autenticado. |
-| Users | PATCH | `/grandsafelife/api/v1/users/me` | Actualiza parcialmente el perfil del usuario autenticado. |
-| Homes | GET | `/grandsafelife/api/v1/homes/{home_id}` | Recupera un hogar accesible por ID. |
-| Homes | POST | `/grandsafelife/api/v1/homes` | Crea un hogar para el usuario autenticado. |
-| Homes | PATCH | `/grandsafelife/api/v1/homes/{home_id}` | Actualiza parcialmente un hogar. |
-| Homes | DELETE | `/grandsafelife/api/v1/homes/{home_id}` | Elimina un hogar y sus relaciones. |
-| Monitoring requests | POST | `/grandsafelife/api/v1/homes/{home_id}/monitoring-requests` | Invita a un usuario a participar de un hogar. |
-| Monitoring requests | GET | `/grandsafelife/api/v1/users/me/monitoring-requests` | Recupera las solicitudes pendientes recibidas. |
-| Monitoring requests | POST | `/grandsafelife/api/v1/monitoring-requests/{request_id}/answer` | Acepta o rechaza una solicitud pendiente. |
-| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}` | Recupera un dispositivo accesible por ID. |
-| Devices | POST | `/grandsafelife/api/v1/devices/{device_id}/association` | Asocia un dispositivo existente a un hogar. |
-| Devices | PATCH | `/grandsafelife/api/v1/devices/{device_id}` | Actualiza la configuración editable de un dispositivo. |
-| Devices | DELETE | `/grandsafelife/api/v1/devices/{device_id}/association` | Libera un dispositivo sin eliminarlo. |
-| Devices | GET | `/grandsafelife/api/v1/users/{owner_id}/devices` | Recupera dispositivos por administrador propietario. |
-| Devices | GET | `/grandsafelife/api/v1/homes/{home_id}/devices` | Recupera dispositivos asociados a un hogar. |
-| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}/location` | Recupera la última ubicación de un dispositivo. |
-| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily?date={YYYY-MM-DD}` | Recupera métricas diarias. |
-| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly?month={YYYY-MM}` | Recupera agregados mensuales. |
-| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly/previous` | Recupera los agregados del mes anterior. |
-| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily/last-week` | Recupera métricas de los últimos siete días. |
-| Alarms | GET | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Recupera las alarmas de un dispositivo. |
-| Alarms | PUT | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Reemplaza la configuración completa de alarmas. |
-| Fall detection | POST | `/grandsafelife/api/v1/fall-detection/requests` | Envía un chunk y obtiene el ID del pedido. |
-| Fall detection | GET | `/grandsafelife/api/v1/fall-detection/requests/{request_id}` | Consulta el estado y resultado del pedido. |
+| CONJUNTO | MÉTODO | URL | DESCRIPCIÓN | App Guido | Le pega a la api? | Falencia | Function |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Users | GET | `/grandsafelife/api/v1/users/me` | Recupera el perfil del usuario autenticado. | No | - | - | - |
+| Users | GET | `/grandsafelife/api/v1/users/{user_id}` | Recupera el perfil completo de un usuario por UID. | Sí | Sí | - | getUserByID |
+| Users | GET | `/grandsafelife/api/v1/users/by-email?email={email}` | Recupera el perfil completo de un usuario por email. | Sí | Sí | - | getUserByEmail |
+| Users | POST | `/grandsafelife/api/v1/users/me` | Crea el perfil del usuario autenticado. | Sí | Sí | - | createUser |
+| Users | PATCH | `/grandsafelife/api/v1/users/{affected_user_id}` | Actualiza el perfil y los hogares del usuario afectado. | Sí | Sí | - | updateUser |
+| Homes | GET | `/grandsafelife/api/v1/homes/{home_id}` | Recupera un hogar accesible por ID. | Sí | Sí | Pendiente | getHomeByID |
+| Homes | POST | `/grandsafelife/api/v1/homes` | Crea un hogar para el usuario autenticado. | Sí | No | Pendiente | createHome |
+| Homes | PATCH | `/grandsafelife/api/v1/homes/{home_id}` | Actualiza parcialmente un hogar. | Sí | No | Pendiente | updateHome |
+| Homes | DELETE | `/grandsafelife/api/v1/homes/{home_id}` | Elimina un hogar y sus relaciones. | Sí | Sí | Pendiente | deleteHome |
+| Monitoring requests | POST | `/grandsafelife/api/v1/homes/{home_id}/monitoring-requests` | Invita a un usuario a participar de un hogar. | No | - | - | - |
+| Monitoring requests | GET | `/grandsafelife/api/v1/users/me/monitoring-requests` | Recupera las solicitudes pendientes recibidas. | No | - | - | - |
+| Monitoring requests | POST | `/grandsafelife/api/v1/monitoring-requests/{request_id}/answer` | Acepta o rechaza una solicitud pendiente. | No | - | - | - |
+| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}` | Recupera un dispositivo accesible por ID. | Sí | Sí | Pendiente | getDeviceByID |
+| Devices | POST | `/grandsafelife/api/v1/devices/{device_id}/association` | Asocia un dispositivo existente a un hogar. | Sí | No | Pendiente | createDevice / updateDevice |
+| Devices | PATCH | `/grandsafelife/api/v1/devices/{device_id}` | Actualiza la configuración editable de un dispositivo. | Sí | No | Pendiente | updateDevice |
+| Devices | DELETE | `/grandsafelife/api/v1/devices/{device_id}/association` | Libera un dispositivo sin eliminarlo. | Sí | Sí | Pendiente | deleteDevice |
+| Devices | GET | `/grandsafelife/api/v1/users/{owner_id}/devices` | Recupera dispositivos por administrador propietario. | Sí | Sí | Pendiente | queryDevicesByOwner |
+| Devices | GET | `/grandsafelife/api/v1/homes/{home_id}/devices` | Recupera dispositivos asociados a un hogar. | Sí | Sí | Pendiente | queryDevicesByHome |
+| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}/location` | Recupera la última ubicación de un dispositivo. | Sí | No | Pendiente | getLocationByDevice |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily?date={YYYY-MM-DD}` | Recupera métricas diarias. | Sí | Sí | Pendiente | getDailyMetrics |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly?month={YYYY-MM}` | Recupera agregados mensuales. | Sí | No | Pendiente | getMonthlyAggregates |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly/previous` | Recupera los agregados del mes anterior. | Sí | No | Pendiente | getPreviousMonthAggregates |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily/last-week` | Recupera métricas de los últimos siete días. | Sí | Sí | Pendiente | getLastWeekMetrics |
+| Alarms | GET | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Recupera las alarmas de un dispositivo. | Sí | Sí | Pendiente | getAlarmsByDeviceId |
+| Alarms | PUT | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Reemplaza la configuración completa de alarmas. | Sí | No | Pendiente | setAlarmsByDeviceId |
+| Fall detection | POST | `/grandsafelife/api/v1/fall-detection/requests` | Envía un chunk y obtiene el ID del pedido. | No | - | - | - |
+| Fall detection | GET | `/grandsafelife/api/v1/fall-detection/requests/{request_id}` | Consulta el estado y resultado del pedido. | No | - | - | - |
 
 ## 2 - Tabla de códigos de operación
 
@@ -114,7 +114,8 @@ Response:
 
 ### `GET /grandsafelife/api/v1/users/{user_id}`
 
-- Descripción: recupera solamente información pública del usuario objetivo.
+- Descripción: recupera el perfil completo del usuario identificado por `user_id`, incluidos sus hogares y roles.
+- Parámetro: `user_id` es el UID del usuario consultado.
 - Body: no aplica.
 
 Response:
@@ -124,17 +125,36 @@ Response:
   "op_status": 0,
   "brief": "Operation completed successfully",
   "resp": {
+    "id": "user_002",
     "name": "María Gómez",
     "email": "maria.gomez@example.com",
-    "avatar": "https://example.com/avatars/user_002.png"
+    "avatar": "https://example.com/avatars/user_002.png",
+    "created_at": 1783700000000,
+    "updated_at": 1783882718000,
+    "homes": {
+      "home_id_001": {
+        "home_name": "Residencia Principal",
+        "role": "admin"
+      },
+      "home_id_002": {
+        "home_name": "Casa de Campo",
+        "role": "pending"
+      }
+    }
   }
 }
 ```
 
+`id` coincide con el `user_id` solicitado. `created_at` y `updated_at` son
+enteros en milisegundos desde Unix epoch. `avatar` puede ser `null`.
+`homes` es un objeto indexado por ID de hogar; si el usuario no tiene hogares,
+se devuelve `{}`.
+
 ### `GET /grandsafelife/api/v1/users/by-email?email={email}`
 
-- Descripción: recupera solamente información pública del usuario correspondiente al email.
-- Body: no aplica. `email` se envía como query parameter.
+- Descripción: recupera el perfil completo del usuario identificado por `email`, incluidos sus hogares y roles.
+- Parámetro: `email` se envía como query parameter.
+- Body: no aplica.
 
 Response:
 
@@ -143,16 +163,34 @@ Response:
   "op_status": 0,
   "brief": "Operation completed successfully",
   "resp": {
+    "id": "user_002",
     "name": "María Gómez",
     "email": "maria.gomez@example.com",
-    "avatar": "https://example.com/avatars/user_002.png"
+    "avatar": "https://example.com/avatars/user_002.png",
+    "created_at": 1783700000000,
+    "updated_at": 1783882718000,
+    "homes": {
+      "home_id_001": {
+        "home_name": "Residencia Principal",
+        "role": "admin"
+      },
+      "home_id_002": {
+        "home_name": "Casa de Campo",
+        "role": "pending"
+      }
+    }
   }
 }
 ```
 
+`id` es el UID del usuario encontrado; `email` coincide con el email consultado. `created_at` y `updated_at` son
+enteros en milisegundos desde Unix epoch. `avatar` puede ser `null`.
+`homes` es un objeto indexado por ID de hogar; si el usuario no tiene hogares,
+se devuelve `{}`.
+
 ### `POST /grandsafelife/api/v1/users/me`
 
-- Descripción: crea el perfil asociado al UID contenido en el token verificado.
+- Descripción: solicita la creación del perfil del usuario de la sesión.
 
 Body:
 
@@ -176,18 +214,27 @@ Response:
 }
 ```
 
-El body no admite UID, `homes`, `created_at` ni `updated_at`.
+El body requiere `name` y `email` no vacíos. `avatar` puede omitirse o ser `null`.
+No admite UID, `homes`, `created_at` ni `updated_at`: el servidor administra
+la identidad, las fechas y los hogares iniciales. Actualmente devuelve el ID fijo
+`firebase_uid_mock`, sin verificar el token ni persistir datos.
 
-### `PATCH /grandsafelife/api/v1/users/me`
+### `PATCH /grandsafelife/api/v1/users/{affected_user_id}`
 
-- Descripción: actualiza parcialmente los campos editables del perfil autenticado.
+- Descripción: actualiza parcialmente el perfil y los hogares del usuario identificado por `affected_user_id`.
+- Parámetro: `affected_user_id` es el UID del usuario cuyo perfil se modifica. Puede ser el usuario de la sesión o un tercero, por ejemplo el invitado al agregarlo a un hogar o el miembro al desvincularlo.
+- El token Bearer identifica a quien realiza la solicitud; `affected_user_id` identifica a quien recibe el cambio. Ambos pueden ser distintos.
+- Cada request modifica un solo usuario. `homes` contiene los hogares de ese usuario, no una lista de usuarios invitados. Cuando Flutter elimina un hogar, envía una actualización por cada miembro afectado.
 
 Body de ejemplo:
 
 ```json
 {
   "name": "Juan P. Pérez",
-  "avatar": "https://example.com/avatars/user_001_updated.png"
+  "avatar": null,
+  "homes": {
+    "home_id_001": {"home_name": "Residencia Principal", "role": "admin"}
+  }
 }
 ```
 
@@ -200,8 +247,13 @@ Response:
 }
 ```
 
-El body admite solamente `name`, `email` y `avatar`. No permite modificar UID,
-`homes`, `created_at` ni `updated_at`.
+El body admite `name`, `email`, `avatar` y `homes`. Los campos omitidos se conservan.
+`name` y `email` deben ser strings no vacíos; `avatar: null` elimina el avatar.
+`homes` reemplaza el mapa completo de hogares y `{}` lo vacía. Cada entrada
+contiene `home_name` y `role` (`admin`, `observer` o `pending`); no admite `null`.
+El UID se indica en la ruta; el body no admite `id`, `created_at` ni `updated_at`.
+Actualmente la operación confirma la recepción sin persistir cambios ni verificar
+el token. La validación de permisos sobre el usuario y sus hogares queda pendiente.
 
 ## 5 - Endpoints "Homes"
 

@@ -18,7 +18,7 @@ def cases():
         ("GET", "/users/by-email?email=maria.gomez@example.com", None),
         ("GET", "/users/user_002", None),
         ("POST", "/users/me", {"name": "Juan", "email": "juan@example.com", "avatar": "avatar"}),
-        ("PATCH", "/users/me", {"name": "Nuevo"}),
+        ("PATCH", "/users/user_002", {"name": "Nuevo"}),
         ("GET", "/homes/home_7f3a92", None),
         ("POST", "/homes", {"name": "Casa"}),
         ("PATCH", "/homes/home_7f3a92", {"name": "Nueva"}),

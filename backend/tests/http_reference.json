@@ -85,7 +85,7 @@
     ],
     [
       "PATCH",
-      "/grandsafelife/api/v1/users/me"
+      "/grandsafelife/api/v1/users/{user_id}"
     ],
     [
       "POST",
@@ -182,9 +182,22 @@
         "op_status": 0,
         "brief": "Operation completed successfully",
         "resp": {
-          "name": "María Gómez",
+          "homes": {
+            "home_id_001": {
+              "home_name": "Residencia Principal",
+              "role": "admin"
+            },
+            "home_id_002": {
+              "home_name": "Casa de Campo",
+              "role": "pending"
+            }
+          },
+          "avatar": "https://example.com/avatars/user_002.png",
           "email": "maria.gomez@example.com",
-          "avatar": "https://example.com/avatars/user_002.png"
+          "created_at": 1783700000000,
+          "updated_at": 1783882718000,
+          "id": "user_002",
+          "name": "María Gómez"
         }
       },
       "calls": [
@@ -227,9 +240,22 @@
         "op_status": 0,
         "brief": "Operation completed successfully",
         "resp": {
+          "id": "user_002",
           "name": "María Gómez",
           "email": "maria.gomez@example.com",
-          "avatar": "https://example.com/avatars/user_002.png"
+          "avatar": "https://example.com/avatars/user_002.png",
+          "created_at": 1783700000000,
+          "updated_at": 1783882718000,
+          "homes": {
+            "home_id_001": {
+              "home_name": "Residencia Principal",
+              "role": "admin"
+            },
+            "home_id_002": {
+              "home_name": "Casa de Campo",
+              "role": "pending"
+            }
+          }
         }
       },
       "calls": [
@@ -391,15 +417,6 @@
             ],
             "msg": "Field required",
             "input": {}
-          },
-          {
-            "type": "missing",
-            "loc": [
-              "body",
-              "avatar"
-            ],
-            "msg": "Field required",
-            "input": {}
           }
         ]
       },
@@ -459,9 +476,10 @@
       },
       "calls": [
         {
-          "method": "process_update_current_user",
+          "method": "process_update_user",
           "args": [
             "Bearer contract-test",
+            "user_002",
             {
               "name": "Nuevo"
             }
@@ -558,9 +576,10 @@
       },
       "calls": [
         {
-          "method": "process_update_current_user",
+          "method": "process_update_user",
           "args": [
             "Bearer contract-test",
+            "user_002",
             {}
           ],
           "kwargs": {}
@@ -611,26 +630,24 @@
       "calls": []
     },
     "patch-4-name-null": {
-      "status": 200,
+      "body": {
+        "detail": [
+          {
+            "loc": [
+              "body",
+              "name"
+            ],
+            "msg": "El campo no admite null",
+            "type": "null_not_allowed",
+            "input": null
+          }
+        ]
+      },
+      "status": 422,
+      "calls": [],
       "headers": {
         "content-type": "application/json"
-      },
-      "body": {
-        "op_status": 0,
-        "brief": "Operation completed successfully"
-      },
-      "calls": [
-        {
-          "method": "process_update_current_user",
-          "args": [
-            "Bearer contract-test",
-            {
-              "name": null
-            }
-          ],
-          "kwargs": {}
-        }
-      ]
+      }
     },
     "patch-4-name-empty": {
       "status": 422,
@@ -3233,9 +3250,22 @@
         "op_status": 0,
         "brief": "Operation completed successfully",
         "resp": {
-          "name": "María Gómez",
+          "homes": {
+            "home_id_001": {
+              "home_name": "Residencia Principal",
+              "role": "admin"
+            },
+            "home_id_002": {
+              "home_name": "Casa de Campo",
+              "role": "pending"
+            }
+          },
+          "avatar": "https://example.com/avatars/user_002.png",
           "email": "not-an-email",
-          "avatar": "https://example.com/avatars/user_002.png"
+          "created_at": 1783700000000,
+          "updated_at": 1783882718000,
+          "id": "user_002",
+          "name": "María Gómez"
         }
       },
       "calls": [
@@ -4097,19 +4127,6 @@
             "input": 5
           },
           {
-            "type": "missing",
-            "loc": [
-              "body",
-              "avatar"
-            ],
-            "msg": "Field required",
-            "input": {
-              "name": "",
-              "email": 5,
-              "extra": true
-            }
-          },
-          {
             "type": "extra_forbidden",
             "loc": [
               "body",
@@ -4167,9 +4184,22 @@
         "op_status": 0,
         "brief": "Operation completed successfully",
         "resp": {
-          "name": "María Gómez",
+          "homes": {
+            "home_id_001": {
+              "home_name": "Residencia Principal",
+              "role": "admin"
+            },
+            "home_id_002": {
+              "home_name": "Casa de Campo",
+              "role": "pending"
+            }
+          },
+          "avatar": "https://example.com/avatars/user_002.png",
           "email": "last",
-          "avatar": "https://example.com/avatars/user_002.png"
+          "created_at": 1783700000000,
+          "updated_at": 1783882718000,
+          "id": "user_002",
+          "name": "María Gómez"
         }
       },
       "calls": [
