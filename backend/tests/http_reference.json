@@ -763,7 +763,8 @@
           "args": [
             "Bearer contract-test",
             {
-              "name": "Casa"
+              "name": "Casa",
+              "members": {}
             }
           ],
           "kwargs": {}
@@ -1075,27 +1076,24 @@
       "calls": []
     },
     "patch-7-name-null": {
-      "status": 200,
+      "calls": [],
+      "body": {
+        "detail": [
+          {
+            "loc": [
+              "body",
+              "name"
+            ],
+            "input": null,
+            "msg": "El campo no admite null",
+            "type": "null_not_allowed"
+          }
+        ]
+      },
       "headers": {
         "content-type": "application/json"
       },
-      "body": {
-        "op_status": 0,
-        "brief": "Operation completed successfully"
-      },
-      "calls": [
-        {
-          "method": "process_update_home",
-          "args": [
-            "Bearer contract-test",
-            "home_7f3a92",
-            {
-              "name": null
-            }
-          ],
-          "kwargs": {}
-        }
-      ]
+      "status": 422
     },
     "patch-7-name-empty": {
       "status": 422,

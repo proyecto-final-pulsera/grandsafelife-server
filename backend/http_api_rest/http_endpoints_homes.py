@@ -1,7 +1,9 @@
 """Reglas de validación y endpoints HTTP de hogares."""
 
 from flask import Blueprint
-from pydantic import BaseModel, ConfigDict, Field
+from typing import Literal
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic_core import PydanticCustomError
 
 from .api_op_codes import API_OP_OK, build_api_response
 from .http_validation import validate_request
@@ -11,12 +13,20 @@ from .http_validation import validate_request
 #Reglas de validación
 #==========================
 
+class HomeMemberInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    email: str = Field(min_length=1)
+    role: Literal["admin", "observer", "pending"]
+
+
 class HomeCreateInput(BaseModel):
     """Campos que la aplicación puede proporcionar al crear un hogar."""
 
     model_config = ConfigDict(extra="forbid")
 
     name: str = Field(min_length=1)
+    members: dict[str, HomeMemberInput] = Field(default_factory=dict)
 
 
 class HomeUpdateInput(BaseModel):
@@ -25,6 +35,14 @@ class HomeUpdateInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     name: str | None = Field(default=None, min_length=1)
+    members: dict[str, HomeMemberInput] | None = None
+
+    @field_validator("name", "members")
+    @classmethod
+    def reject_explicit_null(cls, value):
+        if value is None:
+            raise PydanticCustomError("null_not_allowed", "El campo no admite null")
+        return value
 
 
 #==========================

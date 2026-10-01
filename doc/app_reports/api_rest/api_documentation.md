@@ -15,35 +15,35 @@ https://us-central1-grand-safe-band.cloudfunctions.net/api/grandsafelife/api/v1/
 
 ## 1 - Listado de endpoints
 
-| CONJUNTO | MÉTODO | URL | DESCRIPCIÓN | App Guido | Le pega a la api? | Falencia | Function |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Users | GET | `/grandsafelife/api/v1/users/me` | Recupera el perfil del usuario autenticado. | No | - | - | - |
-| Users | GET | `/grandsafelife/api/v1/users/{user_id}` | Recupera el perfil completo de un usuario por UID. | Sí | Sí | - | getUserByID |
-| Users | GET | `/grandsafelife/api/v1/users/by-email?email={email}` | Recupera el perfil completo de un usuario por email. | Sí | Sí | - | getUserByEmail |
-| Users | POST | `/grandsafelife/api/v1/users/me` | Crea el perfil del usuario autenticado. | Sí | Sí | - | createUser |
-| Users | PATCH | `/grandsafelife/api/v1/users/{affected_user_id}` | Actualiza el perfil y los hogares del usuario afectado. | Sí | Sí | - | updateUser |
-| Homes | GET | `/grandsafelife/api/v1/homes/{home_id}` | Recupera un hogar accesible por ID. | Sí | Sí | Pendiente | getHomeByID |
-| Homes | POST | `/grandsafelife/api/v1/homes` | Crea un hogar para el usuario autenticado. | Sí | No | Pendiente | createHome |
-| Homes | PATCH | `/grandsafelife/api/v1/homes/{home_id}` | Actualiza parcialmente un hogar. | Sí | No | Pendiente | updateHome |
-| Homes | DELETE | `/grandsafelife/api/v1/homes/{home_id}` | Elimina un hogar y sus relaciones. | Sí | Sí | Pendiente | deleteHome |
-| Monitoring requests | POST | `/grandsafelife/api/v1/homes/{home_id}/monitoring-requests` | Invita a un usuario a participar de un hogar. | No | - | - | - |
-| Monitoring requests | GET | `/grandsafelife/api/v1/users/me/monitoring-requests` | Recupera las solicitudes pendientes recibidas. | No | - | - | - |
-| Monitoring requests | POST | `/grandsafelife/api/v1/monitoring-requests/{request_id}/answer` | Acepta o rechaza una solicitud pendiente. | No | - | - | - |
-| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}` | Recupera un dispositivo accesible por ID. | Sí | Sí | Pendiente | getDeviceByID |
-| Devices | POST | `/grandsafelife/api/v1/devices/{device_id}/association` | Asocia un dispositivo existente a un hogar. | Sí | No | Pendiente | createDevice / updateDevice |
-| Devices | PATCH | `/grandsafelife/api/v1/devices/{device_id}` | Actualiza la configuración editable de un dispositivo. | Sí | No | Pendiente | updateDevice |
-| Devices | DELETE | `/grandsafelife/api/v1/devices/{device_id}/association` | Libera un dispositivo sin eliminarlo. | Sí | Sí | Pendiente | deleteDevice |
-| Devices | GET | `/grandsafelife/api/v1/users/{owner_id}/devices` | Recupera dispositivos por administrador propietario. | Sí | Sí | Pendiente | queryDevicesByOwner |
-| Devices | GET | `/grandsafelife/api/v1/homes/{home_id}/devices` | Recupera dispositivos asociados a un hogar. | Sí | Sí | Pendiente | queryDevicesByHome |
-| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}/location` | Recupera la última ubicación de un dispositivo. | Sí | No | Pendiente | getLocationByDevice |
-| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily?date={YYYY-MM-DD}` | Recupera métricas diarias. | Sí | Sí | Pendiente | getDailyMetrics |
-| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly?month={YYYY-MM}` | Recupera agregados mensuales. | Sí | No | Pendiente | getMonthlyAggregates |
-| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly/previous` | Recupera los agregados del mes anterior. | Sí | No | Pendiente | getPreviousMonthAggregates |
-| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily/last-week` | Recupera métricas de los últimos siete días. | Sí | Sí | Pendiente | getLastWeekMetrics |
-| Alarms | GET | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Recupera las alarmas de un dispositivo. | Sí | Sí | Pendiente | getAlarmsByDeviceId |
-| Alarms | PUT | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Reemplaza la configuración completa de alarmas. | Sí | No | Pendiente | setAlarmsByDeviceId |
-| Fall detection | POST | `/grandsafelife/api/v1/fall-detection/requests` | Envía un chunk y obtiene el ID del pedido. | No | - | - | - |
-| Fall detection | GET | `/grandsafelife/api/v1/fall-detection/requests/{request_id}` | Consulta el estado y resultado del pedido. | No | - | - | - |
+| CONJUNTO | MÉTODO | URL | DESCRIPCIÓN | App Guido | Le pega a la api? | Falencia | Function | Tested |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Users | GET | `/grandsafelife/api/v1/users/me` | Recupera el perfil del usuario autenticado. | No | - | - | - | TO DO |
+| Users | GET | `/grandsafelife/api/v1/users/{user_id}` | Recupera el perfil completo de un usuario por UID. | Sí | Sí | - | getUserByID | OK |
+| Users | GET | `/grandsafelife/api/v1/users/by-email?email={email}` | Recupera el perfil completo de un usuario por email. | Sí | Sí | - | getUserByEmail | TO DO |
+| Users | POST | `/grandsafelife/api/v1/users/me` | Crea el perfil del usuario autenticado. | Sí | Sí | - | createUser | TO DO |
+| Users | PATCH | `/grandsafelife/api/v1/users/{affected_user_id}` | Actualiza el perfil y los hogares del usuario afectado. | Sí | Sí | - | updateUser | OK |
+| Homes | GET | `/grandsafelife/api/v1/homes/{home_id}` | Recupera un hogar accesible por ID. | Sí | Sí | - | getHomeByID | OK |
+| Homes | POST | `/grandsafelife/api/v1/homes` | Crea un hogar con sus miembros iniciales. | Sí | Sí | - | createHome | OK |
+| Homes | PATCH | `/grandsafelife/api/v1/homes/{home_id}` | Actualiza parcialmente un hogar. | Sí | Sí | - | updateHome | OK |
+| Homes | DELETE | `/grandsafelife/api/v1/homes/{home_id}` | Elimina el hogar indicado. | Sí | Sí | - | deleteHome | OK |
+| Monitoring requests | POST | `/grandsafelife/api/v1/homes/{home_id}/monitoring-requests` | Invita a un usuario a participar de un hogar. | No | - | - | - | TO DO |
+| Monitoring requests | GET | `/grandsafelife/api/v1/users/me/monitoring-requests` | Recupera las solicitudes pendientes recibidas. | No | - | - | - | TO DO |
+| Monitoring requests | POST | `/grandsafelife/api/v1/monitoring-requests/{request_id}/answer` | Acepta o rechaza una solicitud pendiente. | No | - | - | - | TO DO |
+| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}` | Recupera un dispositivo accesible por ID. | Sí | Sí | Pendiente | getDeviceByID | TO DO |
+| Devices | POST | `/grandsafelife/api/v1/devices/{device_id}/association` | Asocia un dispositivo existente a un hogar. | Sí | No | Pendiente | createDevice / updateDevice | TO DO |
+| Devices | PATCH | `/grandsafelife/api/v1/devices/{device_id}` | Actualiza la configuración editable de un dispositivo. | Sí | No | Pendiente | updateDevice | TO DO |
+| Devices | DELETE | `/grandsafelife/api/v1/devices/{device_id}/association` | Libera un dispositivo sin eliminarlo. | Sí | Sí | Pendiente | deleteDevice | TO DO |
+| Devices | GET | `/grandsafelife/api/v1/users/{owner_id}/devices` | Recupera dispositivos por administrador propietario. | Sí | Sí | Pendiente | queryDevicesByOwner | TO DO |
+| Devices | GET | `/grandsafelife/api/v1/homes/{home_id}/devices` | Recupera dispositivos asociados a un hogar. | Sí | Sí | Pendiente | queryDevicesByHome | TO DO |
+| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}/location` | Recupera la última ubicación de un dispositivo. | Sí | No | Pendiente | getLocationByDevice | TO DO |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily?date={YYYY-MM-DD}` | Recupera métricas diarias. | Sí | Sí | Pendiente | getDailyMetrics | TO DO |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly?month={YYYY-MM}` | Recupera agregados mensuales. | Sí | No | Pendiente | getMonthlyAggregates | TO DO |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly/previous` | Recupera los agregados del mes anterior. | Sí | No | Pendiente | getPreviousMonthAggregates | TO DO |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily/last-week` | Recupera métricas de los últimos siete días. | Sí | Sí | Pendiente | getLastWeekMetrics | TO DO |
+| Alarms | GET | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Recupera las alarmas de un dispositivo. | Sí | Sí | Pendiente | getAlarmsByDeviceId | TO DO |
+| Alarms | PUT | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Reemplaza la configuración completa de alarmas. | Sí | No | Pendiente | setAlarmsByDeviceId | TO DO |
+| Fall detection | POST | `/grandsafelife/api/v1/fall-detection/requests` | Envía un chunk y obtiene el ID del pedido. | No | - | - | - | TO DO |
+| Fall detection | GET | `/grandsafelife/api/v1/fall-detection/requests/{request_id}` | Consulta el estado y resultado del pedido. | No | - | - | - | TO DO |
 
 ## 2 - Tabla de códigos de operación
 
@@ -286,15 +286,22 @@ Response:
 }
 ```
 
+`created_at` y `updated_at` son enteros en milisegundos Unix. Flutter los convierte
+a `Timestamp` conservando su valor y agrega `id` desde la ruta. Los UID de
+`members` identifican a los integrantes del hogar; los del ejemplo son ficticios.
+
 ### `POST /grandsafelife/api/v1/homes`
 
-- Descripción: crea un hogar y agrega al usuario autenticado como administrador.
+- Descripción: crea un hogar con el nombre y los miembros iniciales enviados por la app.
 
 Body:
 
 ```json
 {
-  "name": "Residencia Principal"
+  "name": "Residencia Principal",
+  "members": {
+    "user_id_001": {"email": "juan.perez@example.com", "role": "admin"}
+  }
 }
 ```
 
@@ -308,8 +315,12 @@ Response:
 }
 ```
 
-El ID, los timestamps y el mapa inicial de miembros son responsabilidad del
-servidor. El body no permite enviar esos campos.
+El body admite `name` y `members`, indexado por UID de usuario. Cada miembro
+contiene `email` y `role` (`admin`, `observer` o `pending`). Si se omite `members`,
+se usa `{}`. Flutter envía al creador como administrador y actualiza su `homes`
+por separado. El servidor administra el ID y las fechas; el body no admite
+`id`, `created_at` ni `updated_at`. Actualmente retorna el ID fijo `home_id_001`
+sin persistir datos ni verificar el token.
 
 ### `PATCH /grandsafelife/api/v1/homes/{home_id}`
 
@@ -332,12 +343,15 @@ Response:
 }
 ```
 
-Este endpoint solamente admite `name`. Los miembros deberán gestionarse
-mediante las operaciones específicas de negocio.
+El body admite `name` y/o `members`; los campos omitidos se conservan.
+`members` reemplaza el mapa completo, `{}` lo vacía y `null` no se admite.
+Cada entrada contiene `email` y `role` (`admin`, `observer` o `pending`).
+`name` debe ser un string no vacío. ID y fechas no se admiten en el body.
+Actualmente confirma la recepción sin persistir cambios ni verificar el token.
 
 ### `DELETE /grandsafelife/api/v1/homes/{home_id}`
 
-- Descripción: elimina el hogar y sus referencias en los perfiles relacionados.
+- Descripción: elimina el hogar indicado. Flutter desvincula antes a sus miembros y libera sus dispositivos mediante llamadas separadas.
 - Body: no aplica.
 
 Response:
@@ -349,8 +363,8 @@ Response:
 }
 ```
 
-La implementación definitiva exigirá rol administrador y realizará toda la
-operación de manera consistente desde el servidor.
+Actualmente confirma la recepción sin persistir cambios ni verificar el token.
+La implementación persistente deberá validar rol administrador antes de borrar el hogar.
 
 ## 6 - Endpoints "Monitoring requests"
 
