@@ -1,9 +1,8 @@
-"""Usuarios: USERS_T1 a USERS_T6 del template original."""
+"""Usuarios: USERS_T1 a USERS_T8 del detalle de tests de API REST."""
 from unittest.mock import patch
 from backend.app.processes.process_users import UsersProcesses
 from backend.http_api_rest.http_endpoints_users import UsersEndpoints
 from base_api_test import BaseApiTest
-
 
 class UsersTests(BaseApiTest):
     endpoints_class = UsersEndpoints
@@ -83,3 +82,32 @@ class UsersTests(BaseApiTest):
             with self.subTest(query=query):
                 self.assert_rejected(self.client.get(f"{self.prefix}/by-email", headers=self.headers,
                                                     query_string=query))
+
+    def test_USERS_T7_get_user_by_email_not_found(self):
+        """Un usuario inexistente por email retorna null."""
+        email = "missing+test@example.com"
+        with patch.object(self.processor.process, "process_get_user_by_email", return_value=None):
+            response = self.client.get(f"{self.prefix}/by-email", headers=self.headers,
+                                       query_string={"email": email})
+        self.assert_success(response)
+        self.assertIn("resp", response.json)
+        self.assertIsNone(response.json["resp"])
+        self.assert_last_call("process_get_user_by_email", email)
+        self.assertEqual(len(self.processor.calls), 1)
+
+    def test_USERS_T8_create_and_update_user_with_empty_data(self):
+        """Crear y actualizar aceptan mapas vacíos sin agregar campos."""
+        for target in ("target", None):
+            with self.subTest(operation="create", user_id=target):
+                body = {"data": {}}
+                if target is not None:
+                    body["user_id"] = target
+                response = self.client.post(self.prefix, headers=self.headers, json=body)
+                self.assert_success(response)
+                self.assertEqual(response.json["resp"], {"user_id": target or "firebase_uid_mock"})
+                self.assert_last_call("process_create_user", {}, target)
+        with self.subTest(operation="update"):
+            response = self.client.patch(f"{self.prefix}/target", headers=self.headers, json={})
+            self.assert_success(response)
+            self.assertNotIn("resp", response.json)
+            self.assert_last_call("process_update_user", "target", {})

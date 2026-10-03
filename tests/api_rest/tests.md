@@ -7,19 +7,13 @@ python tests/api_rest/run_tests.py        # Todos los grupos registrados
 python tests/api_rest/run_tests.py users  # Solo usuarios
 ```
 
-## Propuesta de suites
+TODO Nico: Pendiente crear un usuairo de tests para testear contra firestore directamente
 
-Solo usuarios está implementado y verificado. Los demás casos son propuestas para revisión: no autorizan todavía declarar ni implementar métodos. Los nombres de grupos y archivos se unificarán al incorporar cada suite al ejecutor.
-
-Todas las rutas siguientes llevan el prefijo `/grandsafelife/api/v1`.
-
-Cada test comprueba el estado HTTP, el formato de respuesta y la llamada al process con sus argumentos correctos, sin pasar el token. Un request inválido debe devolver 422 con `detail` y no ejecutar el process. Se usan blueprints y processes locales con mocks, sin red ni Firebase. No se comprueban permisos ni autenticación real: actualmente solo se exige la presencia de Authorization.
-
-Cuando se simula un resultado vacío o inexistente, se sustituye puntualmente la respuesta del process; eso prueba el endpoint, no la persistencia. Los subcasos de una misma prueba se identifican con `subTest`.
+## Listado de Tests
 
 ### Usuarios — test_users.py
 
-Los seis casos actuales ya están implementados y pasaron. Se propone conservarlos:
+Los ocho casos de usuarios están implementados:
 
 - **USERS_T1** — `GET /users/{user_id}`: retornar el ID solicitado y fechas enteras en milisegundos; simular usuario inexistente y esperar `resp: null`.
 - **USERS_T2** — `GET /users/by-email?email=...`: conservar el email consultado, incluido `+`, y devolver el usuario encontrado.
@@ -27,9 +21,6 @@ Los seis casos actuales ya están implementados y pasaron. Se propone conservarl
 - **USERS_T4** — `PATCH /users/{user_id}`: conservar el usuario destino, nulos, campos adicionales y rutas con puntos; responder éxito sin `resp`.
 - **USERS_T5** — Los cuatro endpoints: rechazar requests sin Authorization.
 - **USERS_T6** — Rechazar email ausente o vacío, envoltorio de creación inválido, ID de creación vacío/no textual, campos extra del envoltorio y body de actualización que no sea objeto.
-
-Ampliaciones propuestas, todavía sin implementar:
-
 - **USERS_T7** — `GET /users/by-email`: simular usuario no encontrado y esperar `resp: null`.
 - **USERS_T8** — `POST /users` con `data: {}` y `PATCH /users/{user_id}` con `{}`: aceptar mapas vacíos y delegarlos sin agregar campos.
 

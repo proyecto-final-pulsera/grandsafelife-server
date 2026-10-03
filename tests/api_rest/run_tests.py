@@ -11,7 +11,7 @@ TESTS_GROUPS = {
     "users": "test_users",
     "homes": "test_homes",
     "devices": "test_devices",
-    "devices_stats": "test_devices_stats",
+    "devices_stats": "test_device_stats",
     "alarm": "test_alarms",
     }
 
