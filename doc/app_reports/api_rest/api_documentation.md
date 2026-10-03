@@ -15,31 +15,31 @@ https://us-central1-grand-safe-band.cloudfunctions.net/api/grandsafelife/api/v1/
 
 ## 1 - Listado de endpoints
 
-| CONJUNTO | MÉTODO | URL | DESCRIPCIÓN | App Guido | Le pega a la api? | Falencia | Function | Tested |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Users | GET | `/grandsafelife/api/v1/users/{user_id}` | Recupera el perfil completo de un usuario por UID. | Sí | Sí | - | getUserByID | |
-| Users | GET | `/grandsafelife/api/v1/users/by-email?email={email}` | Recupera el perfil completo de un usuario por email. | Sí | Sí | - | getUserByEmail | |
-| Users | POST | `/grandsafelife/api/v1/users` | Crea o reemplaza el documento de un usuario. | Sí | Sí | - | createUser | |
-| Users | PATCH | `/grandsafelife/api/v1/users/{affected_user_id}` | Actualiza el perfil y los hogares del usuario afectado. | Sí | Sí | - | updateUser | |
-| Homes | GET | `/grandsafelife/api/v1/homes/{home_id}` | Recupera un hogar accesible por ID. | Sí | Sí | - | getHomeByID | OK |
-| Homes | POST | `/grandsafelife/api/v1/homes` | Crea o reemplaza un documento de hogar. | Sí | Sí | - | createHome | OK |
-| Homes | PATCH | `/grandsafelife/api/v1/homes/{home_id}` | Actualiza parcialmente un hogar. | Sí | Sí | - | updateHome | OK |
-| Homes | DELETE | `/grandsafelife/api/v1/homes/{home_id}` | Elimina el hogar indicado. | Sí | Sí | - | deleteHome | OK |
-| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}` | Recupera un dispositivo accesible por ID. | Sí | Sí | - | getDeviceByID | |
-| Devices | POST | `/grandsafelife/api/v1/devices` | Crea o reemplaza un documento de dispositivo. | Sí | Sí | - | createDevice | |
-| Devices | PATCH | `/grandsafelife/api/v1/devices/{device_id}` | Actualiza la configuración editable de un dispositivo. | Sí | Sí | - | updateDevice | |
-| Devices | DELETE | `/grandsafelife/api/v1/devices/{device_id}` | Elimina el documento del dispositivo. | Sí | Sí | - | deleteDevice | |
-| Devices | GET | `/grandsafelife/api/v1/users/{owner_id}/devices` | Recupera dispositivos por administrador propietario. | Sí | Sí | - | queryDevicesByOwner | |
-| Devices | GET | `/grandsafelife/api/v1/homes/{home_id}/devices` | Recupera dispositivos asociados a un hogar. | Sí | Sí | - | queryDevicesByHome | |
-| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}/location` | Recupera la última ubicación de un dispositivo. | Sí | Sí | - | getLocationByDevice | |
-| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily?date={YYYY-MM-DD}` | Recupera métricas diarias. | Sí | Sí | Pendiente | getDailyMetrics | |
-| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly?month={YYYY-MM}` | Recupera agregados mensuales. | Sí | No | Pendiente | getMonthlyAggregates | |
-| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly/previous` | Recupera los agregados del mes anterior. | Sí | No | Pendiente | getPreviousMonthAggregates | |
-| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily/last-week` | Recupera métricas de los últimos siete días. | Sí | Sí | Pendiente | getLastWeekMetrics | |
-| Alarms | GET | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Recupera las alarmas de un dispositivo. | Sí | Sí | Pendiente | getAlarmsByDeviceId | |
-| Alarms | PUT | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Reemplaza la configuración completa de alarmas. | Sí | No | Pendiente | setAlarmsByDeviceId | |
-| Fall detection | POST | `/grandsafelife/api/v1/fall-detection/requests` | Envía un chunk y obtiene el ID del pedido. | No | - | - | - | |
-| Fall detection | GET | `/grandsafelife/api/v1/fall-detection/requests/{request_id}` | Consulta el estado y resultado del pedido. | No | - | - | - | |
+| CONJUNTO | MÉTODO | URL | DESCRIPCIÓN | App consumidora | Le pega a la api? | Function | Tested |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Users | GET | `/grandsafelife/api/v1/users/{user_id}` | Recupera el perfil completo de un usuario por UID. | Monitores | Sí | getUserByID |  |
+| Users | GET | `/grandsafelife/api/v1/users/by-email?email={email}` | Recupera el perfil completo de un usuario por email. | Monitores | Sí | getUserByEmail |  |
+| Users | POST | `/grandsafelife/api/v1/users` | Crea o reemplaza el documento de un usuario. | Monitores | Sí | createUser |  |
+| Users | PATCH | `/grandsafelife/api/v1/users/{user_id}` | Actualiza el perfil y los hogares del usuario afectado. | Monitores | Sí | updateUser |  |
+| Homes | GET | `/grandsafelife/api/v1/homes/{home_id}` | Recupera un hogar accesible por ID. | Monitores | Sí | getHomeByID | OK |
+| Homes | POST | `/grandsafelife/api/v1/homes` | Crea o reemplaza un documento de hogar. | Monitores | Sí | createHome | OK |
+| Homes | PATCH | `/grandsafelife/api/v1/homes/{home_id}` | Actualiza parcialmente un hogar. | Monitores | Sí | updateHome | OK |
+| Homes | DELETE | `/grandsafelife/api/v1/homes/{home_id}` | Elimina el hogar indicado. | Monitores | Sí | deleteHome | OK |
+| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}` | Recupera un dispositivo accesible por ID. | Monitores | Sí | getDeviceByID |  |
+| Devices | POST | `/grandsafelife/api/v1/devices` | Crea o reemplaza un documento de dispositivo. | Monitores | Sí | createDevice |  |
+| Devices | PATCH | `/grandsafelife/api/v1/devices/{device_id}` | Actualiza la configuración editable de un dispositivo. | Monitores | Sí | updateDevice |  |
+| Devices | DELETE | `/grandsafelife/api/v1/devices/{device_id}` | Elimina el documento del dispositivo. | Monitores | Sí | deleteDevice |  |
+| Devices | GET | `/grandsafelife/api/v1/users/{owner_id}/devices` | Recupera dispositivos por administrador propietario. | Monitores | Sí | queryDevicesByOwner |  |
+| Devices | GET | `/grandsafelife/api/v1/homes/{home_id}/devices` | Recupera dispositivos asociados a un hogar. | Monitores | Sí | queryDevicesByHome |  |
+| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}/location` | Recupera la última ubicación de un dispositivo. | Monitores | Sí | getLocationByDevice |  |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily?date={YYYY-MM-DD}` | Recupera métricas diarias. | Monitores | Sí | getDailyMetrics |  |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly?month={YYYY-MM}` | Recupera agregados mensuales. | Monitores | Sí | getMonthlyAggregates |  |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly/previous` | Recupera los agregados del mes anterior. | Monitores | Sí | getPreviousMonthAggregates |  |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily/last-week` | Recupera métricas de los últimos siete días. | Monitores | Sí | getLastWeekMetrics |  |
+| Alarms | GET | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Recupera las alarmas de un dispositivo. | Monitores | Sí | getAlarmsByDeviceId |  |
+| Alarms | PUT | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Reemplaza la configuración completa de alarmas. | Monitores | Sí | setAlarmsByDeviceId |  |
+| Fall detection | POST | `/grandsafelife/api/v1/fall-detection/requests` | Envía un chunk y obtiene el ID del pedido. | Anciano | - | - |  |
+| Fall detection | GET | `/grandsafelife/api/v1/fall-detection/requests/{request_id}` | Consulta el estado y resultado del pedido. | Anciano | - | - |  |
 
 ## 2 - Tabla de códigos de operación
 
@@ -50,6 +50,7 @@ https://us-central1-grand-safe-band.cloudfunctions.net/api/grandsafelife/api/v1/
 | 2 | `Processing result ready` | Clasificación disponible. |
 | 3 | `Processing request not found` | Pedido no encontrado. |
 | 4 | `Processing request failed` | Fallo de procesamiento. |
+| 5 | `Not authenticated` | Fallo de autenticación. |
 
 ## 3 - Convenciones generales
 
@@ -113,7 +114,7 @@ Response:
 `id` coincide con el `user_id` solicitado. `created_at` y `updated_at` son
 enteros en milisegundos desde Unix epoch. `avatar` puede ser `null`.
 `homes` es un objeto indexado por ID de hogar; si el usuario no tiene hogares,
-se devuelve `{}`.
+se devuelve `{}`. Si el usuario no existe, `resp` es `null`.
 
 ### `GET /grandsafelife/api/v1/users/by-email?email={email}`
 
@@ -151,7 +152,7 @@ Response:
 `id` es el UID del usuario encontrado; `email` coincide con el email consultado. `created_at` y `updated_at` son
 enteros en milisegundos desde Unix epoch. `avatar` puede ser `null`.
 `homes` es un objeto indexado por ID de hogar; si el usuario no tiene hogares,
-se devuelve `{}`.
+se devuelve `{}`. Si no se encuentra el usuario, `resp` es `null`.
 
 ### `POST /grandsafelife/api/v1/users`
 
@@ -176,8 +177,8 @@ Body:
 ```
 
 `user_id` corresponde al argumento opcional `id` del datasource. Con un ID no
-vacío, el servidor deberá crear o reemplazar ese documento completo (`set`, sin
-merge). Si no se indica, deberá crear un documento con ID generado (`add`).
+vacío, el servidor crea o reemplaza ese documento completo (`set`, sin
+merge). Si no se indica, crea un documento con ID generado (`add`).
 Flutter omite `user_id` si su argumento es `null` o vacío. El Bearer identifica
 al solicitante para validar permisos; no sustituye al ID solicitado.
 
@@ -186,10 +187,8 @@ campos adicionales y valores nulos. Un `id` o `user_id` dentro de `data` es un
 campo del documento, no el selector de su ruta. No se inicializa `homes` vacío
 si el cliente envía otro valor. El objeto `data` puede estar vacío.
 
-Flutter omite `created_at` y `updated_at`: el servidor generará ambas fechas
+Flutter omite `created_at` y `updated_at`: el servidor genera ambas fechas
 actuales al crear y al reemplazar, sobrescribiendo cualquier valor previo.
-La persistencia y los permisos quedan pendientes; el mock devuelve el ID
-solicitado o `firebase_uid_mock` cuando se omite, sin guardar cambios.
 
 Response:
 
@@ -203,11 +202,11 @@ Response:
 
 Flutter retorna el string `resp.user_id`.
 
-### `PATCH /grandsafelife/api/v1/users/{affected_user_id}`
+### `PATCH /grandsafelife/api/v1/users/{user_id}`
 
-- Descripción: actualiza parcialmente el perfil y los hogares del usuario identificado por `affected_user_id`.
-- Parámetro: `affected_user_id` es el UID del usuario cuyo perfil se modifica. Puede ser el usuario de la sesión o un tercero, por ejemplo el invitado al agregarlo a un hogar o el miembro al desvincularlo.
-- El token Bearer identifica a quien realiza la solicitud; `affected_user_id` identifica a quien recibe el cambio. Ambos pueden ser distintos.
+- Descripción: actualiza parcialmente el perfil y los hogares del usuario identificado por `user_id`.
+- Parámetro: `user_id` es el UID del usuario cuyo perfil se modifica. Puede ser el usuario de la sesión o un tercero, por ejemplo el invitado al agregarlo a un hogar o el miembro al desvincularlo.
+- El token Bearer identifica a quien realiza la solicitud; `user_id` identifica a quien recibe el cambio. Ambos pueden ser distintos.
 - Cada request modifica un solo usuario. `homes` contiene los hogares de ese usuario, no una lista de usuarios invitados. Cuando Flutter elimina un hogar, envía una actualización por cada miembro afectado.
 
 Body de ejemplo:
@@ -238,16 +237,13 @@ se determina exclusivamente por la ruta.
 
 Los campos omitidos se conservan. `homes` reemplaza el mapa completo y `{}` lo
 vacía; `homes.home_id_001.role` actualiza solamente esa ruta. Un valor `null`
-se guarda como tal, no elimina el campo. El servidor deberá aplicar `update`
+se guarda como tal, no elimina el campo. El servidor aplica `update`
 al documento existente y devolver un error si no existe.
 
-Flutter omite `updated_at`, que el servidor generará en cada actualización.
+Flutter omite `updated_at`, que el servidor genera en cada actualización.
 `created_at` se conserva si no se envía; si viene como `Timestamp`, Flutter lo
-envía en milisegundos Unix y el servidor deberá convertirlo al guardar la fecha.
+envía en milisegundos Unix y el servidor lo convierte al guardar la fecha.
 No se regenera automáticamente la fecha de creación.
-
-Actualmente la operación confirma la recepción sin persistir cambios ni verificar
-el token. La validación de permisos sobre el usuario y sus hogares queda pendiente.
 
 ## 5 - Endpoints "Homes"
 
@@ -281,7 +277,7 @@ Response:
 ```
 
 `created_at` y `updated_at` son enteros en milisegundos Unix. Flutter los convierte
-a `Timestamp` conservando su valor y agrega `id` desde la ruta. Los UID de
+a `Timestamp` conservando su valor y agrega `id` desde la ruta. Si el hogar no existe, `resp` es `null`. Los UID de
 `members` identifican a los integrantes del hogar; los del ejemplo son ficticios.
 
 ### `POST /grandsafelife/api/v1/homes`
@@ -303,14 +299,14 @@ Body:
 ```
 
 `home_id` corresponde al argumento opcional `id` de `createHome`. Flutter lo
-omite cuando es nulo o vacío. Con ID, el servidor deberá ejecutar `set(data)`
-sin merge: crear o reemplazar todo el documento. Sin ID, deberá ejecutar `add(data)`
+omite cuando es nulo o vacío. Con ID, el servidor ejecuta `set(data)`
+sin merge: crear o reemplazar todo el documento. Sin ID, ejecuta `add(data)`
 y devolver el ID generado. Un campo `id` o `home_id` dentro de `data` es un dato
 del documento y no selecciona su ruta.
 
 `data` conserva todos los campos recibidos, incluidos mapas, campos adicionales
 y valores nulos; puede ser `{}`. Flutter omite `created_at` y `updated_at` porque
-el servidor generará ambas fechas actuales, tanto al crear como al reemplazar.
+el servidor genera ambas fechas actuales, tanto al crear como al reemplazar.
 La app actualiza `user.homes` por separado.
 
 Response:
@@ -319,8 +315,7 @@ Response:
 {"op_status": 0, "brief": "Operation completed successfully", "resp": "home_id_001"}
 ```
 
-Flutter retorna el ID recibido. El mock devuelve el ID solicitado o `home_id_001`
-si no se indicó, sin persistencia ni validación real del token.
+Flutter retorna el ID recibido.
 
 ### `PATCH /grandsafelife/api/v1/homes/{home_id}`
 
@@ -349,11 +344,10 @@ El hogar destino se determina por la ruta, no por un campo `id` dentro del body.
 Los campos omitidos se conservan. Un mapa `members` reemplaza ese campo completo;
 `{}` lo vacía y una ruta con puntos modifica solo el campo indicado.
 
-Flutter omite `updated_at`, que generará el servidor en cada actualización.
+Flutter omite `updated_at`, que genera el servidor en cada actualización.
 Si se recibe `created_at` como `Timestamp`, se envía en milisegundos Unix para
-convertirlo al persistir; si se omite, se conserva. El servidor deberá aplicar
+convertirlo al persistir; si se omite, se conserva. El servidor aplica
 `homes.doc(home_id).update(data)` y fallar si el documento no existe.
-Actualmente confirma la recepción sin persistir cambios ni verificar el token.
 
 ### `DELETE /grandsafelife/api/v1/homes/{home_id}`
 
@@ -369,104 +363,9 @@ Response:
 }
 ```
 
-Actualmente confirma la recepción sin persistir cambios ni verificar el token.
-La implementación persistente deberá validar rol administrador y ejecutar
-`homes.doc(home_id).delete()`: elimina únicamente ese documento, no la colección,
-otros documentos ni subcolecciones. Si no existe, también es exitoso. No genera fechas.
+Elimina únicamente el documento del hogar. Si no existe, también es exitoso.
 
-## 6 - Endpoints "Monitoring requests"
-
-Las solicitudes usan `pending`, `accepted` y `rejected` como estados. Estos
-valores no son roles; los roles admitidos para una invitación son `admin` y
-`observer`.
-
-### `POST /grandsafelife/api/v1/homes/{home_id}/monitoring-requests`
-
-- Descripción: invita por email a otro usuario a participar del hogar.
-
-Body:
-
-```json
-{
-  "email": "maria.gomez@example.com",
-  "role": "observer"
-}
-```
-
-Response:
-
-```json
-{
-  "op_status": 0,
-  "brief": "Operation completed successfully",
-  "resp": "request_id_001"
-}
-```
-
-El servidor obtiene al solicitante desde el token, comprueba su rol
-administrador y resuelve internamente al destinatario mediante el email. El body
-no admite IDs, estado ni timestamps.
-
-### `GET /grandsafelife/api/v1/users/me/monitoring-requests`
-
-- Descripción: recupera inicialmente las solicitudes pendientes recibidas por el usuario autenticado.
-- Body: no aplica.
-
-Response:
-
-```json
-{
-  "op_status": 0,
-  "brief": "Operation completed successfully",
-  "resp": [
-    {
-      "request_id": "request_id_001",
-      "home_id": "home_id_001",
-      "home_name": "Residencia Principal",
-      "requester": {
-        "name": "Juan Pérez",
-        "email": "juan.perez@example.com"
-      },
-      "requested_role": "observer",
-      "status": "pending",
-      "created_at": 1783882718000,
-      "updated_at": 1783882718000
-    }
-  ]
-}
-```
-
-Si posteriormente se necesitan solicitudes enviadas o históricas, se agregará
-un filtro explícito al contrato.
-
-### `POST /grandsafelife/api/v1/monitoring-requests/{request_id}/answer`
-
-- Descripción: permite al destinatario aceptar o rechazar una solicitud pendiente.
-
-Body:
-
-```json
-{
-  "answer": "accepted"
-}
-```
-
-`answer` admite únicamente `accepted` o `rejected`.
-
-Response:
-
-```json
-{
-  "op_status": 0,
-  "brief": "Operation completed successfully"
-}
-```
-
-Al aceptar, el servidor agregará atómicamente al usuario en `home.members` y el
-hogar en `user.homes`, utilizando el rol pedido. Al rechazar, no modificará las
-membresías.
-
-## 7 - Endpoints "Devices"
+## 6 - Endpoints "Devices"
 
 El datasource permite leer, crear o reemplazar, actualizar y eliminar documentos
 de dispositivos. La pantalla de asociación utiliza `updateDevice` sobre un
@@ -474,10 +373,6 @@ dispositivo existente. El registro de un dispositivo y su asociación son operac
 
 Las fechas se expresan en milisegundos Unix. Flutter las convierte a `Timestamp`.
 Los tipos son `hub` y `pulsera`; para hubs sin batería se utiliza -1.
-El ID de prueba `dev_available` devuelve propietario y hogar vacíos para probar
-la asociación. Los mocks no persisten cambios. Los contratos conservan los campos
-de los documentos consumidos por Flutter; no requieren cambiar las colecciones.
-Autenticación, permisos y acceso a Firestore se implementarán en el servidor.
 
 ### `GET /grandsafelife/api/v1/devices/{device_id}`
 
@@ -545,43 +440,14 @@ genera entonces un ID. Los campos dentro de `data`, incluido un eventual `id`,
 son datos del documento y no seleccionan su ruta. `data` es un objeto JSON que
 conserva campos adicionales, mapas, listas y valores nulos.
 
-Al implementar persistencia, el servidor generará `created_at` y `updated_at`
-al crear **y al reemplazar**, igual que `set(data)` sin merge. Flutter omite
-esas dos fechas del request. El mock devuelve el ID recibido o genera uno,
-sin guardar datos.
+El servidor genera `created_at` y `updated_at` al crear y al reemplazar.
+Flutter omite esas dos fechas del request.
 
 Response:
 
 ```json
 {"op_status": 0, "brief": "Operation completed successfully", "resp": "dev_a81f23"}
 ```
-
-El endpoint de asociación siguiente no es utilizado por el flujo actual de Flutter.
-
-### `POST /grandsafelife/api/v1/devices/{device_id}/association`
-
-- Descripción: vincula un dispositivo físico existente a un hogar.
-
-Body:
-
-```json
-{
-  "home_id": "home_7f3a92"
-}
-```
-
-Response:
-
-```json
-{
-  "op_status": 0,
-  "brief": "Operation completed successfully",
-  "resp": "dev_a81f23"
-}
-```
-
-El servidor resuelve `owner_id` desde el administrador del hogar. El body no
-admite ese campo ni información operativa del dispositivo.
 
 ### `PATCH /grandsafelife/api/v1/devices/{device_id}`
 
@@ -609,13 +475,13 @@ El body es el mapa parcial recibido por `updateDevice`: conserva `coords`, `id`,
 campos adicionales, mapas anidados, rutas de campo con puntos y valores `null`.
 No se restringe a una selección de campos del modelo Flutter. Los valores de
 `created_at` que sean `Timestamp` se transportan como milisegundos Unix.
-Flutter omite `updated_at`, que generará el servidor en cada actualización.
+Flutter omite `updated_at`, que genera el servidor en cada actualización.
 
-La persistencia deberá aplicar `update(data)`: conservar campos omitidos,
+El servidor aplica `update(data)`: conservar campos omitidos,
 reemplazar los mapas enviados completos y actualizar solamente el campo indicado
 cuando se use una ruta con puntos; fallar si el documento no existe. No regenerar
 `created_at` automáticamente. Para asociar, la app envía hogar y propietario;
-para liberar, ambos son strings vacíos. El mock confirma sin guardar cambios.
+para liberar, ambos son strings vacíos. 
 
 ### `DELETE /grandsafelife/api/v1/devices/{device_id}`
 
@@ -630,25 +496,7 @@ Response:
 ```
 
 El contrato elimina el documento y también acepta que ya no exista. No implica
-borrar subcolecciones ni otros documentos. Flutter retorna `void`. El mock
-confirma la operación sin persistencia.
-
-### `DELETE /grandsafelife/api/v1/devices/{device_id}/association`
-
-- Descripción: elimina la asociación actual y deja disponible el dispositivo.
-- Body: no aplica.
-
-Response:
-
-```json
-{
-  "op_status": 0,
-  "brief": "Operation completed successfully"
-}
-```
-
-La operación elimina `home_id` y `owner_id`, pero conserva el registro físico y
-sus estadísticas históricas.
+borrar subcolecciones ni otros documentos. Flutter retorna `void`.
 
 ### `GET /grandsafelife/api/v1/users/{owner_id}/devices`
 
@@ -769,7 +617,7 @@ Response:
 La respuesta de ubicación usa `lat` y `long` numéricos. El datasource convierte
 `long` a `lng` para el mapa de Flutter, conservando los valores recibidos.
 
-## 8 - Endpoints "Devices Stats"
+## 7 - Endpoints "Devices Stats"
 
 Las métricas son de solo lectura para la aplicación. Su carga, procesamiento y
 agregación corresponden a los dispositivos y al servidor.
@@ -798,6 +646,7 @@ Response:
 }
 ```
 
+`id` coincide con la fecha solicitada y `updated_at` es una fecha ISO 8601.
 Si no existen datos para la fecha solicitada, `resp` es `{}`.
 
 ### `GET /grandsafelife/api/v1/devices/{device_id}/stats/monthly?month={YYYY-MM}`
@@ -814,11 +663,11 @@ Response:
   "resp": {
     "id": "2026-09",
     "avg_steps": 4120.5,
-    "avg_falls": 0.03,
-    "avg_stumbles": 1.4,
-    "avg_lying_down": 7.9,
-    "avg_night_rises": 1.1,
-    "total_panic_button_press": 0,
+    "total_falls": 1,
+    "total_stumbles": 18,
+    "avg_time_lying_down": 7.9,
+    "total_night_rises": 14,
+    "total_panic_button": 0,
     "sedentarism_level": 45,
     "risk_level": 12,
     "active_days": 13
@@ -842,11 +691,11 @@ Response:
   "resp": {
     "id": "2026-08",
     "avg_steps": 4120.5,
-    "avg_falls": 0.03,
-    "avg_stumbles": 1.4,
-    "avg_lying_down": 7.9,
-    "avg_night_rises": 1.1,
-    "total_panic_button_press": 0,
+    "total_falls": 1,
+    "total_stumbles": 18,
+    "avg_time_lying_down": 7.9,
+    "total_night_rises": 14,
+    "total_panic_button": 0,
     "sedentarism_level": 45,
     "risk_level": 12,
     "active_days": 13
@@ -895,11 +744,10 @@ Response:
 El array está ordenado del día más antiguo al más reciente y omite los días sin
 datos. Si el período completo está vacío, `resp` es `[]`.
 
-## 9 - Endpoints "Alarms"
+## 8 - Endpoints "Alarms"
 
-Las alarmas se representan como un objeto cuyas claves son sus IDs. El servidor
-administra sus estados y timestamps; la aplicación solamente configura nombre,
-horario, días e indicador de actividad.
+Las alarmas se representan como un objeto cuyas claves son sus IDs.
+`created_at` y `updated_at` son enteros en milisegundos Unix.
 
 ### `GET /grandsafelife/api/v1/devices/{device_id}/alarms`
 
@@ -919,8 +767,8 @@ Response:
       "days": 127,
       "is_active": true,
       "state": "taken",
-      "created_at": "2026-08-15T10:32:14Z",
-      "updated_at": "2026-09-01T18:21:47Z"
+      "created_at": 1786789934000,
+      "updated_at": 1788286907000
     },
     "alarm_def_456": {
       "name": "Losartán 50mg",
@@ -928,8 +776,8 @@ Response:
       "days": 127,
       "is_active": true,
       "state": "pending",
-      "created_at": "2026-08-10T09:00:00Z",
-      "updated_at": "2026-09-01T00:00:00Z"
+      "created_at": 1786352400000,
+      "updated_at": 1788220800000
     }
   }
 }
@@ -951,13 +799,19 @@ Body:
     "name": "Ibuprofeno 400mg",
     "time_in_minutes": 480,
     "days": 127,
-    "is_active": true
+    "is_active": true,
+    "state": "taken",
+    "created_at": 1786789934000,
+    "updated_at": 1788286907000
   },
   "alarm_def_456": {
     "name": "Losartán 50mg",
     "time_in_minutes": 1200,
     "days": 127,
-    "is_active": true
+    "is_active": true,
+    "state": "pending",
+    "created_at": 1786352400000,
+    "updated_at": 1788220800000
   }
 }
 ```
@@ -972,11 +826,11 @@ Response:
 ```
 
 Las claves omitidas se consideran eliminadas y un body `{}` elimina todas las
-alarmas. La aplicación no puede enviar `state`, `created_at` ni `updated_at`;
-el servidor conserva o genera esos valores según corresponda. El horario debe
-estar entre `0` y `1439` minutos.
+alarmas. `state`, `created_at` y `updated_at` son opcionales y se conservan
+cuando se envían; las fechas también admiten `null`. El horario debe estar
+entre `0` y `1439` minutos.
 
-## 10 - Endpoints "Fall detection"
+## 9 - Endpoints "Fall detection"
 
 Estado actual: las rutas devuelven respuestas fijas. No registran pedidos ni
 ejecutan inferencia. La integración con `process_*`, autenticación efectiva,
