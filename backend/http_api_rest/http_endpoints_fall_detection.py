@@ -117,6 +117,4 @@ class FallDetectionEndpoints:
             # Traducir su resultado: IN_PROGRESS/READY -> 200,
             # NOT_FOUND -> 400, FAILED -> 500 (fallo interno de procesamiento).
             # Respuesta fija: cualquier ID válido permanece en curso.
-            return build_api_response(
-                API_OP_PROCESS_IN_PROGRESS, {"request_id": request_id}
-            )
+            return build_api_response(API_OP_PROCESS_IN_PROGRESS, {"request_id": request_id})

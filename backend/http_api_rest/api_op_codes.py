@@ -12,6 +12,7 @@ API_OP_PROCESS_IN_PROGRESS = 1
 API_OP_PROCESS_READY = 2
 API_OP_PROCESS_NOT_FOUND = 3
 API_OP_PROCESS_FAILED = 4
+API_OP_UNAUTHORIZED = 5
 
 API_OP_BRIEFS = {
     API_OP_OK: "Operation completed successfully",
@@ -19,6 +20,7 @@ API_OP_BRIEFS = {
     API_OP_PROCESS_READY: "Processing result ready",
     API_OP_PROCESS_NOT_FOUND: "Processing request not found",
     API_OP_PROCESS_FAILED: "Processing request failed",
+    API_OP_UNAUTHORIZED: "Unauthorized access",
 }
 
 _NO_RESPONSE = object()
