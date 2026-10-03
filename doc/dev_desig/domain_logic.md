@@ -53,12 +53,12 @@ y nombres definitivos de estos objetos todavía están pendientes.
 
 ## Ejemplo: consultar el perfil propio
 
-La ruta actual es `GET /grandsafelife/api/v1/users/me`. El flujo conceptual es:
+La ruta actual es `GET /grandsafelife/api/v1/users/{user_id}`. El flujo conceptual es:
 
 1. Verificar el token y obtener la identidad confiable.
 2. Construir el contexto autenticado con el `user_id`.
 3. Aplicar las comprobaciones de negocio que correspondan y consultar el perfil mediante el repository.
-4. Devolver el perfil o un resultado de error, por ejemplo perfil inexistente.
+4. Devolver el perfil o null si no existe; propagar los errores de consulta.
 5. Traducir el resultado al envelope y código HTTP correspondientes.
 
 Estar autenticado no implica que exista el perfil de la aplicación ni autoriza

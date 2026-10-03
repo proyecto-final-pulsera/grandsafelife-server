@@ -70,7 +70,7 @@ El token se envía a la API mediante HTTPS:
 
 ```dart
 final response = await http.get(
-  Uri.parse('$baseUrl/grandsafelife/api/v1/users/me'),
+  Uri.parse('$baseUrl/grandsafelife/api/v1/users/$userId'),
   headers: {
     'Authorization': 'Bearer $idToken',
   },
@@ -135,14 +135,8 @@ En este caso:
 * `target_user_id` identifica al usuario objetivo.
 * `app` verifica si el solicitante tiene permiso para consultar al objetivo.
 
-Para operaciones sobre el perfil propio no es necesario que Flutter envíe su UID:
-
-```http
-GET /grandsafelife/api/v1/users/me
-Authorization: Bearer <firebase_id_token>
-```
-
-El servidor obtiene el UID exclusivamente del token verificado.
+Para consultar el perfil propio, Flutter utiliza la misma ruta por ID con su UID.
+El token identifica al solicitante y el servidor valida el acceso al usuario objetivo.
 
 ---
 
@@ -150,23 +144,11 @@ El servidor obtiene el UID exclusivamente del token verificado.
 
 Firebase Authentication crea la identidad autenticable desde Flutter. La API no crea esa identidad ni genera su UID.
 
-El endpoint de creación de usuario del servidor debe interpretarse como creación del perfil de Grand Safe Life asociado a una identidad Firebase existente. El servidor obtiene el UID desde el token y no debe confiar en un UID enviado en el body.
-
-Ejemplo conceptual:
-
-```http
-POST /grandsafelife/api/v1/users/me
-Authorization: Bearer <firebase_id_token>
-Content-Type: application/json
-
-{
-  "name": "Juan Pérez",
-  "email": "juan.perez@example.com",
-  "avatar": null
-}
-```
-
-El documento podría persistirse internamente como `users/{uid_verificado}`.
+`POST /grandsafelife/api/v1/users` recibe `user_id` opcional y `data` con los
+campos del perfil. El servidor deberá validar permisos para crear o reemplazar
+el documento solicitado; si se omite el ID, generará uno. Esta operación no crea
+una identidad en Firebase Authentication. El contrato completo está en la
+documentación de API REST.
 
 ---
 
@@ -202,7 +184,6 @@ La estructura funcional de los endpoints no cambia sustancialmente. Los cambios 
 * Los endpoints protegidos exigen `Authorization: Bearer <ID token>`.
 * Una dependencia HTTP común verifica el token.
 * Los processors reciben el UID autenticado ya validado.
-* Los endpoints `/users/me` obtienen la identidad exclusivamente del token.
 * Los IDs incluidos en una URL o body representan recursos objetivo, no la identidad autenticada del solicitante.
 * `app` continúa siendo responsable de la autorización.
 
@@ -231,7 +212,7 @@ También queda pendiente confirmar el código HTTP exacto para autenticación y 
 4. Definir los códigos de operación de autenticación en `api_op_codes.py`.
 5. Implementar la verificación del token.
 6. Crear pruebas para token válido, ausente, inválido y usuario sin permisos.
-7. Ajustar los endpoints de usuario para distinguir `/users/me` de operaciones autorizadas sobre otros usuarios.
+7. Validar permisos sobre el usuario objetivo distinguiéndolo del solicitante autenticado.
 8. Coordinar con Guido la incorporación de `getIdToken()` al cliente HTTP.
 
 ---
