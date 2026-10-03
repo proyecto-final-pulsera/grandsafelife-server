@@ -4,7 +4,6 @@ from flask import Flask, Response, request
 from werkzeug.exceptions import MethodNotAllowed, NotFound
 
 from .http_endpoints_users import UsersEndpoints
-from .http_endpoints_monitoring_requests import MonitoringRequestsEndpoints
 from .http_endpoints_homes import HomesEndpoints
 from .http_endpoints_fall_detection import FallDetectionEndpoints
 from .http_endpoints_devices import DevicesEndpoints
@@ -17,7 +16,6 @@ def create_http_app(http_processor):
     app = Flask(__name__, static_folder=None)
     app.config["PROVIDE_AUTOMATIC_OPTIONS"] = False
     app.register_blueprint(UsersEndpoints(http_processor).blueprint)
-    app.register_blueprint(MonitoringRequestsEndpoints(http_processor).blueprint)
     app.register_blueprint(HomesEndpoints(http_processor).blueprint)
     app.register_blueprint(FallDetectionEndpoints(http_processor).blueprint)
     app.register_blueprint(DevicesEndpoints(http_processor).blueprint)
