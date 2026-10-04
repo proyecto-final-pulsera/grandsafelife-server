@@ -15,14 +15,17 @@ class App:
 
     def __init__(self, db, fall_detection_manager: FallProcessorManager | None = None):
         self.db = db
-        self.users = UsersProcesses()
-        self.homes = HomesProcesses()
-        self.devices = DevicesProcesses()
-        self.devices_stats = DevicesStatsProcesses()
-        self.alarms = AlarmsProcesses()
+        self.users = UsersProcesses(db)
+        self.homes = HomesProcesses(db)
+        self.devices = DevicesProcesses(db)
+        self.devices_stats = DevicesStatsProcesses(db)
+        self.alarms = AlarmsProcesses(db)
         manager = fall_detection_manager if fall_detection_manager is not None else FallProcessorManager(N=1)
         self.fall_detection = FallDetectionProcesses(manager)
 
+    #--------------------
+    # Users
+    #--------------------
     def process_get_user_by_id(self, user_id):
         return self.users.process_get_user_by_id(user_id)
 
@@ -35,6 +38,9 @@ class App:
     def process_update_user(self, user_id, user_data):
         return self.users.process_update_user(user_id, user_data)
 
+    #--------------------
+    # Homes
+    #--------------------
     def process_get_home_by_id(self, home_id):
         return self.homes.process_get_home_by_id(home_id)
 
@@ -47,6 +53,9 @@ class App:
     def process_delete_home(self, home_id):
         return self.homes.process_delete_home(home_id)
 
+    #--------------------
+    # Devices
+    #--------------------
     def process_get_device_by_id(self, device_id):
         return self.devices.process_get_device_by_id(device_id)
 
@@ -74,6 +83,9 @@ class App:
     def process_get_device_location(self, device_id):
         return self.devices.process_get_device_location(device_id)
 
+    #--------------------
+    # Devices Stats
+    #--------------------
     def process_get_daily_metrics(self, device_id, date):
         return self.devices_stats.process_get_daily_metrics(device_id, date)
 
@@ -86,12 +98,18 @@ class App:
     def process_get_last_week_metrics(self, device_id):
         return self.devices_stats.process_get_last_week_metrics(device_id)
 
+    #--------------------
+    # Alarms
+    #--------------------
     def process_get_alarms_by_device_id(self, device_id):
         return self.alarms.process_get_alarms_by_device_id(device_id)
 
     def process_set_alarms_by_device_id(self, device_id, alarms):
         return self.alarms.process_set_alarms_by_device_id(device_id, alarms)
 
+    #--------------------
+    # Fall Detection
+    #--------------------
     def process_create_fall_detection_request(self, authorization, data):
         return self.fall_detection.process_create_fall_detection_request(authorization, data)
 
