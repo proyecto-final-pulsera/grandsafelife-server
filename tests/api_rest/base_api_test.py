@@ -50,7 +50,7 @@ def require_emulators():
                 'FIREBASE_AUTH_EMULATOR_HOST': '127.0.0.1:9099'}
     for key, value in expected.items():
         if os.environ.get(key) != value:
-            raise RuntimeError(f'{key} debe ser {value}. Usar el ejecutor de tests/README.md.')
+            raise RuntimeError(f'{key} debe ser {value}. Usar el ejecutor de doc/tests/README.md.')
     status, hub = http('GET', 'http://127.0.0.1:4400/emulators')
     if status != 200:
         raise RuntimeError('No responde el hub de emuladores.')

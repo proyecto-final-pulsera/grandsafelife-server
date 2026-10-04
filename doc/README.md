@@ -18,4 +18,4 @@
 
 ## Reportes de tests
 
-- Por ahora no hay
+- [Firebase Emulator Suite](tests/README.md)

@@ -1,10 +1,15 @@
 # Tests con Firebase Emulator Suite
 
-Estas pruebas recorren HTTP real -> función api -> Flask -> autenticación -> process -> Firestore.
-No usan mocks, no despliegan y no necesitan Postman. Python actúa como cliente de la API.
-Los antiguos tests basados en datos mock de tests/api_rest fueron reemplazados por esta suite.
+Estas pruebas recorren HTTP -> función api -> Flask -> autenticación -> process -> Firestore.
+Python actúa como cliente de la API.
 
-## Preparación
+Para eso se usa Firebase Emulator Suite que permite correr los servicios de firebase en un entorno local, sin desplegar
+
+<img src="image-1.png" alt="Firebase Emulator Suite" width="600">
+
+<img src="image.png" alt="Entorno local de Firebase" width="600">
+
+## Preparación del entorno
 
 Desde la raíz de grandsafelife-server, instalar Python 3.13, Firebase CLI y Java 21.
 Preparar el entorno que Functions espera en venv:
@@ -13,10 +18,6 @@ Preparar el entorno que Functions espera en venv:
 python -m venv venv
 .\venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
-
-No hace falta una cuenta ni credenciales de producción: se usa el proyecto ficticio
-`demo-grandsafelife`. La primera ejecución puede descargar los emuladores y requerir Internet.
-Los puertos deben estar libres: Functions 5001, Firestore 8080, Auth 9099, UI 4000 y hub 4400.
 
 ## Ejecutar automáticamente
 
@@ -39,7 +40,9 @@ Internamente usa `firebase emulators:exec` con el proyecto fijo `demo-grandsafel
 
 La salida se agrupa con encabezados `Tests - Users`, `Tests - Homes`, etc. Cada caso
 se numera dentro de su grupo, muestra su descripción y termina con `Resultado: OK`,
-`FALLO` o `ERROR`. Al final permanece el resumen y el detalle de fallos de unittest.
+`FALLO` o `ERROR`.
+
+Al final permanece el resumen y el detalle de fallos de unittest.
 Los mensajes de Firebase/Flask se intercalan con estos encabezados. En el proyecto
 demo local, las actualizaciones inexistentes muestran una línea con Firestore NotFound
 y HTTP 500, precedida por la explicación del caso esperado. Otros errores conservan su traceback.

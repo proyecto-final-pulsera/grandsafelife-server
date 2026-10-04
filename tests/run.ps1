@@ -21,7 +21,7 @@ $ErrorActionPreference = 'Stop'
 $testRepoRoot = Split-Path -Parent $PSScriptRoot
 $testPython = Join-Path $testRepoRoot 'venv\Scripts\python.exe'
 if (-not (Test-Path -LiteralPath $testPython)) {
-    throw 'Falta venv\Scripts\python.exe. Preparar el entorno siguiendo tests/README.md.'
+    throw 'Falta venv\Scripts\python.exe. Preparar el entorno siguiendo doc/tests/README.md.'
 }
 $testArguments = @('tests/api_rest/run_tests.py')
 if ($Group) { $testArguments += $Group }
