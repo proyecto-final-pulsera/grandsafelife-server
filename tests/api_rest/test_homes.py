@@ -5,6 +5,9 @@ from backend.http_api_rest.http_endpoints_homes import HomesEndpoints
 from base_api_test import BaseApiTest
 
 class HomesTests(BaseApiTest):
+    test_all_routes_reject_invalid_token_before_process = (
+        BaseApiTest.assert_all_routes_reject_invalid_token_before_process
+    )
     endpoints_class = HomesEndpoints
     process_class = HomesProcesses
     prefix = "/grandsafelife/api/v1/homes"

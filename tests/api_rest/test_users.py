@@ -1,10 +1,14 @@
 """Usuarios: USERS_T1 a USERS_T8 del detalle de tests de API REST."""
 from unittest.mock import patch
+from firebase_admin import auth
 from backend.app.processes.process_users import UsersProcesses
 from backend.http_api_rest.http_endpoints_users import UsersEndpoints
 from base_api_test import BaseApiTest
 
 class UsersTests(BaseApiTest):
+    test_all_routes_reject_invalid_token_before_process = (
+        BaseApiTest.assert_all_routes_reject_invalid_token_before_process
+    )
     endpoints_class = UsersEndpoints
     process_class = UsersProcesses
     prefix = "/grandsafelife/api/v1/users"
@@ -13,6 +17,7 @@ class UsersTests(BaseApiTest):
         """Obtener por ID; un documento inexistente retorna null."""
         response = self.client.get(f"{self.prefix}/target", headers=self.headers)
         self.assert_success(response)
+        self.verifier.assert_called_once_with("test-token")
         user = response.json["resp"]
         self.assertEqual(user["id"], "target")
         self.assertIsInstance(user["email"], str)
@@ -24,6 +29,32 @@ class UsersTests(BaseApiTest):
             response = self.client.get(f"{self.prefix}/missing", headers=self.headers)
         self.assert_success(response)
         self.assertIsNone(response.json["resp"])
+
+    def test_get_user_by_id_rejects_invalid_authentication(self):
+        """Tokens rechazados no llegan al process y retornan el envelope 401."""
+        for error in (
+            auth.InvalidIdTokenError("Invalid token"),
+            auth.ExpiredIdTokenError("Expired token", None),
+            auth.RevokedIdTokenError("Revoked token"),
+            auth.UserDisabledError("Disabled user"),
+        ):
+            with self.subTest(error=type(error).__name__):
+                self.verifier.side_effect = error
+                response = self.client.get(f"{self.prefix}/target", headers=self.headers)
+                self.assertEqual(response.status_code, 401)
+                self.assertEqual(response.json, {"op_status": 5, "brief": "Unauthorized access"})
+                self.assertEqual(self.processor.calls, [])
+
+    def test_get_user_by_id_rejects_invalid_bearer(self):
+        for authorization in ("Basic token", "Bearer", "Bearer token extra"):
+            with self.subTest(authorization=authorization):
+                response = self.client.get(
+                    f"{self.prefix}/target", headers={"Authorization": authorization}
+                )
+                self.assertEqual(response.status_code, 401)
+                self.assertEqual(response.json["op_status"], 5)
+                self.assertEqual(self.processor.calls, [])
+        self.verifier.assert_not_called()
 
     def test_USERS_T2_get_user_by_email(self):
         """Obtener por email conservando el parámetro enviado."""

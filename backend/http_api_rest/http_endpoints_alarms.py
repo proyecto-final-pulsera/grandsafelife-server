@@ -1,9 +1,11 @@
 """Reglas de validación y endpoints HTTP de alarmas de dispositivos."""
 
 from flask import Blueprint
+from firebase_admin import auth
 from pydantic import BaseModel, ConfigDict, Field, RootModel
 
-from .api_op_codes import API_OP_OK, build_api_response
+from ..authentication.authentication import Authentication
+from .api_op_codes import API_OP_OK, API_OP_UNAUTHORIZED, build_api_response
 from .http_validation import validate_request
 
 
@@ -38,6 +40,7 @@ class AlarmsEndpoints:
 
     def __init__(self, http_processor):
         self.http_processor = http_processor
+        self.authentication = Authentication()
         self.blueprint = Blueprint("alarms", __name__, url_prefix="/grandsafelife/api/v1/devices/<device_id>/alarms",)
         self._register_routes()
 
@@ -49,10 +52,16 @@ class AlarmsEndpoints:
             # Validación de formato.
             authorization, _, _ = validate_request()
 
-            # TODO: Resolver aquí la autenticación y los permisos antes del process.
-            # current_uid, app_type = self.authentication.get_current_user_uid(authorization)
-            # Validar el tipo de app, la existencia del dispositivo y el acceso
-            # del usuario al hogar asociado. Authentication aún no está implementada.
+            # Autenticación antes de ejecutar el process.
+            try:
+                current_uid, app_type = self.authentication.get_current_user_uid(authorization)
+            except (ValueError, auth.InvalidIdTokenError, auth.RevokedIdTokenError, auth.UserDisabledError):
+                return build_api_response(API_OP_UNAUTHORIZED), 401
+
+            print(f"[AUTH SERVER] uid={current_uid}", flush=True)
+
+            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
+            # app_type es por ahora la constante mockeada MONITOR_APP.
 
             # Procesamiento del request con los datos listos para ejecutar la acción.
             alarms = self.http_processor.process_get_alarms_by_device_id(device_id)
@@ -63,10 +72,16 @@ class AlarmsEndpoints:
             # Validación de formato.
             authorization, body, _ = validate_request(body_model=AlarmMapInput)
 
-            # TODO: Resolver aquí la autenticación y los permisos antes del process.
-            # current_uid, app_type = self.authentication.get_current_user_uid(authorization)
-            # Validar el tipo de app, la existencia del dispositivo y los permisos
-            # de administración sobre el hogar. Authentication aún no está implementada.
+            # Autenticación antes de ejecutar el process.
+            try:
+                current_uid, app_type = self.authentication.get_current_user_uid(authorization)
+            except (ValueError, auth.InvalidIdTokenError, auth.RevokedIdTokenError, auth.UserDisabledError):
+                return build_api_response(API_OP_UNAUTHORIZED), 401
+
+            print(f"[AUTH SERVER] uid={current_uid}", flush=True)
+
+            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
+            # app_type es por ahora la constante mockeada MONITOR_APP.
 
             # Procesamiento del reemplazo completo, incluido un mapa vacío.
             self.http_processor.process_set_alarms_by_device_id(

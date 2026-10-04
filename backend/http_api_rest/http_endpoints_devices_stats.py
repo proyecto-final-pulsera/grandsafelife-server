@@ -1,9 +1,11 @@
 """Reglas de validación y endpoints HTTP de métricas de dispositivos."""
 
 from flask import Blueprint
+from firebase_admin import auth
 from pydantic import BaseModel, Field
 
-from .api_op_codes import API_OP_OK, build_api_response
+from ..authentication.authentication import Authentication
+from .api_op_codes import API_OP_OK, API_OP_UNAUTHORIZED, build_api_response
 from .http_validation import validate_request
 
 
@@ -32,6 +34,7 @@ class DevicesStatsEndpoints:
 
     def __init__(self, http_processor):
         self.http_processor = http_processor
+        self.authentication = Authentication()
         self.blueprint = Blueprint("devices_stats", __name__,url_prefix="/grandsafelife/api/v1/devices/<device_id>/stats",)
         self._register_routes()
 
@@ -43,10 +46,16 @@ class DevicesStatsEndpoints:
             # Validación de formato.
             authorization, _, query = validate_request(query_model=DailyDateQuery)
 
-            # TODO: Resolver aquí la autenticación y los permisos antes del process.
-            # current_uid, app_type = self.authentication.get_current_user_uid(authorization)
-            # Validar el tipo de app, la existencia del dispositivo y el acceso
-            # del usuario al hogar asociado. Authentication aún no está implementada.
+            # Autenticación antes de ejecutar el process.
+            try:
+                current_uid, app_type = self.authentication.get_current_user_uid(authorization)
+            except (ValueError, auth.InvalidIdTokenError, auth.RevokedIdTokenError, auth.UserDisabledError):
+                return build_api_response(API_OP_UNAUTHORIZED), 401
+
+            print(f"[AUTH SERVER] uid={current_uid}", flush=True)
+
+            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
+            # app_type es por ahora la constante mockeada MONITOR_APP.
 
             # Procesamiento del request con los datos listos para ejecutar la acción.
             metrics = self.http_processor.process_get_daily_metrics(device_id, query.date)
@@ -57,10 +66,16 @@ class DevicesStatsEndpoints:
             # Validación de formato.
             authorization, _, query = validate_request(query_model=MonthlyDateQuery)
 
-            # TODO: Resolver aquí la autenticación y los permisos antes del process.
-            # current_uid, app_type = self.authentication.get_current_user_uid(authorization)
-            # Validar el tipo de app, la existencia del dispositivo y el acceso
-            # del usuario al hogar asociado. Authentication aún no está implementada.
+            # Autenticación antes de ejecutar el process.
+            try:
+                current_uid, app_type = self.authentication.get_current_user_uid(authorization)
+            except (ValueError, auth.InvalidIdTokenError, auth.RevokedIdTokenError, auth.UserDisabledError):
+                return build_api_response(API_OP_UNAUTHORIZED), 401
+
+            print(f"[AUTH SERVER] uid={current_uid}", flush=True)
+
+            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
+            # app_type es por ahora la constante mockeada MONITOR_APP.
 
             # Procesamiento del request con los datos listos para ejecutar la acción.
             aggregates = self.http_processor.process_get_monthly_aggregates(device_id, query.month)
@@ -71,10 +86,16 @@ class DevicesStatsEndpoints:
             # Validación de formato.
             authorization, _, _ = validate_request()
 
-            # TODO: Resolver aquí la autenticación y los permisos antes del process.
-            # current_uid, app_type = self.authentication.get_current_user_uid(authorization)
-            # Validar el tipo de app, la existencia del dispositivo y el acceso
-            # del usuario al hogar asociado. Authentication aún no está implementada.
+            # Autenticación antes de ejecutar el process.
+            try:
+                current_uid, app_type = self.authentication.get_current_user_uid(authorization)
+            except (ValueError, auth.InvalidIdTokenError, auth.RevokedIdTokenError, auth.UserDisabledError):
+                return build_api_response(API_OP_UNAUTHORIZED), 401
+
+            print(f"[AUTH SERVER] uid={current_uid}", flush=True)
+
+            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
+            # app_type es por ahora la constante mockeada MONITOR_APP.
 
             # Procesamiento del request con los datos listos para ejecutar la acción.
             aggregates = self.http_processor.process_get_previous_month_aggregates(device_id)
@@ -85,10 +106,16 @@ class DevicesStatsEndpoints:
             # Validación de formato.
             authorization, _, _ = validate_request()
 
-            # TODO: Resolver aquí la autenticación y los permisos antes del process.
-            # current_uid, app_type = self.authentication.get_current_user_uid(authorization)
-            # Validar el tipo de app, la existencia del dispositivo y el acceso
-            # del usuario al hogar asociado. Authentication aún no está implementada.
+            # Autenticación antes de ejecutar el process.
+            try:
+                current_uid, app_type = self.authentication.get_current_user_uid(authorization)
+            except (ValueError, auth.InvalidIdTokenError, auth.RevokedIdTokenError, auth.UserDisabledError):
+                return build_api_response(API_OP_UNAUTHORIZED), 401
+
+            print(f"[AUTH SERVER] uid={current_uid}", flush=True)
+
+            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
+            # app_type es por ahora la constante mockeada MONITOR_APP.
 
             # Procesamiento del request con los datos listos para ejecutar la acción.
             metrics = self.http_processor.process_get_last_week_metrics(device_id)

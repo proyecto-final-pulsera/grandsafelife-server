@@ -5,6 +5,9 @@ from backend.http_api_rest.http_endpoints_alarms import AlarmsEndpoints
 from base_api_test import BaseApiTest
 
 class AlarmsTests(BaseApiTest):
+    test_all_routes_reject_invalid_token_before_process = (
+        BaseApiTest.assert_all_routes_reject_invalid_token_before_process
+    )
     endpoints_class = AlarmsEndpoints
     process_class = AlarmsProcesses
     prefix = "/grandsafelife/api/v1/devices/target/alarms"

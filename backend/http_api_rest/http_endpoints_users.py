@@ -1,8 +1,10 @@
 """Reglas de validación y endpoints HTTP de usuarios."""
 
 from flask import Blueprint
+from firebase_admin import auth
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, RootModel
 
+from ..authentication.authentication import Authentication
 from .api_op_codes import API_OP_OK, API_OP_UNAUTHORIZED, build_api_response
 from .http_validation import validate_request
 
@@ -33,6 +35,7 @@ class UserEmailQuery(BaseModel):
 class UsersEndpoints:
     def __init__(self, http_processor):
         self.http_processor = http_processor
+        self.authentication = Authentication()
         self.blueprint = Blueprint("users", __name__, url_prefix="/grandsafelife/api/v1/users")
         self._register_routes()
 
@@ -43,10 +46,16 @@ class UsersEndpoints:
             #Validacion de formato
             authorization, _, _ = validate_request()
 
-            # TODO: Resolver aquí la autenticación y los permisos antes del process.
-            # current_uid, app_type = self.authentication.get_current_user_uid(authorization)
-            # Validar el tipo de app y los permisos de current_uid sobre los datos
-            # solicitados. Authentication aún no está implementada.
+            # Autenticación antes de ejecutar el process.
+            try:
+                current_uid, app_type = self.authentication.get_current_user_uid(authorization)
+            except (ValueError, auth.InvalidIdTokenError, auth.RevokedIdTokenError, auth.UserDisabledError):
+                return build_api_response(API_OP_UNAUTHORIZED), 401
+
+            print(f"[AUTH SERVER] uid={current_uid}", flush=True)
+
+            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
+            # app_type es por ahora la constante mockeada MONITOR_APP.
 
             
             #Procesamiento del request
@@ -59,10 +68,16 @@ class UsersEndpoints:
             #Validacion de formato
             authorization, _, query = validate_request(query_model=UserEmailQuery)
 
-            # TODO: Resolver aquí la autenticación y los permisos antes del process.
-            # current_uid, app_type = self.authentication.get_current_user_uid(authorization)
-            # Validar el tipo de app y los permisos de current_uid sobre los datos
-            # solicitados. Authentication aún no está implementada.
+            # Autenticación antes de ejecutar el process.
+            try:
+                current_uid, app_type = self.authentication.get_current_user_uid(authorization)
+            except (ValueError, auth.InvalidIdTokenError, auth.RevokedIdTokenError, auth.UserDisabledError):
+                return build_api_response(API_OP_UNAUTHORIZED), 401
+
+            print(f"[AUTH SERVER] uid={current_uid}", flush=True)
+
+            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
+            # app_type es por ahora la constante mockeada MONITOR_APP.
             
 
             #Procesamiento del request
@@ -74,10 +89,16 @@ class UsersEndpoints:
             #Validacion de formato
             authorization, body, _ = validate_request(body_model=UserProfileInput)
 
-            # TODO: Resolver aquí la autenticación y los permisos antes del process.
-            # current_uid, app_type = self.authentication.get_current_user_uid(authorization)
-            # Validar el tipo de app y los permisos de current_uid sobre los datos
-            # solicitados. Authentication aún no está implementada.
+            # Autenticación antes de ejecutar el process.
+            try:
+                current_uid, app_type = self.authentication.get_current_user_uid(authorization)
+            except (ValueError, auth.InvalidIdTokenError, auth.RevokedIdTokenError, auth.UserDisabledError):
+                return build_api_response(API_OP_UNAUTHORIZED), 401
+
+            print(f"[AUTH SERVER] uid={current_uid}", flush=True)
+
+            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
+            # app_type es por ahora la constante mockeada MONITOR_APP.
             
 
             #Procesamiento del request
@@ -89,10 +110,16 @@ class UsersEndpoints:
             #Validacion de formato
             authorization, body, _ = validate_request(body_model=UserProfileUpdate)
 
-            # TODO: Resolver aquí la autenticación y los permisos antes del process.
-            # current_uid, app_type = self.authentication.get_current_user_uid(authorization)
-            # Validar el tipo de app y los permisos de current_uid sobre los datos
-            # solicitados. Authentication aún no está implementada.
+            # Autenticación antes de ejecutar el process.
+            try:
+                current_uid, app_type = self.authentication.get_current_user_uid(authorization)
+            except (ValueError, auth.InvalidIdTokenError, auth.RevokedIdTokenError, auth.UserDisabledError):
+                return build_api_response(API_OP_UNAUTHORIZED), 401
+
+            print(f"[AUTH SERVER] uid={current_uid}", flush=True)
+
+            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
+            # app_type es por ahora la constante mockeada MONITOR_APP.
 
 
             #Procesamiento del request

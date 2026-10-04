@@ -6,6 +6,9 @@ from backend.http_api_rest.http_endpoints_devices_stats import DevicesStatsEndpo
 from base_api_test import BaseApiTest
 
 class DevicesStatsTests(BaseApiTest):
+    test_all_routes_reject_invalid_token_before_process = (
+        BaseApiTest.assert_all_routes_reject_invalid_token_before_process
+    )
     endpoints_class = DevicesStatsEndpoints
     process_class = DevicesStatsProcesses
     prefix = "/grandsafelife/api/v1/devices/target/stats"
