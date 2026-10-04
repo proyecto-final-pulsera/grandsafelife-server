@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 #Requires -RunAsAdministrator
 <#
 .SYNOPSIS
@@ -176,12 +176,11 @@ if (-not $ToolsOnly) {
             Invoke-Checked $python @('-m', 'venv', $venv)
         }
         Invoke-Checked $venvPython @('-m', 'pip', 'install', '--upgrade', 'pip')
-        Invoke-Checked $venvPython @('-m', 'pip', 'install', '-r', 'backend/tests/requirements.txt')
+        Invoke-Checked $venvPython @('-m', 'pip', 'install', '-r', 'requirements.txt')
         Invoke-Checked $venvPython @('-m', 'pip', 'check')
-        Invoke-Checked $venvPython @('-c', 'import flask, pydantic, firebase_functions, httpx')
+        Invoke-Checked $venvPython @('-c', 'import flask, pydantic, firebase_functions, firebase_admin')
         if (-not $SkipTests) {
-            if ($env:CONTRACT_BASE_URL) { throw 'Quite CONTRACT_BASE_URL para ejecutar las pruebas exclusivamente en proceso local.' }
-            Invoke-Checked $venvPython @('-m', 'backend.tests.test_http_contract')
+            Invoke-Checked 'powershell.exe' @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', 'tests/run.ps1')
         }
     } finally { Pop-Location }
 }

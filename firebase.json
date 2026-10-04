@@ -24,8 +24,36 @@
         "**/backend/tests/**",
         "**/backend/fall_detection/model/test/**",
         "**/backend/fall_detection/model/app/models/**",
-        "**/backend/fall_detection/model/requirements.txt"
+        "**/backend/fall_detection/model/requirements.txt",
+        "**/tests/**"
       ]
     }
-  ]
+  ],
+  "firestore": {
+    "rules": "tests/firestore.rules"
+  },
+  "emulators": {
+    "ui": {
+      "host": "127.0.0.1",
+      "enabled": true,
+      "port": 4000
+    },
+    "hub": {
+      "host": "127.0.0.1",
+      "port": 4400
+    },
+    "auth": {
+      "host": "127.0.0.1",
+      "port": 9099
+    },
+    "singleProjectMode": true,
+    "functions": {
+      "host": "127.0.0.1",
+      "port": 5001
+    },
+    "firestore": {
+      "host": "127.0.0.1",
+      "port": 8080
+    }
+  }
 }

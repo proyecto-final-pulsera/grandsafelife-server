@@ -42,3 +42,4 @@ htmlcov/
 *.key
 credentials*.json
 *service*account*.json
+/tests/local-data/

@@ -1,6 +1,11 @@
 """Configuración de rutas y respuestas de error de la API HTTP."""
 
+import logging
+import os
+
 from flask import Flask, Response, request
+from flask.logging import default_handler
+from google.api_core.exceptions import NotFound as FirestoreNotFound
 from werkzeug.exceptions import MethodNotAllowed, NotFound
 
 from .http_endpoints_users import UsersEndpoints
@@ -11,9 +16,27 @@ from .http_endpoints_devices_stats import DevicesStatsEndpoints
 from .http_endpoints_alarms import AlarmsEndpoints
 from .http_validation import RequestValidationError
 
+
+class EmulatorErrorLog(logging.Filter):
+    """Resume el error de actualización inexistente en el proyecto local de tests."""
+
+    def filter(self, record):
+        if record.exc_info:
+            error = record.exc_info[1]
+            if isinstance(error, RuntimeError) and isinstance(error.__cause__, FirestoreNotFound):
+                record.msg = 'Firestore NotFound: el documento solicitado no existe. %s %s devuelve HTTP 500.'
+                record.args = (request.method, request.path)
+                record.exc_info = None
+                record.exc_text = None
+        return True
+
+
 def create_http_app(http_processor):
     """Crea la aplicación Flask, registra los endpoints y configura los errores HTTP."""
     app = Flask(__name__, static_folder=None)
+    if (os.environ.get('GCLOUD_PROJECT') == 'demo-grandsafelife'
+            and os.environ.get('FIRESTORE_EMULATOR_HOST') == '127.0.0.1:8080'):
+        default_handler.addFilter(EmulatorErrorLog())
     app.config["PROVIDE_AUTOMATIC_OPTIONS"] = False
     app.register_blueprint(UsersEndpoints(http_processor).blueprint)
     app.register_blueprint(HomesEndpoints(http_processor).blueprint)
