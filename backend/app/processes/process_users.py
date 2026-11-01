@@ -1,5 +1,6 @@
 """Procesamiento de usuarios autenticados mediante Cloud Firestore."""
 from datetime import datetime, timezone
+from google.cloud import firestore
 from ...database.database import get_firestore_client
 from google.cloud.firestore_v1.base_query import FieldFilter
 
@@ -70,3 +71,11 @@ class UsersProcesses:
             self.db.collection('users').document(user_id).update({'notifications_token': token})
         except Exception as error:
             raise RuntimeError(f'Error setting notifications token: {error}') from error
+
+    def process_delete_notifications_token(self, user_id):
+        try:
+            self.db.collection('users').document(user_id).update(
+                {'notifications_token': firestore.DELETE_FIELD}
+            )
+        except Exception as error:
+            raise RuntimeError(f'Error deleting notifications token: {error}') from error

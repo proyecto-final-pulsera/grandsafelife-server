@@ -41,6 +41,9 @@ class App:
     def process_set_notifications_token(self, user_id, token):
         return self.users.process_set_notifications_token(user_id, token)
 
+    def process_delete_notifications_token(self, user_id):
+        return self.users.process_delete_notifications_token(user_id)
+
     #--------------------
     # Homes
     #--------------------

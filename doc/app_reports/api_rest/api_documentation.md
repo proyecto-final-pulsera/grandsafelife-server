@@ -22,6 +22,7 @@ https://us-central1-grand-safe-band.cloudfunctions.net/api/grandsafelife/api/v1/
 | Users | POST | `/grandsafelife/api/v1/users` | Crea o reemplaza el documento de un usuario. | Monitores | createUser |
 | Users | PATCH | `/grandsafelife/api/v1/users/{user_id}` | Actualiza el perfil y los hogares del usuario afectado. | Monitores | updateUser |
 | Users | POST | `/grandsafelife/api/v1/users/{user_id}/notifications_token` | Guarda el token de notificaciones del usuario. | Monitores | setNotificationsToken |
+| Users | DELETE | `/grandsafelife/api/v1/users/{user_id}/notifications_token` | Elimina el token de notificaciones del usuario. | Monitores | deleteNotificationsToken |
 | Homes | GET | `/grandsafelife/api/v1/homes/{home_id}` | Recupera un hogar accesible por ID. | Monitores | getHomeByID |
 | Homes | POST | `/grandsafelife/api/v1/homes` | Crea o reemplaza un documento de hogar. | Monitores | createHome |
 | Homes | PATCH | `/grandsafelife/api/v1/homes/{home_id}` | Actualiza parcialmente un hogar. | Monitores | updateHome |
@@ -279,6 +280,26 @@ Response (HTTP `200`):
 El documento debe existir: se utiliza `update`, sin crear usuarios nuevos.
 Los demás campos, incluido `updated_at`, se conservan. Cada llamada reemplaza
 el token anterior; este campo almacena un solo token por usuario.
+
+### `DELETE /grandsafelife/api/v1/users/{user_id}/notifications_token`
+
+- Descripción: elimina directamente el campo `notifications_token` de `users/{user_id}`.
+- Parámetro: `user_id` es el UID del usuario cuyo token se desregistra.
+- Header: `Authorization: Bearer <firebase_id_token>`.
+- Body: no aplica. No se envía ni se compara el token anterior.
+- La autenticación es obligatoria.
+
+Los demás campos, incluido `updated_at`, se conservan. El documento del usuario debe existir; si el campo ya no existe, la operación devuelve igualmente éxito.
+Una autenticación inválida devuelve HTTP `401`.
+
+Response (HTTP `200`):
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully"
+}
+```
 
 ## 5 - Endpoints "Homes"
 

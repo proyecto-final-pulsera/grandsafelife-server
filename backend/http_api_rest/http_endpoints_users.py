@@ -151,3 +151,20 @@ class UsersEndpoints:
             #Procesamiento del request
             self.http_processor.process_set_notifications_token(user_id, body.token)
             return build_api_response(API_OP_OK)
+
+        @self.blueprint.delete("/<user_id>/notifications_token")
+        def delete_notifications_token(user_id):
+            authorization, _, _ = validate_request()
+
+            try:
+                current_uid, app_type = self.authentication.get_current_user_uid(authorization)
+            except (ValueError, auth.InvalidIdTokenError, auth.RevokedIdTokenError, auth.UserDisabledError):
+                return build_api_response(API_OP_UNAUTHORIZED), 401
+
+            print(f"[AUTH SERVER] uid={current_uid}", flush=True)
+
+            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
+            # app_type es por ahora la constante mockeada MONITOR_APP.
+
+            self.http_processor.process_delete_notifications_token(user_id)
+            return build_api_response(API_OP_OK)
