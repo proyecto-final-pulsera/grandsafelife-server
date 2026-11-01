@@ -64,3 +64,9 @@ class UsersProcesses:
             self.db.collection('users').document(user_id).update(data)
         except Exception as error:
             raise RuntimeError(f'Error updating user: {error}') from error
+
+    def process_set_notifications_token(self, user_id, token):
+        try:
+            self.db.collection('users').document(user_id).update({'notifications_token': token})
+        except Exception as error:
+            raise RuntimeError(f'Error setting notifications token: {error}') from error

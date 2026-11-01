@@ -38,6 +38,9 @@ class App:
     def process_update_user(self, user_id, user_data):
         return self.users.process_update_user(user_id, user_data)
 
+    def process_set_notifications_token(self, user_id, token):
+        return self.users.process_set_notifications_token(user_id, token)
+
     #--------------------
     # Homes
     #--------------------

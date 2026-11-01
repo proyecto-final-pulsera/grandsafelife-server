@@ -15,31 +15,32 @@ https://us-central1-grand-safe-band.cloudfunctions.net/api/grandsafelife/api/v1/
 
 ## 1 - Listado de endpoints
 
-| CONJUNTO | MÉTODO | URL | DESCRIPCIÓN | App consumidora | Le pega a la api? | Function | Tested |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Users | GET | `/grandsafelife/api/v1/users/{user_id}` | Recupera el perfil completo de un usuario por UID. | Monitores | Sí | getUserByID |  |
-| Users | GET | `/grandsafelife/api/v1/users/by-email?email={email}` | Recupera el perfil completo de un usuario por email. | Monitores | Sí | getUserByEmail |  |
-| Users | POST | `/grandsafelife/api/v1/users` | Crea o reemplaza el documento de un usuario. | Monitores | Sí | createUser |  |
-| Users | PATCH | `/grandsafelife/api/v1/users/{user_id}` | Actualiza el perfil y los hogares del usuario afectado. | Monitores | Sí | updateUser |  |
-| Homes | GET | `/grandsafelife/api/v1/homes/{home_id}` | Recupera un hogar accesible por ID. | Monitores | Sí | getHomeByID | OK |
-| Homes | POST | `/grandsafelife/api/v1/homes` | Crea o reemplaza un documento de hogar. | Monitores | Sí | createHome | OK |
-| Homes | PATCH | `/grandsafelife/api/v1/homes/{home_id}` | Actualiza parcialmente un hogar. | Monitores | Sí | updateHome | OK |
-| Homes | DELETE | `/grandsafelife/api/v1/homes/{home_id}` | Elimina el hogar indicado. | Monitores | Sí | deleteHome | OK |
-| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}` | Recupera un dispositivo accesible por ID. | Monitores | Sí | getDeviceByID |  |
-| Devices | POST | `/grandsafelife/api/v1/devices` | Crea o reemplaza un documento de dispositivo. | Monitores | Sí | createDevice |  |
-| Devices | PATCH | `/grandsafelife/api/v1/devices/{device_id}` | Actualiza la configuración editable de un dispositivo. | Monitores | Sí | updateDevice |  |
-| Devices | DELETE | `/grandsafelife/api/v1/devices/{device_id}` | Elimina el documento del dispositivo. | Monitores | Sí | deleteDevice |  |
-| Devices | GET | `/grandsafelife/api/v1/users/{owner_id}/devices` | Recupera dispositivos por administrador propietario. | Monitores | Sí | queryDevicesByOwner |  |
-| Devices | GET | `/grandsafelife/api/v1/homes/{home_id}/devices` | Recupera dispositivos asociados a un hogar. | Monitores | Sí | queryDevicesByHome |  |
-| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}/location` | Recupera la última ubicación de un dispositivo. | Monitores | Sí | getLocationByDevice |  |
-| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily?date={YYYY-MM-DD}` | Recupera métricas diarias. | Monitores | Sí | getDailyMetrics |  |
-| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly?month={YYYY-MM}` | Recupera agregados mensuales. | Monitores | Sí | getMonthlyAggregates |  |
-| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly/previous` | Recupera los agregados del mes anterior. | Monitores | Sí | getPreviousMonthAggregates |  |
-| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily/last-week` | Recupera métricas de los últimos siete días. | Monitores | Sí | getLastWeekMetrics |  |
-| Alarms | GET | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Recupera las alarmas de un dispositivo. | Monitores | Sí | getAlarmsByDeviceId |  |
-| Alarms | PUT | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Reemplaza la configuración completa de alarmas. | Monitores | Sí | setAlarmsByDeviceId |  |
-| Fall detection | POST | `/grandsafelife/api/v1/fall-detection/requests` | Envía un chunk y obtiene el ID del pedido. | Anciano | - | - |  |
-| Fall detection | GET | `/grandsafelife/api/v1/fall-detection/requests/{request_id}` | Consulta el estado y resultado del pedido. | Anciano | - | - |  |
+| CONJUNTO | MÉTODO | URL | DESCRIPCIÓN | App consumidora | Function |
+| --- | --- | --- | --- | --- | --- |
+| Users | GET | `/grandsafelife/api/v1/users/{user_id}` | Recupera el perfil completo de un usuario por UID. | Monitores | getUserByID |
+| Users | GET | `/grandsafelife/api/v1/users/by-email?email={email}` | Recupera el perfil completo de un usuario por email. | Monitores | getUserByEmail |
+| Users | POST | `/grandsafelife/api/v1/users` | Crea o reemplaza el documento de un usuario. | Monitores | createUser |
+| Users | PATCH | `/grandsafelife/api/v1/users/{user_id}` | Actualiza el perfil y los hogares del usuario afectado. | Monitores | updateUser |
+| Users | POST | `/grandsafelife/api/v1/users/{user_id}/notifications_token` | Guarda el token de notificaciones del usuario. | Monitores | setNotificationsToken |
+| Homes | GET | `/grandsafelife/api/v1/homes/{home_id}` | Recupera un hogar accesible por ID. | Monitores | getHomeByID |
+| Homes | POST | `/grandsafelife/api/v1/homes` | Crea o reemplaza un documento de hogar. | Monitores | createHome |
+| Homes | PATCH | `/grandsafelife/api/v1/homes/{home_id}` | Actualiza parcialmente un hogar. | Monitores | updateHome |
+| Homes | DELETE | `/grandsafelife/api/v1/homes/{home_id}` | Elimina el hogar indicado. | Monitores | deleteHome |
+| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}` | Recupera un dispositivo accesible por ID. | Monitores | getDeviceByID |
+| Devices | POST | `/grandsafelife/api/v1/devices` | Crea o reemplaza un documento de dispositivo. | Monitores | createDevice |
+| Devices | PATCH | `/grandsafelife/api/v1/devices/{device_id}` | Actualiza la configuración editable de un dispositivo. | Monitores | updateDevice |
+| Devices | DELETE | `/grandsafelife/api/v1/devices/{device_id}` | Elimina el documento del dispositivo. | Monitores | deleteDevice |
+| Devices | GET | `/grandsafelife/api/v1/users/{owner_id}/devices` | Recupera dispositivos por administrador propietario. | Monitores | queryDevicesByOwner |
+| Devices | GET | `/grandsafelife/api/v1/homes/{home_id}/devices` | Recupera dispositivos asociados a un hogar. | Monitores | queryDevicesByHome |
+| Devices | GET | `/grandsafelife/api/v1/devices/{device_id}/location` | Recupera la última ubicación de un dispositivo. | Monitores | getLocationByDevice |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily?date={YYYY-MM-DD}` | Recupera métricas diarias. | Monitores | getDailyMetrics |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly?month={YYYY-MM}` | Recupera agregados mensuales. | Monitores | getMonthlyAggregates |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/monthly/previous` | Recupera los agregados del mes anterior. | Monitores | getPreviousMonthAggregates |
+| Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily/last-week` | Recupera métricas de los últimos siete días. | Monitores | getLastWeekMetrics |
+| Alarms | GET | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Recupera las alarmas de un dispositivo. | Monitores | getAlarmsByDeviceId |
+| Alarms | PUT | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Reemplaza la configuración completa de alarmas. | Monitores | setAlarmsByDeviceId |
+| Fall detection | POST | `/grandsafelife/api/v1/fall-detection/requests` | Envía un chunk y obtiene el ID del pedido. | Anciano | - |
+| Fall detection | GET | `/grandsafelife/api/v1/fall-detection/requests/{request_id}` | Consulta el estado y resultado del pedido. | Anciano | - |
 
 ## 2 - Tabla de códigos de operación
 
@@ -244,6 +245,40 @@ Flutter omite `updated_at`, que el servidor genera en cada actualización.
 `created_at` se conserva si no se envía; si viene como `Timestamp`, Flutter lo
 envía en milisegundos Unix y el servidor lo convierte al guardar la fecha.
 No se regenera automáticamente la fecha de creación.
+
+### `POST /grandsafelife/api/v1/users/{user_id}/notifications_token`
+
+- Descripción: agrega o reemplaza únicamente `notifications_token` en `users/{user_id}`.
+- Parámetro: `user_id` es el UID del usuario cuyo token se guarda.
+- Header: `Authorization: Bearer <firebase_id_token>`.
+- La autenticación es obligatoria.
+
+Body:
+
+```json
+{
+  "token": "token_de_notificaciones_del_dispositivo"
+}
+```
+
+`token` es un string obligatorio, no vacío ni compuesto únicamente por espacios.
+Se guarda exactamente como se recibe. No se admiten campos adicionales ni `null`.
+
+- Un body inválido devuelve HTTP `422`
+- una autenticación inválida devuelve HTTP `401`.
+
+Response (HTTP `200`):
+
+```json
+{
+  "op_status": 0,
+  "brief": "Operation completed successfully"
+}
+```
+
+El documento debe existir: se utiliza `update`, sin crear usuarios nuevos.
+Los demás campos, incluido `updated_at`, se conservan. Cada llamada reemplaza
+el token anterior; este campo almacena un solo token por usuario.
 
 ## 5 - Endpoints "Homes"
 

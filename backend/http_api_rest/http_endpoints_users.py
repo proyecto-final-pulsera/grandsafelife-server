@@ -28,6 +28,12 @@ class UserEmailQuery(BaseModel):
     email: str = Field(min_length=1)
 
 
+class NotificationsTokenInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    token: str = Field(min_length=1, pattern=r"\S")
+
+
 #==========================
 #Endpoints
 #==========================
@@ -124,4 +130,24 @@ class UsersEndpoints:
 
             #Procesamiento del request
             self.http_processor.process_update_user(user_id, body.model_dump(exclude_unset=True),)
+            return build_api_response(API_OP_OK)
+
+        @self.blueprint.post("/<user_id>/notifications_token")
+        def set_notifications_token(user_id):
+            #Validacion de formato
+            authorization, body, _ = validate_request(body_model=NotificationsTokenInput)
+
+            # Autenticación antes de ejecutar el process.
+            try:
+                current_uid, app_type = self.authentication.get_current_user_uid(authorization)
+            except (ValueError, auth.InvalidIdTokenError, auth.RevokedIdTokenError, auth.UserDisabledError):
+                return build_api_response(API_OP_UNAUTHORIZED), 401
+
+            print(f"[AUTH SERVER] uid={current_uid}", flush=True)
+
+            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
+            # app_type es por ahora la constante mockeada MONITOR_APP.
+
+            #Procesamiento del request
+            self.http_processor.process_set_notifications_token(user_id, body.token)
             return build_api_response(API_OP_OK)
