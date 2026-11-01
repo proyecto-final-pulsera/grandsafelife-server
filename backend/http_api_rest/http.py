@@ -3,11 +3,13 @@
 import logging
 import os
 
+# HTTP
 from flask import Flask, Response, request
 from flask.logging import default_handler
 from google.api_core.exceptions import NotFound as FirestoreNotFound
 from werkzeug.exceptions import MethodNotAllowed, NotFound
 
+# Endpoints
 from .http_endpoints_users import UsersEndpoints
 from .http_endpoints_homes import HomesEndpoints
 from .http_endpoints_fall_detection import FallDetectionEndpoints
@@ -16,7 +18,14 @@ from .http_endpoints_devices_stats import DevicesStatsEndpoints
 from .http_endpoints_alarms import AlarmsEndpoints
 from .http_validation import RequestValidationError
 
+# Recursos de negocio
+from ..database.repositories.repository_users import UsersRepository
+from ..database.repositories.repository_homes import HomesRepository
+from ..database.repositories.repository_devices import DevicesRepository
+from ..database.repositories.repository_devices_stats import DevicesStatsRepository
+from ..database.repositories.repository_alarms import AlarmsRepository
 
+# Helper para tests
 class EmulatorErrorLog(logging.Filter):
     """Resume el error de actualización inexistente en el proyecto local de tests."""
 
@@ -30,31 +39,31 @@ class EmulatorErrorLog(logging.Filter):
                 record.exc_text = None
         return True
 
-
-def create_http_app(http_processor):
+#==========================
+# Configuración de HTTP Server
+#==========================
+def create_http_app(db, fall_detector, notifier_mng=None):
     """Crea la aplicación Flask, registra los endpoints y configura los errores HTTP."""
     app = Flask(__name__, static_folder=None)
-    if (os.environ.get('GCLOUD_PROJECT') == 'demo-grandsafelife'
-            and os.environ.get('FIRESTORE_EMULATOR_HOST') == '127.0.0.1:8080'):
+    if (os.environ.get('GCLOUD_PROJECT') == 'demo-grandsafelife' and os.environ.get('FIRESTORE_EMULATOR_HOST') == '127.0.0.1:8080'):
         default_handler.addFilter(EmulatorErrorLog())
+
     app.config["PROVIDE_AUTOMATIC_OPTIONS"] = False
-    app.register_blueprint(UsersEndpoints(http_processor).blueprint)
-    app.register_blueprint(HomesEndpoints(http_processor).blueprint)
-    app.register_blueprint(FallDetectionEndpoints(http_processor).blueprint)
-    app.register_blueprint(DevicesEndpoints(http_processor).blueprint)
-    app.register_blueprint(DevicesStatsEndpoints(http_processor).blueprint)
-    app.register_blueprint(AlarmsEndpoints(http_processor).blueprint)
+    app.register_blueprint(UsersEndpoints(UsersRepository(db)).blueprint)
+    app.register_blueprint(HomesEndpoints(HomesRepository(db)).blueprint)
+    app.register_blueprint(FallDetectionEndpoints(db, fall_detector, notifier_mng).blueprint)
+    app.register_blueprint(DevicesEndpoints(DevicesRepository(db)).blueprint)
+    app.register_blueprint(DevicesStatsEndpoints(DevicesStatsRepository(db)).blueprint)
+    app.register_blueprint(AlarmsEndpoints(AlarmsRepository(db)).blueprint)
 
     # Deshabilitar HEAD: consulta los encabezados del recurso sin devolver body.
     for rule in app.url_map.iter_rules():
         rule.methods.discard("HEAD")
 
-
     # Frente a errores de validación se retorna 422 con la lista de errores en el campo detail.
     @app.errorhandler(RequestValidationError)
     def validation_error(error):
         return {"detail": error.errors}, 422
-
 
     # Si existe la URL pero no con el método indicado (GET, POST, PUT, etc) se retorna 405
     @app.errorhandler(MethodNotAllowed)

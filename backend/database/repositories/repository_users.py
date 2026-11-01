@@ -1,11 +1,11 @@
-"""Procesamiento de usuarios autenticados mediante Cloud Firestore."""
+"""Repositorio de usuarios autenticados mediante Cloud Firestore."""
 from datetime import datetime, timezone
 from google.cloud import firestore
-from ...database.database import get_firestore_client
+from ..database import get_firestore_client
 from google.cloud.firestore_v1.base_query import FieldFilter
 
 
-class UsersProcesses:
+class UsersRepository:
     def __init__(self, db=None):
         self._db = db
 
@@ -27,13 +27,13 @@ class UsersProcesses:
                 data[field] = int(data[field].timestamp() * 1000)
         return data
 
-    def process_get_user_by_id(self, user_id):
+    def get_user_by_id(self, user_id):
         try:
             return self._user_data(self.db.collection('users').document(user_id).get())
         except Exception as error:
             raise RuntimeError(f'Error fetching user: {error}') from error
 
-    def process_get_user_by_email(self, email):
+    def get_user_by_email(self, email):
         try:
             documents = self.db.collection('users').where(
                 filter=FieldFilter('email', '==', email)
@@ -42,7 +42,7 @@ class UsersProcesses:
         except Exception as error:
             raise RuntimeError(f'Error fetching user by email: {error}') from error
 
-    def process_create_user(self, user_data, user_id=None):
+    def create_user(self, user_data, user_id=None):
         try:
             data = dict(user_data)
             now = datetime.now(timezone.utc)
@@ -55,7 +55,7 @@ class UsersProcesses:
         except Exception as error:
             raise RuntimeError(f'Error creating user: {error}') from error
 
-    def process_update_user(self, user_id, user_data):
+    def update_user(self, user_id, user_data):
         try:
             data = dict(user_data)
             data['updated_at'] = datetime.now(timezone.utc)
@@ -66,13 +66,13 @@ class UsersProcesses:
         except Exception as error:
             raise RuntimeError(f'Error updating user: {error}') from error
 
-    def process_set_notifications_token(self, user_id, token):
+    def set_notifications_token(self, user_id, token):
         try:
             self.db.collection('users').document(user_id).update({'notifications_token': token})
         except Exception as error:
             raise RuntimeError(f'Error setting notifications token: {error}') from error
 
-    def process_delete_notifications_token(self, user_id):
+    def delete_notifications_token(self, user_id):
         try:
             self.db.collection('users').document(user_id).update(
                 {'notifications_token': firestore.DELETE_FIELD}

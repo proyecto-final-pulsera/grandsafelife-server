@@ -33,8 +33,8 @@ class HomeUpdateInput(RootModel[dict[str, JsonValue]]):
 class HomesEndpoints:
     """Agrupa las rutas de hogares e inyecta su procesador HTTP."""
 
-    def __init__(self, http_processor):
-        self.http_processor = http_processor
+    def __init__(self, repository):
+        self.repository = repository
         self.authentication = Authentication()
         self.blueprint = Blueprint(
             "homes", __name__, url_prefix="/grandsafelife/api/v1/homes",
@@ -58,7 +58,7 @@ class HomesEndpoints:
 
             # TODO: Validar los permisos de current_uid sobre los datos solicitados.
             # app_type es por ahora la constante mockeada MONITOR_APP.
-            home = self.http_processor.process_get_home_by_id(home_id)
+            home = self.repository.get_home_by_id(home_id)
             return build_api_response(API_OP_OK, home)
 
         @self.blueprint.post("")
@@ -75,7 +75,7 @@ class HomesEndpoints:
 
             # TODO: Validar los permisos de current_uid sobre los datos solicitados.
             # app_type es por ahora la constante mockeada MONITOR_APP.
-            home_id = self.http_processor.process_create_home(
+            home_id = self.repository.create_home(
                 body.data, body.home_id,
             )
             return build_api_response(API_OP_OK, home_id)
@@ -94,7 +94,7 @@ class HomesEndpoints:
 
             # TODO: Validar los permisos de current_uid sobre los datos solicitados.
             # app_type es por ahora la constante mockeada MONITOR_APP.
-            self.http_processor.process_update_home(
+            self.repository.update_home(
                 home_id, body.model_dump(exclude_unset=True),
             )
             return build_api_response(API_OP_OK)
@@ -113,5 +113,5 @@ class HomesEndpoints:
 
             # TODO: Validar los permisos de current_uid sobre los datos solicitados.
             # app_type es por ahora la constante mockeada MONITOR_APP.
-            self.http_processor.process_delete_home(home_id)
+            self.repository.delete_home(home_id)
             return build_api_response(API_OP_OK)

@@ -33,8 +33,8 @@ class DeviceCreateInput(BaseModel):
 class DevicesEndpoints:
     """Agrupa las rutas de dispositivos e inyecta su procesador HTTP."""
 
-    def __init__(self, http_processor):
-        self.http_processor = http_processor
+    def __init__(self, repository):
+        self.repository = repository
         self.authentication = Authentication()
         self.blueprint = Blueprint("devices", __name__, url_prefix="/grandsafelife/api/v1",)
         self._register_routes()
@@ -56,7 +56,7 @@ class DevicesEndpoints:
 
             # TODO: Validar los permisos de current_uid sobre los datos solicitados.
             # app_type es por ahora la constante mockeada MONITOR_APP.
-            device_id = self.http_processor.process_create_device(body.data,body.device_id,)
+            device_id = self.repository.create_device(body.data,body.device_id,)
             return build_api_response(API_OP_OK, device_id)
 
         @self.blueprint.get("/devices/<device_id>")
@@ -73,7 +73,7 @@ class DevicesEndpoints:
 
             # TODO: Validar los permisos de current_uid sobre los datos solicitados.
             # app_type es por ahora la constante mockeada MONITOR_APP.
-            device = self.http_processor.process_get_device_by_id(device_id,)
+            device = self.repository.get_device_by_id(device_id,)
             return build_api_response(API_OP_OK, device)
 
         @self.blueprint.patch("/devices/<device_id>")
@@ -90,7 +90,7 @@ class DevicesEndpoints:
 
             # TODO: Validar los permisos de current_uid sobre los datos solicitados.
             # app_type es por ahora la constante mockeada MONITOR_APP.
-            self.http_processor.process_update_device(device_id, body.model_dump(exclude_unset=True),)
+            self.repository.update_device(device_id, body.model_dump(exclude_unset=True),)
             return build_api_response(API_OP_OK)
 
         @self.blueprint.delete("/devices/<device_id>")
@@ -107,7 +107,7 @@ class DevicesEndpoints:
 
             # TODO: Validar los permisos de current_uid sobre los datos solicitados.
             # app_type es por ahora la constante mockeada MONITOR_APP.
-            self.http_processor.process_delete_device(device_id)
+            self.repository.delete_device(device_id)
             return build_api_response(API_OP_OK)
 
         @self.blueprint.get("/users/<owner_id>/devices")
@@ -124,7 +124,7 @@ class DevicesEndpoints:
 
             # TODO: Validar los permisos de current_uid sobre los datos solicitados.
             # app_type es por ahora la constante mockeada MONITOR_APP.
-            devices = self.http_processor.process_get_devices_by_owner(owner_id,)
+            devices = self.repository.get_devices_by_owner(owner_id,)
             return build_api_response(API_OP_OK, devices)
 
         @self.blueprint.get("/homes/<home_id>/devices")
@@ -141,7 +141,7 @@ class DevicesEndpoints:
 
             # TODO: Validar los permisos de current_uid sobre los datos solicitados.
             # app_type es por ahora la constante mockeada MONITOR_APP.
-            devices = self.http_processor.process_get_devices_by_home(home_id,)
+            devices = self.repository.get_devices_by_home(home_id,)
             return build_api_response(API_OP_OK, devices)
 
         @self.blueprint.get("/devices/<device_id>/location")
@@ -158,5 +158,5 @@ class DevicesEndpoints:
 
             # TODO: Validar los permisos de current_uid sobre los datos solicitados.
             # app_type es por ahora la constante mockeada MONITOR_APP.
-            location = self.http_processor.process_get_device_location(device_id,)
+            location = self.repository.get_device_location(device_id,)
             return build_api_response(API_OP_OK, location)

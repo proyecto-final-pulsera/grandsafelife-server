@@ -32,8 +32,8 @@ class MonthlyDateQuery(BaseModel):
 class DevicesStatsEndpoints:
     """Agrupa las rutas de métricas e inyecta su procesador HTTP."""
 
-    def __init__(self, http_processor):
-        self.http_processor = http_processor
+    def __init__(self, repository):
+        self.repository = repository
         self.authentication = Authentication()
         self.blueprint = Blueprint("devices_stats", __name__,url_prefix="/grandsafelife/api/v1/devices/<device_id>/stats",)
         self._register_routes()
@@ -58,7 +58,7 @@ class DevicesStatsEndpoints:
             # app_type es por ahora la constante mockeada MONITOR_APP.
 
             # Procesamiento del request con los datos listos para ejecutar la acción.
-            metrics = self.http_processor.process_get_daily_metrics(device_id, query.date)
+            metrics = self.repository.get_daily_metrics(device_id, query.date)
             return build_api_response(API_OP_OK, metrics)
 
         @self.blueprint.get("/monthly")
@@ -78,7 +78,7 @@ class DevicesStatsEndpoints:
             # app_type es por ahora la constante mockeada MONITOR_APP.
 
             # Procesamiento del request con los datos listos para ejecutar la acción.
-            aggregates = self.http_processor.process_get_monthly_aggregates(device_id, query.month)
+            aggregates = self.repository.get_monthly_aggregates(device_id, query.month)
             return build_api_response(API_OP_OK, aggregates)
 
         @self.blueprint.get("/monthly/previous")
@@ -98,7 +98,7 @@ class DevicesStatsEndpoints:
             # app_type es por ahora la constante mockeada MONITOR_APP.
 
             # Procesamiento del request con los datos listos para ejecutar la acción.
-            aggregates = self.http_processor.process_get_previous_month_aggregates(device_id)
+            aggregates = self.repository.get_previous_month_aggregates(device_id)
             return build_api_response(API_OP_OK, aggregates)
 
         @self.blueprint.get("/daily/last-week")
@@ -118,5 +118,5 @@ class DevicesStatsEndpoints:
             # app_type es por ahora la constante mockeada MONITOR_APP.
 
             # Procesamiento del request con los datos listos para ejecutar la acción.
-            metrics = self.http_processor.process_get_last_week_metrics(device_id)
+            metrics = self.repository.get_last_week_metrics(device_id)
             return build_api_response(API_OP_OK, metrics)

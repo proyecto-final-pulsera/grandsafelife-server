@@ -1,9 +1,9 @@
-"""Procesamiento de hogares autenticados mediante Cloud Firestore."""
+"""Repositorio de hogares autenticados mediante Cloud Firestore."""
 from datetime import datetime, timezone
-from ...database.database import get_firestore_client
+from ..database import get_firestore_client
 
 
-class HomesProcesses:
+class HomesRepository:
     def __init__(self, db=None):
         self._db = db
 
@@ -13,7 +13,7 @@ class HomesProcesses:
             self._db = get_firestore_client()
         return self._db
 
-    def process_get_home_by_id(self, home_id):
+    def get_home_by_id(self, home_id):
         try:
             document = self.db.collection('homes').document(home_id).get()
             if not document.exists:
@@ -28,7 +28,7 @@ class HomesProcesses:
         except Exception as error:
             raise RuntimeError(f'Error fetching home: {error}') from error
 
-    def process_create_home(self, home_data, home_id=None):
+    def create_home(self, home_data, home_id=None):
         try:
             data = dict(home_data)
             now = datetime.now(timezone.utc)
@@ -41,7 +41,7 @@ class HomesProcesses:
         except Exception as error:
             raise RuntimeError(f'Error creating home: {error}') from error
 
-    def process_update_home(self, home_id, home_data):
+    def update_home(self, home_id, home_data):
         try:
             data = dict(home_data)
             data['updated_at'] = datetime.now(timezone.utc)
@@ -52,7 +52,7 @@ class HomesProcesses:
         except Exception as error:
             raise RuntimeError(f'Error updating home: {error}') from error
 
-    def process_delete_home(self, home_id):
+    def delete_home(self, home_id):
         try:
             # Firestore elimina solo el documento; no sus subcolecciones.
             self.db.collection('homes').document(home_id).delete()

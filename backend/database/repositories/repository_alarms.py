@@ -1,9 +1,9 @@
 """Lectura y reemplazo de alarmas de dispositivos mediante Cloud Firestore."""
 from datetime import datetime, timezone
-from ...database.database import get_firestore_client
+from ..database import get_firestore_client
 
 
-class AlarmsProcesses:
+class AlarmsRepository:
     def __init__(self, db=None):
         self._db = db
 
@@ -13,7 +13,7 @@ class AlarmsProcesses:
             self._db = get_firestore_client()
         return self._db
 
-    def process_get_alarms_by_device_id(self, device_id):
+    def get_alarms_by_device_id(self, device_id):
         try:
             document = self.db.collection('alarms').document(device_id).get()
             if not document.exists:
@@ -27,7 +27,7 @@ class AlarmsProcesses:
         except Exception as error:
             raise RuntimeError(f'Error fetching alarms: {error}') from error
 
-    def process_set_alarms_by_device_id(self, device_id, alarms):
+    def set_alarms_by_device_id(self, device_id, alarms):
         try:
             data = {}
             for alarm_id, alarm in alarms.items():

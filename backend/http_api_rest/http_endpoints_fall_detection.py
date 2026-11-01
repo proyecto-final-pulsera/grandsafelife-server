@@ -1,120 +1,49 @@
-"""Contratos HTTP de detección de caídas; integración con process_* pendiente."""
-
-from typing import Literal
-
+"""Endpoint síncrono de detección de caídas."""
 from flask import Blueprint
-from pydantic import BaseModel, ConfigDict, Field, JsonValue, RootModel
-
-from .api_op_codes import (
-    API_OP_OK,
-    API_OP_PROCESS_FAILED,
-    API_OP_PROCESS_IN_PROGRESS,
-    API_OP_PROCESS_NOT_FOUND,
-    API_OP_PROCESS_READY,
-    build_api_response,
-)
+from firebase_admin import auth
+from pydantic import BaseModel, ConfigDict, StrictBool
+from ..authentication.authentication import Authentication
+from .api_op_codes import API_OP_OK, API_OP_PROCESS_FAILED, API_OP_UNAUTHORIZED, build_api_response
 from .http_validation import validate_request
-
 
 #==========================
 #Reglas de validación
 #==========================
-
-
-class FallDetectionInput(RootModel[dict[str, JsonValue]]):
-    """Objeto JSON crudo provisional; el esquema del chunk está por definir."""
-
-
-class RequestReference(BaseModel):
+class FallDetectionInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
-
-    request_id: int = Field(gt=0)
-
-
-class FallDetectionResultResponse(RequestReference):
-    is_fall: bool
-
-
-class FallDetectionErrorResponse(RequestReference):
-    error_code: str = Field(min_length=1)
-
-
-class AcceptedResponse(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    op_status: Literal[API_OP_OK]
-    brief: str
-    resp: RequestReference
-
-
-class InProgressResponse(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    op_status: Literal[API_OP_PROCESS_IN_PROGRESS]
-    brief: str
-    resp: RequestReference
-
-
-class ReadyResponse(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    op_status: Literal[API_OP_PROCESS_READY]
-    brief: str
-    resp: FallDetectionResultResponse
-
-
-class NotFoundResponse(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    op_status: Literal[API_OP_PROCESS_NOT_FOUND]
-    brief: str
-    resp: RequestReference
-
-
-class FailedResponse(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    op_status: Literal[API_OP_PROCESS_FAILED]
-    brief: str
-    resp: FallDetectionErrorResponse
-
+    fall_detected: StrictBool
 
 #==========================
 #Endpoints
 #==========================
 
-
 class FallDetectionEndpoints:
-    """Expone rutas con respuestas fijas hasta implementar los casos de uso."""
-
-    def __init__(self, http_processor):
-        self.http_processor = http_processor
-        self.blueprint = Blueprint(
-            "fall_detection", __name__,
-            url_prefix="/grandsafelife/api/v1/fall-detection/requests",
-        )
+    def __init__(self, db, detector, notifier_mng=None):
+        self.db = db
+        self.detector = detector
+        self.notifier_mng = notifier_mng
+        self.authentication = Authentication()
+        self.blueprint = Blueprint("fall_detection", __name__, url_prefix="/grandsafelife/api/v1/fall-detection")
         self._register_routes()
 
     def _register_routes(self):
         @self.blueprint.post("")
-        def create_fall_detection_request():
+        def detect_fall():
             authorization, body, _ = validate_request(body_model=FallDetectionInput)
-            # TODO: Quitar el bypass cuando se implemente el caso de uso.
-            # result = self.http_processor.process_create_fall_detection_request(
-            #     authorization, body.model_dump()
-            # )
-            # Respuesta fija: todavía no se registra ni procesa ningún pedido.
-            return build_api_response(API_OP_OK, {"request_id": 1})
+            try:
+                current_uid, app_type = self.authentication.get_current_user_uid(authorization)
+            except (ValueError, auth.InvalidIdTokenError, auth.RevokedIdTokenError, auth.UserDisabledError):
+                return build_api_response(API_OP_UNAUTHORIZED), 401
+            # TODO: Validar permisos y tipo de aplicación como en users.
 
-        @self.blueprint.get("/<request_id>")
-        def get_fall_detection_request(request_id):
-            authorization, _, _ = validate_request(path_model=RequestReference)
-            request_id = RequestReference.model_validate({"request_id": request_id}).request_id
-            # TODO: Quitar el bypass cuando se implemente el caso de uso.
-            # result = self.http_processor.process_get_fall_detection_request(
-            #     authorization, request_id
-            # )
-            # Traducir su resultado: IN_PROGRESS/READY -> 200,
-            # NOT_FOUND -> 400, FAILED -> 500 (fallo interno de procesamiento).
-            # Respuesta fija: cualquier ID válido permanece en curso.
-            return build_api_response(API_OP_PROCESS_IN_PROGRESS, {"request_id": request_id})
+            result = self.detector.detect_fall(body.model_dump())
+            if result.error_code is not None:
+                return build_api_response(API_OP_PROCESS_FAILED, {"error_code": result.error_code}), 500
+
+            is_fall = result.is_fall_detected
+
+            if(is_fall):
+                # TODO: Recuperar usuarios monitores a los que hay que notificar y enviarles la notificación de caída.
+                pass
+
+            return build_api_response(API_OP_OK, {"is_fall": is_fall})

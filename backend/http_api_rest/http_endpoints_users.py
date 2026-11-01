@@ -39,8 +39,8 @@ class NotificationsTokenInput(BaseModel):
 #==========================
 
 class UsersEndpoints:
-    def __init__(self, http_processor):
-        self.http_processor = http_processor
+    def __init__(self, repository):
+        self.repository = repository
         self.authentication = Authentication()
         self.blueprint = Blueprint("users", __name__, url_prefix="/grandsafelife/api/v1/users")
         self._register_routes()
@@ -65,7 +65,7 @@ class UsersEndpoints:
 
             
             #Procesamiento del request
-            user = self.http_processor.process_get_user_by_id(user_id)
+            user = self.repository.get_user_by_id(user_id)
             return build_api_response(API_OP_OK, user)
 
 
@@ -87,7 +87,7 @@ class UsersEndpoints:
             
 
             #Procesamiento del request
-            user = self.http_processor.process_get_user_by_email(query.email)
+            user = self.repository.get_user_by_email(query.email)
             return build_api_response(API_OP_OK, user)
 
         @self.blueprint.post("")
@@ -108,7 +108,7 @@ class UsersEndpoints:
             
 
             #Procesamiento del request
-            result = self.http_processor.process_create_user(body.data, body.user_id)
+            result = self.repository.create_user(body.data, body.user_id)
             return build_api_response(API_OP_OK, result)
 
         @self.blueprint.patch("/<user_id>")
@@ -129,7 +129,7 @@ class UsersEndpoints:
 
 
             #Procesamiento del request
-            self.http_processor.process_update_user(user_id, body.model_dump(exclude_unset=True),)
+            self.repository.update_user(user_id, body.model_dump(exclude_unset=True),)
             return build_api_response(API_OP_OK)
 
         @self.blueprint.post("/<user_id>/notifications_token")
@@ -149,7 +149,7 @@ class UsersEndpoints:
             # app_type es por ahora la constante mockeada MONITOR_APP.
 
             #Procesamiento del request
-            self.http_processor.process_set_notifications_token(user_id, body.token)
+            self.repository.set_notifications_token(user_id, body.token)
             return build_api_response(API_OP_OK)
 
         @self.blueprint.delete("/<user_id>/notifications_token")
@@ -166,5 +166,5 @@ class UsersEndpoints:
             # TODO: Validar los permisos de current_uid sobre los datos solicitados.
             # app_type es por ahora la constante mockeada MONITOR_APP.
 
-            self.http_processor.process_delete_notifications_token(user_id)
+            self.repository.delete_notifications_token(user_id)
             return build_api_response(API_OP_OK)

@@ -1,10 +1,9 @@
 from .http_api_rest.http import create_http_app
-from .app.app import App
 
-from .database.database import initialize_firebase
+from .database.database import get_firestore_client
+from .fall_detection.model import FallDetection
 
-initialize_firebase()
-# El cliente Firestore se crea al ejecutar el primer proceso que lo necesita.
-application = App(db=None)
+db = get_firestore_client()
+fall_detector = FallDetection()
 
-app = create_http_app(application)
+app = create_http_app(db=db, fall_detector=fall_detector, notifier_mng=None)

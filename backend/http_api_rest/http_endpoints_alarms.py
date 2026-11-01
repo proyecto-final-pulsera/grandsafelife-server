@@ -38,8 +38,8 @@ class AlarmMapInput(RootModel[dict[str, AlarmInput]]):
 class AlarmsEndpoints:
     """Agrupa las rutas de alarmas e inyecta su procesador HTTP."""
 
-    def __init__(self, http_processor):
-        self.http_processor = http_processor
+    def __init__(self, repository):
+        self.repository = repository
         self.authentication = Authentication()
         self.blueprint = Blueprint("alarms", __name__, url_prefix="/grandsafelife/api/v1/devices/<device_id>/alarms",)
         self._register_routes()
@@ -64,7 +64,7 @@ class AlarmsEndpoints:
             # app_type es por ahora la constante mockeada MONITOR_APP.
 
             # Procesamiento del request con los datos listos para ejecutar la acción.
-            alarms = self.http_processor.process_get_alarms_by_device_id(device_id)
+            alarms = self.repository.get_alarms_by_device_id(device_id)
             return build_api_response(API_OP_OK, alarms)
 
         @self.blueprint.put("")
@@ -84,7 +84,7 @@ class AlarmsEndpoints:
             # app_type es por ahora la constante mockeada MONITOR_APP.
 
             # Procesamiento del reemplazo completo, incluido un mapa vacío.
-            self.http_processor.process_set_alarms_by_device_id(
+            self.repository.set_alarms_by_device_id(
                 device_id, body.model_dump(exclude_unset=True),
             )
             return build_api_response(API_OP_OK)

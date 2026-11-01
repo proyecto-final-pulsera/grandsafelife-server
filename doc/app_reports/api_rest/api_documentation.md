@@ -40,8 +40,7 @@ https://us-central1-grand-safe-band.cloudfunctions.net/api/grandsafelife/api/v1/
 | Devices Stats | GET | `/grandsafelife/api/v1/devices/{device_id}/stats/daily/last-week` | Recupera métricas de los últimos siete días. | Monitores | getLastWeekMetrics |
 | Alarms | GET | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Recupera las alarmas de un dispositivo. | Monitores | getAlarmsByDeviceId |
 | Alarms | PUT | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Reemplaza la configuración completa de alarmas. | Monitores | setAlarmsByDeviceId |
-| Fall detection | POST | `/grandsafelife/api/v1/fall-detection/requests` | Envía un chunk y obtiene el ID del pedido. | Anciano | - |
-| Fall detection | GET | `/grandsafelife/api/v1/fall-detection/requests/{request_id}` | Consulta el estado y resultado del pedido. | Anciano | - |
+| Fall detection | POST | `/grandsafelife/api/v1/fall-detection` | Procesa y devuelve la clasificación. | Anciano | - |
 
 ## 2 - Tabla de códigos de operación
 
@@ -893,85 +892,20 @@ ejecutan inferencia. La integración con `process_*`, autenticación efectiva,
 permisos y ciclo de vida del pedido quedan pendientes. El header `Authorization`
 es obligatorio, pero todavía no se verifica su token.
 
-### `POST /grandsafelife/api/v1/fall-detection/requests`
+### POST /grandsafelife/api/v1/fall-detection
 
-- Descripción: envía datos para detección de caídas y obtiene un ID de pedido.
-- Body: objeto JSON crudo, con estructura interna provisional hasta que se
-  defina el chunk del detector. No se recibe un string que contenga JSON.
-- HTTP: `200` para la recepción; `422` si falta el body o el header, o el body
-  no es un objeto JSON. La aceptación no indica que la clasificación esté lista.
-- Implementación actual: retorna siempre el ID de ejemplo `1`; no genera un
-  ID único ni conserva el body. El manager asignará los IDs en una etapa posterior.
+Proicesa chunk de datos enviados y retorna si fue una caída o no
+Requiere Authorization con el usuario del anciano.
 
-Body (ejemplo estructural, no define el formato de los sensores):
+Provisorio:
+- Body: {"fall_detected": true} o {"fall_detected": false}.
+Solo acepta booleanos JSON, sin campos adicionales. El bypass está en el detector.
 
-```json
-{}
-```
+Respuesta HTTP 200:
+{"op_status": 0, "brief": "Operation completed successfully", "resp": {"is_fall": true}}
 
-Response:
+Errores: 422 por formato inválido
+401 por autenticación inválida
+500 con op_status: 4 y resp.error_code si falla el detector.
 
-```json
-{
-  "op_status": 0,
-  "brief": "Operation completed successfully",
-  "resp": { "request_id": 1 }
-}
-```
-
-### `GET /grandsafelife/api/v1/fall-detection/requests/{request_id}`
-
-- Descripción: consulta el pedido identificado por `request_id`.
-- Parámetro: `request_id` es un entero positivo generado por el servidor.
-- Body: no aplica.
-- Implementación actual: cualquier ID válido devuelve pedido en curso; todavía no se consulta su existencia. Los demás resultados quedan declarados en el contrato HTTP documentado aquí para la integración posterior.
-- Un ID inválido o la ausencia del header produce HTTP `422`.
-- Conocer un ID no otorgará permisos: el caso de uso deberá verificar acceso.
-
-Response:
-
-Pedido en curso — HTTP `200`:
-
-```json
-{
-  "op_status": 1,
-  "brief": "Processing request in progress",
-  "resp": { "request_id": 1 }
-}
-```
-
-Resultado listo — HTTP `200`:
-
-```json
-{
-  "op_status": 2,
-  "brief": "Processing result ready",
-  "resp": { "request_id": 1, "is_fall": true }
-}
-```
-
-`is_fall` puede ser `true` o `false` y solamente aparece en un resultado listo.
-
-Pedido no encontrado — HTTP `400`:
-
-```json
-{
-  "op_status": 3,
-  "brief": "Processing request not found",
-  "resp": { "request_id": 1 }
-}
-```
-
-Pedido fallido por un error interno de procesamiento — HTTP `500`:
-
-```json
-{
-  "op_status": 4,
-  "brief": "Processing request failed",
-  "resp": { "request_id": 1, "error_code": "PROCESSING_ERROR" }
-}
-```
-
-`error_code` es un código público de procesamiento, nunca un traceback ni un
-mensaje interno del proveedor. Su catálogo definitivo y el tratamiento de datos
-rechazados por el detector quedan pendientes de la integración del caso de uso.
+En caso de que haya detectado una caída se envía una notificación a los monitores.

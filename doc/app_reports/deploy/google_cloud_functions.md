@@ -70,18 +70,5 @@ firebase deploy --only functions:backend:api --project grand-safe-band
 - [Configuración de runtime y escalado](https://firebase.google.com/docs/functions/manage-functions).
 - [Restricciones de ejecución y estado](https://firebase.google.com/docs/functions/tips).
 
-TODO Explicar basado en ejemplo
 - [Ejemplo didáctico](https://firebase.google.com/docs/functions/get-started?hl=es-419)
-
-## Desarrollos futuros
-
-El flujo previsto es enviar datos con `POST /grandsafelife/api/v1/fall-detection/requests`, recibir un `request_id` y consultar luego con `GET /grandsafelife/api/v1/fall-detection/requests/{request_id}`.
-
-Queda por definir:
-
-- Dónde se ejecutará el procesamiento y cómo se iniciará de forma fiable si la API responde antes de terminar. No está elegida una cola ni otro servicio.
-- Cómo guardar pedidos, estados y resultados para poder consultarlos desde cualquier instancia, incluso después de un reinicio.
-- Cómo generar IDs únicos, asociarlos al usuario autorizado y manejar errores, capacidad, concurrencia y vencimiento de resultados.
-- Con qué frecuencia consultará el cliente y cómo distinguirá un pedido en curso, listo, fallido o inexistente.
-
-Estas decisiones deberán conectar los endpoints con los casos de uso y el [manager de detección](../../dev_desig/fall_detection_manager.md), midiendo antes el tiempo y la memoria que requiere el modelo.
+    - Uso de Cloud Functions como servidor HTTP Api REST

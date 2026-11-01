@@ -2,10 +2,10 @@
 from datetime import datetime, timedelta, timezone
 from google.cloud.firestore_v1.base_query import FieldFilter
 from google.cloud.firestore_v1.field_path import FieldPath
-from ...database.database import get_firestore_client
+from ..database import get_firestore_client
 
 
-class DevicesStatsProcesses:
+class DevicesStatsRepository:
     def __init__(self, db=None):
         self._db = db
 
@@ -29,28 +29,28 @@ class DevicesStatsProcesses:
             data['updated_at'] = data['updated_at'].astimezone(timezone.utc).isoformat().replace('+00:00', 'Z')
         return data
 
-    def process_get_daily_metrics(self, device_id, date):
+    def get_daily_metrics(self, device_id, date):
         try:
             document = self._metrics_collection(device_id, 'daily_metrics').document(date).get()
             return self._metrics_data(document)
         except Exception as error:
             raise RuntimeError(f'Error fetching daily metrics: {error}') from error
 
-    def process_get_monthly_aggregates(self, device_id, month):
+    def get_monthly_aggregates(self, device_id, month):
         try:
             document = self._metrics_collection(device_id, 'monthly_aggregates').document(month).get()
             return self._metrics_data(document)
         except Exception as error:
             raise RuntimeError(f'Error fetching monthly aggregates: {error}') from error
 
-    def process_get_previous_month_aggregates(self, device_id):
+    def get_previous_month_aggregates(self, device_id):
         # Mes calendario anterior según la fecha local del servidor, incluido enero.
         now = datetime.now()
         previous_month = now.replace(day=1) - timedelta(days=1)
         month = f'{previous_month.year:04d}-{previous_month.month:02d}'
-        return self.process_get_monthly_aggregates(device_id, month)
+        return self.get_monthly_aggregates(device_id, month)
 
-    def process_get_last_week_metrics(self, device_id):
+    def get_last_week_metrics(self, device_id):
         try:
             today = datetime.now().date()
             collection = self._metrics_collection(device_id, 'daily_metrics')
