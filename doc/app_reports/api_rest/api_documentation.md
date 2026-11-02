@@ -94,6 +94,7 @@ Response:
   "resp": {
     "id": "user_002",
     "name": "María Gómez",
+    "notifications_token": "<token>",
     "email": "maria.gomez@example.com",
     "avatar": "https://example.com/avatars/user_002.png",
     "created_at": 1783700000000,
