@@ -1,17 +1,29 @@
 """Endpoint síncrono de detección de caídas."""
 from flask import Blueprint
 from firebase_admin import auth
-from pydantic import BaseModel, ConfigDict, StrictBool
+from pydantic import BaseModel, ConfigDict, Field, StrictBool
+from ..database.repositories.repository_homes import HomesRepository
+from ..database.repositories.repository_users import UsersRepository
 from ..authentication.authentication import Authentication
-from .api_op_codes import API_OP_OK, API_OP_PROCESS_FAILED, API_OP_UNAUTHORIZED, build_api_response
+from .api_op_codes import API_OP_FALL_DETECTED, API_OP_FALL_DETECTED_NO_RECIPIENTS, API_OP_FALL_NOT_DETECTED, API_OP_FORBIDDEN, API_OP_PROCESS_FAILED, API_OP_UNAUTHORIZED, build_api_response
 from .http_validation import validate_request
 
 #==========================
 #Reglas de validación
 #==========================
+class FallLocation(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    lat: float = Field(ge=-90, le=90, allow_inf_nan=False)
+    long: float = Field(ge=-180, le=180, allow_inf_nan=False)
+
+
 class FallDetectionInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
     fall_detected: StrictBool
+    home_id: str = Field(min_length=1, pattern=r"\S")
+    deviceUID: str = Field(min_length=1, pattern=r"\S")
+    name: str = Field(min_length=1, pattern=r"\S")
+    coords: FallLocation
 
 #==========================
 #Endpoints
@@ -20,6 +32,8 @@ class FallDetectionInput(BaseModel):
 class FallDetectionEndpoints:
     def __init__(self, db, detector, notifier_mng=None):
         self.db = db
+        self.homes = HomesRepository(db)
+        self.users = UsersRepository(db)
         self.detector = detector
         self.notifier_mng = notifier_mng
         self.authentication = Authentication()
@@ -34,16 +48,33 @@ class FallDetectionEndpoints:
                 current_uid, app_type = self.authentication.get_current_user_uid(authorization)
             except (ValueError, auth.InvalidIdTokenError, auth.RevokedIdTokenError, auth.UserDisabledError):
                 return build_api_response(API_OP_UNAUTHORIZED), 401
-            # TODO: Validar permisos y tipo de aplicación como en users.
+            home = self.homes.get_home_by_id(body.home_id)
+            members = home.get("members", {}) if home else {}
+            member = members.get(current_uid, {})
+            if member.get("role") != "admin":
+                return build_api_response(API_OP_FORBIDDEN), 403
 
-            result = self.detector.detect_fall(body.model_dump())
+            user_ids = list(members)
+
+            result = self.detector.detect_fall({"fall_detected": body.fall_detected})
             if result.error_code is not None:
                 return build_api_response(API_OP_PROCESS_FAILED, {"error_code": result.error_code}), 500
 
             is_fall = result.is_fall_detected
 
-            if(is_fall):
-                # TODO: Recuperar usuarios monitores a los que hay que notificar y enviarles la notificación de caída.
-                pass
+            if is_fall:
+                tokens = [self.users.getNotificationsToken(user_id) for user_id in user_ids]
+                tokens = list(dict.fromkeys(token for token in tokens if token))
+                if tokens:
+                    self.notifier_mng.send_fall_notification(
+                        tokens, body.home_id, body.deviceUID, body.name, body.coords.model_dump()
+                    )
+                else:
+                    # TODO: Definir la acción posterior del servidor ante una caída sin destinatarios.
+                    return build_api_response(API_OP_FALL_DETECTED_NO_RECIPIENTS, {"user_ids": user_ids})
 
-            return build_api_response(API_OP_OK, {"is_fall": is_fall})
+            if is_fall:
+                code = API_OP_FALL_DETECTED
+            else:
+                code = API_OP_FALL_NOT_DETECTED
+            return build_api_response(code, {"user_ids": user_ids})

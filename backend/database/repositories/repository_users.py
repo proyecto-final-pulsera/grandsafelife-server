@@ -66,6 +66,10 @@ class UsersRepository:
         except Exception as error:
             raise RuntimeError(f'Error updating user: {error}') from error
 
+    def getNotificationsToken(self, user_id):
+        user = self.get_user_by_id(user_id)
+        return user.get('notifications_token') if user is not None else None
+
     def set_notifications_token(self, user_id, token):
         try:
             self.db.collection('users').document(user_id).update({'notifications_token': token})

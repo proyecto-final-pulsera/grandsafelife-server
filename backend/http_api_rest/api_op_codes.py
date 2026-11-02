@@ -8,19 +8,21 @@ resultados.
 """
 
 API_OP_OK = 0
-API_OP_PROCESS_IN_PROGRESS = 1
-API_OP_PROCESS_READY = 2
-API_OP_PROCESS_NOT_FOUND = 3
-API_OP_PROCESS_FAILED = 4
+API_OP_FALL_DETECTED = 1
+API_OP_FALL_NOT_DETECTED = 2
+API_OP_PROCESS_FAILED = 3
 API_OP_UNAUTHORIZED = 5
+API_OP_FALL_DETECTED_NO_RECIPIENTS = 6
+API_OP_FORBIDDEN = 4
 
 API_OP_BRIEFS = {
     API_OP_OK: "Operation completed successfully",
-    API_OP_PROCESS_IN_PROGRESS: "Processing request in progress",
-    API_OP_PROCESS_READY: "Processing result ready",
-    API_OP_PROCESS_NOT_FOUND: "Processing request not found",
+    API_OP_FALL_DETECTED: "Fall detected",
+    API_OP_FALL_NOT_DETECTED: "Fall not detected",
+    API_OP_FALL_DETECTED_NO_RECIPIENTS: "Fall detected without notification recipients",
     API_OP_PROCESS_FAILED: "Processing request failed",
     API_OP_UNAUTHORIZED: "Unauthorized access",
+    API_OP_FORBIDDEN: "Insufficient permissions",
 }
 
 _NO_RESPONSE = object()
