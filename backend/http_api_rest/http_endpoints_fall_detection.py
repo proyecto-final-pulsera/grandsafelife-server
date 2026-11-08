@@ -1,7 +1,8 @@
 """Endpoint síncrono de detección de caídas."""
 from flask import Blueprint
 from firebase_admin import auth
-from pydantic import BaseModel, ConfigDict, Field, StrictBool
+from typing import Any
+from pydantic import BaseModel, ConfigDict, Field
 from ..database.repositories.repository_homes import HomesRepository
 from ..database.repositories.repository_users import UsersRepository
 from ..authentication.authentication import Authentication
@@ -17,9 +18,36 @@ class FallLocation(BaseModel):
     long: float = Field(ge=-180, le=180, allow_inf_nan=False)
 
 
+class FallHeader(BaseModel):
+    model_config = ConfigDict(extra="allow")
+    fs_acel: float
+    fs_press: float
+    din_range_acel: float
+
+
+class FallAccelerometer(BaseModel):
+    model_config = ConfigDict(extra="allow")
+    data_acel_x: list[Any]
+    data_acel_y: list[Any]
+    data_acel_z: list[Any]
+
+
+class FallAltitude(BaseModel):
+    model_config = ConfigDict(extra="allow")
+    temp: float | list[Any]
+    press: list[Any]
+
+
+class FallTimeseries(BaseModel):
+    model_config = ConfigDict(extra="allow")
+    accelerometer: FallAccelerometer
+    altitud: FallAltitude
+
+
 class FallDetectionInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    fall_detected: StrictBool
+    header: FallHeader
+    timeseries: FallTimeseries
     home_id: str = Field(min_length=1, pattern=r"\S")
     deviceUID: str = Field(min_length=1, pattern=r"\S")
     name: str = Field(min_length=1, pattern=r"\S")
