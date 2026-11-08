@@ -84,7 +84,7 @@ class FallDetectionEndpoints:
 
             user_ids = list(members)
 
-            result = self.detector.detect_fall({"fall_detected": body.fall_detected})
+            result = self.detector.detect_fall(body.model_dump())
             if result.error_code is not None:
                 return build_api_response(API_OP_PROCESS_FAILED, {"error_code": result.error_code}), 500
 
