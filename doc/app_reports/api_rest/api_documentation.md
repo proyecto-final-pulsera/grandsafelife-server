@@ -888,25 +888,61 @@ entre `0` y `1439` minutos.
 
 ## 9 - Endpoints "Fall detection"
 
-Estado actual: las rutas devuelven respuestas fijas. No registran pedidos ni
-ejecutan inferencia. La integración con `process_*`, autenticación efectiva,
-permisos y ciclo de vida del pedido quedan pendientes. El header `Authorization`
-es obligatorio, pero todavía no se verifica su token.
+### `POST /grandsafelife/api/v1/fall-detection`
 
-### POST /grandsafelife/api/v1/fall-detection
+Procesa un evento con el modelo de detección de caídas y, si detecta una caída,
+notifica a los monitores del hogar. Requiere Bearer válido, rol `admin` en el
+hogar y `Content-Type: application/json`.
 
-Proicesa chunk de datos enviados y retorna si fue una caída o no
-Requiere Authorization con el usuario del anciano.
+Body (arrays abreviados; enviar todas las muestras en un único request):
 
-Provisorio:
-- Body: {"fall_detected": true} o {"fall_detected": false}.
-Solo acepta booleanos JSON, sin campos adicionales. El bypass está en el detector.
+```json
+{
+  "home_id": "home_id_001",
+  "deviceUID": "pulsera01",
+  "name": "Pulsera Abuelo",
+  "coords": {"lat": -34.6037, "long": -58.3816},
+  "header": {
+    "fs_acel": 50,
+    "fs_press": 16,
+    "din_range_acel": 8
+  },
+  "timeseries": {
+    "accelerometer": {
+      "data_acel_x": [815, ..., 954],
+      "data_acel_y": [-2457, ...,  23],
+      "data_acel_z": [3444, ...,  4031]
+    },
+    "altitud": {
+      "temp": 27.35,
+      "press": [1009.5696, ..., 1009.5696]
+    }
+  }
+}
+```
+
+- `home_id`, `deviceUID`, `name`: datos del dispositivo vinculado.
+- `coords`: ubicación del evento.
+- `header`: frecuencias de muestreo y rango dinámico del acelerómetro.
+- `timeseries`: tres ejes de aceleración de igual longitud, temperatura escalar y muestras de presión.
 
 Respuesta HTTP 200:
-{"op_status": 0, "brief": "Operation completed successfully", "resp": {"is_fall": true}}
 
-Errores: 422 por formato inválido
-401 por autenticación inválida
-500 con op_status: 4 y resp.error_code si falla el detector.
+```json
+{
+  "op_status": 1,
+  "brief": "Fall detected",
+  "resp": {"user_ids": ["user_001"]}
+}
+```
 
-En caso de que haya detectado una caída se envía una notificación a los monitores.
+Resultados: 
+- `1` caída
+- `2` no caída
+- `6` caída sin destinatarios de notificación.
+
+Errores HTTP:
+- `422` por formato inválido
+- `401` por autenticación
+- `403` por permisos
+- `500` con `op_status: 3` y `resp.error_code` si falla el detector.
