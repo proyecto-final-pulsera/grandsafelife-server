@@ -1,5 +1,6 @@
 """Repositorio de usuarios autenticados mediante Cloud Firestore."""
 from datetime import datetime, timezone
+from google.api_core.exceptions import NotFound
 from google.cloud import firestore
 from ..database import get_firestore_client
 from google.cloud.firestore_v1.base_query import FieldFilter
@@ -73,8 +74,11 @@ class UsersRepository:
     def set_notifications_token(self, user_id, token):
         try:
             self.db.collection('users').document(user_id).update({'notifications_token': token})
+        except NotFound:
+            return False
         except Exception as error:
             raise RuntimeError(f'Error setting notifications token: {error}') from error
+        return True
 
     def delete_notifications_token(self, user_id):
         try:

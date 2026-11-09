@@ -14,6 +14,7 @@ API_OP_PROCESS_FAILED = 3
 API_OP_UNAUTHORIZED = 5
 API_OP_FALL_DETECTED_NO_RECIPIENTS = 6
 API_OP_FORBIDDEN = 4
+API_OP_USER_NOT_REGISTERED = 7
 
 API_OP_BRIEFS = {
     API_OP_OK: "Operation completed successfully",
@@ -23,6 +24,7 @@ API_OP_BRIEFS = {
     API_OP_PROCESS_FAILED: "Processing request failed",
     API_OP_UNAUTHORIZED: "Unauthorized access",
     API_OP_FORBIDDEN: "Insufficient permissions",
+    API_OP_USER_NOT_REGISTERED: "User not registered",
 }
 
 _NO_RESPONSE = object()

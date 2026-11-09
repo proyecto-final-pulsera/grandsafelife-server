@@ -5,7 +5,12 @@ from firebase_admin import auth
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, RootModel
 
 from ..authentication.authentication import Authentication
-from .api_op_codes import API_OP_OK, API_OP_UNAUTHORIZED, build_api_response
+from .api_op_codes import (
+    API_OP_OK,
+    API_OP_UNAUTHORIZED,
+    API_OP_USER_NOT_REGISTERED,
+    build_api_response,
+)
 from .http_validation import validate_request
 
 
@@ -149,7 +154,8 @@ class UsersEndpoints:
             # app_type es por ahora la constante mockeada MONITOR_APP.
 
             #Procesamiento del request
-            self.repository.set_notifications_token(user_id, body.token)
+            if not self.repository.set_notifications_token(user_id, body.token):
+                return build_api_response(API_OP_USER_NOT_REGISTERED), 404
             return build_api_response(API_OP_OK)
 
         @self.blueprint.delete("/<user_id>/notifications_token")
