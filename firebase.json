@@ -13,7 +13,7 @@
         "**/*.log",
         "**/*.local",
         "**/*.md",
-        "**/*.json",
+        "**/!(modelo_barometro_xgboost-V3).json",
         "**/*.pem",
         "**/*.key",
         "**/credentials*",
@@ -23,7 +23,6 @@
         "**/IA Workflow/**",
         "**/backend/tests/**",
         "**/backend/fall_detection/model/test/**",
-        "**/backend/fall_detection/model/app/models/**",
         "**/backend/fall_detection/model/requirements.txt",
         "**/tests/**"
       ]

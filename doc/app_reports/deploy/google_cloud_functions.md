@@ -36,7 +36,7 @@ La configuración actual es:
 | Runtime | Python 3.13 |
 | Instancias mínimas / máximas | 0 / 10 |
 | Peticiones simultáneas por instancia | 1 |
-| CPU y memoria por instancia | 1 CPU y 256 MiB |
+| CPU y memoria por instancia | 1 CPU y 1 GB |
 | Tiempo máximo por petición | 60 segundos |
 
 Con el [entorno de desarrollo preparado](../../dev_reports/installation_for_devs.md), los comandos se ejecutan desde la raíz. Para probar localmente:

@@ -11,7 +11,7 @@ from firebase_functions import https_fn, options
     max_instances=10,
     concurrency=1,
     cpu=1,
-    memory=options.MemoryOption.MB_256,
+    memory=options.MemoryOption.GB_1,
     timeout_sec=60,
 )
 def api(req: https_fn.Request) -> https_fn.Response:
