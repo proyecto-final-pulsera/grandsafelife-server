@@ -41,6 +41,7 @@ https://us-central1-grand-safe-band.cloudfunctions.net/api/grandsafelife/api/v1/
 | Alarms | GET | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Recupera las alarmas de un dispositivo. | Monitores | getAlarmsByDeviceId |
 | Alarms | PUT | `/grandsafelife/api/v1/devices/{device_id}/alarms` | Reemplaza la configuración completa de alarmas. | Monitores | setAlarmsByDeviceId |
 | Fall detection | POST | `/grandsafelife/api/v1/fall-detection` | Procesa y devuelve la clasificación. | Anciano | - |
+| Panic Button | POST | `/grandsafelife/api/v1/panic` | Envia notificaciones a monitores de que necesita ayuda. | Anciano | - |
 
 ## 2 - Tabla de códigos de operación
 
@@ -946,3 +947,41 @@ Errores HTTP:
 - `401` por autenticación
 - `403` por permisos
 - `500` con `op_status: 3` y `resp.error_code` si falla el detector.
+
+## 10 - Endpoints "Panic Button"
+
+### `POST /grandsafelife/api/v1/panic`
+
+Notifica a los monitores del hogar que la persona monitoreada necesita ayuda. Requiere Bearer válido, rol `admin` en el
+hogar y `Content-Type: application/json`.
+
+Body:
+
+```json
+{
+  "home_id": "home_id_001",
+  "deviceUID": "pulsera01",
+  "name": "Pulsera Abuelo",
+  "coords": {"lat": -34.6037, "long": -58.3816}
+}
+```
+
+- `home_id`, `deviceUID`, `name`: datos del dispositivo vinculado.
+
+Respuesta HTTP 200:
+
+```json
+{
+  "op_status": 8,
+  "brief": "Monitors Notified",
+  "resp": {"user_ids": ["user_001"]}
+}
+```
+
+Resultados:
+- `9` alerta de pánico sin destinatarios de notificación.
+
+Errores HTTP:
+- `422` por formato inválido
+- `401` por autenticación
+- `403` por permisos

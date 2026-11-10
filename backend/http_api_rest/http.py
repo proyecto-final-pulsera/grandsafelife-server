@@ -13,6 +13,7 @@ from werkzeug.exceptions import MethodNotAllowed, NotFound
 from .http_endpoints_users import UsersEndpoints
 from .http_endpoints_homes import HomesEndpoints
 from .http_endpoints_fall_detection import FallDetectionEndpoints
+from .http_endpoints_panic import PanicEndpoints
 from .http_endpoints_devices import DevicesEndpoints
 from .http_endpoints_devices_stats import DevicesStatsEndpoints
 from .http_endpoints_alarms import AlarmsEndpoints
@@ -52,6 +53,7 @@ def create_http_app(db, fall_detector, notifier_mng=None):
     app.register_blueprint(UsersEndpoints(UsersRepository(db)).blueprint)
     app.register_blueprint(HomesEndpoints(HomesRepository(db)).blueprint)
     app.register_blueprint(FallDetectionEndpoints(db, fall_detector, notifier_mng).blueprint)
+    app.register_blueprint(PanicEndpoints(db, notifier_mng).blueprint)
     app.register_blueprint(DevicesEndpoints(DevicesRepository(db)).blueprint)
     app.register_blueprint(DevicesStatsEndpoints(DevicesStatsRepository(db)).blueprint)
     app.register_blueprint(AlarmsEndpoints(AlarmsRepository(db)).blueprint)

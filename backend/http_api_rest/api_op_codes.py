@@ -15,6 +15,8 @@ API_OP_UNAUTHORIZED = 5
 API_OP_FALL_DETECTED_NO_RECIPIENTS = 6
 API_OP_FORBIDDEN = 4
 API_OP_USER_NOT_REGISTERED = 7
+API_OP_PANIC_NOTIFIED = 8
+API_OP_PANIC_NO_RECIPIENTS = 9
 
 API_OP_BRIEFS = {
     API_OP_OK: "Operation completed successfully",
@@ -25,6 +27,8 @@ API_OP_BRIEFS = {
     API_OP_UNAUTHORIZED: "Unauthorized access",
     API_OP_FORBIDDEN: "Insufficient permissions",
     API_OP_USER_NOT_REGISTERED: "User not registered",
+    API_OP_PANIC_NOTIFIED: "Monitors Notified",
+    API_OP_PANIC_NO_RECIPIENTS: "Panic alert without notification recipients",
 }
 
 _NO_RESPONSE = object()
