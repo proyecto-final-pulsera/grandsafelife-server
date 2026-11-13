@@ -64,11 +64,6 @@ class UsersEndpoints:
                 return build_api_response(API_OP_UNAUTHORIZED), 401
 
             print(f"[AUTH SERVER] uid={current_uid}", flush=True)
-
-            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
-            # app_type es por ahora la constante mockeada MONITOR_APP.
-
-            
             #Procesamiento del request
             user = self.repository.get_user_by_id(user_id)
             return build_api_response(API_OP_OK, user)
@@ -87,10 +82,6 @@ class UsersEndpoints:
 
             print(f"[AUTH SERVER] uid={current_uid}", flush=True)
 
-            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
-            # app_type es por ahora la constante mockeada MONITOR_APP.
-            
-
             #Procesamiento del request
             user = self.repository.get_user_by_email(query.email)
             return build_api_response(API_OP_OK, user)
@@ -108,10 +99,6 @@ class UsersEndpoints:
 
             print(f"[AUTH SERVER] uid={current_uid}", flush=True)
 
-            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
-            # app_type es por ahora la constante mockeada MONITOR_APP.
-            
-
             #Procesamiento del request
             result = self.repository.create_user(body.data, body.user_id)
             return build_api_response(API_OP_OK, result)
@@ -128,9 +115,6 @@ class UsersEndpoints:
                 return build_api_response(API_OP_UNAUTHORIZED), 401
 
             print(f"[AUTH SERVER] uid={current_uid}", flush=True)
-
-            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
-            # app_type es por ahora la constante mockeada MONITOR_APP.
 
 
             #Procesamiento del request
@@ -150,9 +134,6 @@ class UsersEndpoints:
 
             print(f"[AUTH SERVER] uid={current_uid}", flush=True)
 
-            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
-            # app_type es por ahora la constante mockeada MONITOR_APP.
-
             #Procesamiento del request
             if not self.repository.set_notifications_token(user_id, body.token):
                 return build_api_response(API_OP_USER_NOT_REGISTERED), 404
@@ -168,9 +149,6 @@ class UsersEndpoints:
                 return build_api_response(API_OP_UNAUTHORIZED), 401
 
             print(f"[AUTH SERVER] uid={current_uid}", flush=True)
-
-            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
-            # app_type es por ahora la constante mockeada MONITOR_APP.
 
             self.repository.delete_notifications_token(user_id)
             return build_api_response(API_OP_OK)

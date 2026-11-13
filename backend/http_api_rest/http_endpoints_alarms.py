@@ -60,8 +60,6 @@ class AlarmsEndpoints:
 
             print(f"[AUTH SERVER] uid={current_uid}", flush=True)
 
-            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
-            # app_type es por ahora la constante mockeada MONITOR_APP.
 
             # Procesamiento del request con los datos listos para ejecutar la acción.
             alarms = self.repository.get_alarms_by_device_id(device_id)
@@ -80,11 +78,13 @@ class AlarmsEndpoints:
 
             print(f"[AUTH SERVER] uid={current_uid}", flush=True)
 
-            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
-            # app_type es por ahora la constante mockeada MONITOR_APP.
 
             # Procesamiento del reemplazo completo, incluido un mapa vacío.
             self.repository.set_alarms_by_device_id(
                 device_id, body.model_dump(exclude_unset=True),
             )
+
+            # TODO COEDX
+            # Agregar notificacion al anciano para que se le actualice a la app la lista de alarmas.
+
             return build_api_response(API_OP_OK)

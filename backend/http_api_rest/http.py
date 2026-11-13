@@ -54,8 +54,10 @@ def create_http_app(db, fall_detector, notifier_mng=None):
     app.register_blueprint(HomesEndpoints(HomesRepository(db)).blueprint)
     app.register_blueprint(FallDetectionEndpoints(db, fall_detector, notifier_mng).blueprint)
     app.register_blueprint(PanicEndpoints(db, notifier_mng).blueprint)
-    app.register_blueprint(DevicesEndpoints(DevicesRepository(db)).blueprint)
-    app.register_blueprint(DevicesStatsEndpoints(DevicesStatsRepository(db)).blueprint)
+    devices = DevicesRepository(db)
+    homes = HomesRepository(db)
+    app.register_blueprint(DevicesEndpoints(devices, homes).blueprint)
+    app.register_blueprint(DevicesStatsEndpoints(DevicesStatsRepository(db), devices, homes).blueprint)
     app.register_blueprint(AlarmsEndpoints(AlarmsRepository(db)).blueprint)
 
     # Deshabilitar HEAD: consulta los encabezados del recurso sin devolver body.

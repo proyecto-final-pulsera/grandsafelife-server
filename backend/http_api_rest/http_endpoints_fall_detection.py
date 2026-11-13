@@ -5,6 +5,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 from ..database.repositories.repository_homes import HomesRepository
 from ..database.repositories.repository_users import UsersRepository
+from ..database.repositories.repository_devices import DevicesRepository
 from ..authentication.authentication import Authentication
 from .api_op_codes import API_OP_FALL_DETECTED, API_OP_FALL_DETECTED_NO_RECIPIENTS, API_OP_FALL_NOT_DETECTED, API_OP_FORBIDDEN, API_OP_PROCESS_FAILED, API_OP_UNAUTHORIZED, build_api_response
 from .http_validation import validate_request
@@ -62,6 +63,7 @@ class FallDetectionEndpoints:
         self.db = db
         self.homes = HomesRepository(db)
         self.users = UsersRepository(db)
+        self.devices = DevicesRepository(db)
         self.detector = detector
         self.notifier_mng = notifier_mng
         self.authentication = Authentication()
@@ -76,6 +78,10 @@ class FallDetectionEndpoints:
                 current_uid, app_type = self.authentication.get_current_user_uid(authorization)
             except (ValueError, auth.InvalidIdTokenError, auth.RevokedIdTokenError, auth.UserDisabledError):
                 return build_api_response(API_OP_UNAUTHORIZED), 401
+            device = self.devices.get_device_by_id(body.deviceUID)
+            if not device or device.get("owner_id") != current_uid:
+                return build_api_response(API_OP_FORBIDDEN), 403
+
             home = self.homes.get_home_by_id(body.home_id)
             members = home.get("members", {}) if home else {}
             member = members.get(current_uid, {})

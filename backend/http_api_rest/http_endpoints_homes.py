@@ -5,7 +5,7 @@ from firebase_admin import auth
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, RootModel
 
 from ..authentication.authentication import Authentication
-from .api_op_codes import API_OP_OK, API_OP_UNAUTHORIZED, build_api_response
+from .api_op_codes import API_OP_OK, API_OP_UNAUTHORIZED, API_OP_FORBIDDEN, build_api_response
 from .http_validation import validate_request
 
 
@@ -56,9 +56,9 @@ class HomesEndpoints:
 
             print(f"[AUTH SERVER] uid={current_uid}", flush=True)
 
-            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
-            # app_type es por ahora la constante mockeada MONITOR_APP.
             home = self.repository.get_home_by_id(home_id)
+            if not home or current_uid not in (home.get("members") or {}):
+                return build_api_response(API_OP_FORBIDDEN), 403
             return build_api_response(API_OP_OK, home)
 
         @self.blueprint.post("")
@@ -73,8 +73,6 @@ class HomesEndpoints:
 
             print(f"[AUTH SERVER] uid={current_uid}", flush=True)
 
-            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
-            # app_type es por ahora la constante mockeada MONITOR_APP.
             home_id = self.repository.create_home(
                 body.data, body.home_id,
             )
@@ -92,8 +90,6 @@ class HomesEndpoints:
 
             print(f"[AUTH SERVER] uid={current_uid}", flush=True)
 
-            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
-            # app_type es por ahora la constante mockeada MONITOR_APP.
             self.repository.update_home(
                 home_id, body.model_dump(exclude_unset=True),
             )
@@ -111,7 +107,7 @@ class HomesEndpoints:
 
             print(f"[AUTH SERVER] uid={current_uid}", flush=True)
 
-            # TODO: Validar los permisos de current_uid sobre los datos solicitados.
-            # app_type es por ahora la constante mockeada MONITOR_APP.
+            # TODO: Eliminar home desde db/users/homes/home asociadas y también db/home/users/users.
+
             self.repository.delete_home(home_id)
             return build_api_response(API_OP_OK)
